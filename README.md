@@ -14,7 +14,7 @@ You can define the size in megabytes(e.g. 100 MB) for `cacheMaxSize`. It will he
 Set `showLogs` to `true` to show logs about the cache behavior & sizes.
 
 
-Call [disposeCachedFadeInImage()] when closing app.
+Call `disposeCachedFadeInImage()` when closing app.
 ```dart
 disposeCachedFadeInImage();
 ```
