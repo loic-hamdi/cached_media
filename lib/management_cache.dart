@@ -4,6 +4,7 @@ import 'package:cached_image/cached_image.dart';
 import 'package:cached_image/entity_cached_image_info.dart';
 import 'package:cached_image/management_store.dart';
 import 'package:cached_image/objectbox.dart';
+import 'dart:developer' as developer;
 
 double calculateCacheSize(List<CachedImageInfo> allCachedImageInfo) {
   double tmpCurrentCacheSize = 0;
@@ -23,6 +24,9 @@ Future<void> reduceCacheSize(ObjectBox objectBox, List<CachedImageInfo> allCache
   if (allCachedImageInfo.isNotEmpty) {
     allCachedImageInfo.sort((a, b) => a.dateCreated.compareTo(b.dateCreated));
     final a = allCachedImageInfo.first;
+    if (getShowLogs) {
+      developer.log("🧽 Clearing cache from ${a.cachedImageUrl}");
+    }
     await deleteImageInCache(a.cachedImageUrl);
     removeCachedImageInfo(objectBox, a.id);
   }
