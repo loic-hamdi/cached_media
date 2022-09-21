@@ -32,8 +32,17 @@ to `/example` folder.
 const like = 'sample';
 ```
 
-## Additional information
+## Install
 
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
+
+The function [initCachedFadeInImage()] must be placed after [WidgetsFlutterBinding.ensureInitialized()]
+You can define the size in megabytes(e.g. 100 MB) for [cacheMaxSize]. It will help maintain the performance of your app.
+Set [showLogs] to [true] to show logs about the cache behavior & sizes.
+```dart
+initCachedFadeInImage();
+```
+
+Call [disposeCachedFadeInImage()] when closing app.
+```dart
+disposeCachedFadeInImage();
+```
