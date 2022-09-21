@@ -24,27 +24,13 @@ disposeCachedFadeInImage();
 ```dart
 CachedImage(
       uniqueId: 'abc',
-      imageUrl: imageUrl,
-      width: width,
-      height: height,
-      fit: fit,
+      imageUrl: 'https://www.foo.bar/image.jpg',
+      width: 100,
+      height: 100,
       startLoadingOnlyWhenVisible: false,
-      assetErrorImage: Assets.imageError,
+      assetErrorImage: 'assets/error.jpg',
       showCircularProgressIndicator: false,
-      customLoadingProgressIndicator: FittedBox(
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: const [
-              SizedBox(
-                width: kPaddingElementsDefault * 1.5,
-                height: kPaddingElementsDefault,
-                child: CustomCircularProgressIndicator(),
-              ),
-            ],
-          ),
-        ),
-      ),
+      customLoadingProgressIndicator: CustomCircularProgressIndicator(),
       fadeInDuration: const Duration(milliseconds: 2000),
     );
 ```
