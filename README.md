@@ -3,7 +3,7 @@
 
 This package will store locally your images in order to save bandwidth & ressources.
 
-## How to use?
+## Usage
 
 The function `initCachedFadeInImage()` must be placed after `WidgetsFlutterBinding.ensureInitialized()`
 ```dart
@@ -19,7 +19,7 @@ Call [disposeCachedFadeInImage()] when closing app.
 disposeCachedFadeInImage();
 ```
 
-### Usage:
+### Example
 
 ```dart
 CachedImage(

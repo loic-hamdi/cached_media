@@ -1,7 +1,7 @@
 import 'dart:io';
 
+import 'package:cached_image/cached_image.dart';
 import 'package:cached_image/entity_cached_image_info.dart';
-import 'package:cached_image/init.dart';
 import 'package:cached_image/management_store.dart';
 import 'package:cached_image/objectbox.dart';
 

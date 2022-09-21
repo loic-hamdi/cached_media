@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:cached_image/init.dart';
+import 'package:cached_image/cached_image.dart';
 import 'package:uuid/uuid.dart';
 import 'package:dio/dio.dart';
 import 'dart:developer' as developer;
@@ -33,14 +33,14 @@ Future<String?> downloadImageToLocalCache(String imageUrl, String imageName) asy
     String savePath = "${tempDir.path}/$imageName'";
     try {
       var dio = Dio();
-      developer.log('📦 downloading image');
+      developer.log('📦 downloading image: $imageUrl');
       final response = await dio.download(imageUrl, savePath);
       if (response.statusCode == 200) {
         return savePath;
       }
       return null;
     } on DioError catch (e) {
-      developer.log('❌ DIO ERROR - imageUrl : $imageUrl');
+      developer.log('❌ Dio Error - image : $imageUrl');
       if (e.type == DioErrorType.response) {
         return null;
       }
@@ -54,10 +54,10 @@ Future<String?> downloadImageToLocalCache(String imageUrl, String imageName) asy
         return null;
       }
     } catch (e) {
-      developer.log('❌ OTHER ERROR - imageUrl : $imageUrl');
+      developer.log('❌ Error - image : $imageUrl');
     }
   } else {
-    developer.log('❌  tempDir is NULL!');
+    developer.log('❌  Temp directory not found!');
   }
   return null;
 }
