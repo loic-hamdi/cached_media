@@ -5,24 +5,24 @@ This package will store locally your media in order to save bandwidth & ressourc
 
 ## Usage
 
-The function `initializeCachedImage()` must be placed after `WidgetsFlutterBinding.ensureInitialized()`
+The function `initializeCachedMedia()` must be placed after `WidgetsFlutterBinding.ensureInitialized()`
 ```dart
-initializeCachedImage();
+initializeCachedMedia();
 ```
 
 You can define the size in megabytes(e.g. 100 MB) for `cacheMaxSize`. It will help maintain the performance of your app.
 Set `showLogs` to `true` to show logs about the cache behavior & sizes.
 
 
-Call `disposeCachedImage()` when closing app.
+Call `disposeCachedMedia()` when closing app.
 ```dart
-disposeCachedImage();
+disposeCachedMedia();
 ```
 
 ### Example
 
 ```dart
-CachedImage(
+CachedMedia(
       uniqueId: 'abc',
       imageUrl: 'https://www.foo.bar/image.jpg',
       width: 100,

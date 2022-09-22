@@ -68,7 +68,7 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
   bool startFadeIn = false;
   late Duration fadeInDuration;
 
-  CachedMediaInfo? cachedImageInfo;
+  CachedMediaInfo? cachedMediaInfo;
 
   @override
   void initState() {
@@ -82,21 +82,21 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
   Future<void> init() async {
     isInitiating = true;
     if (mounted) setState(() {});
-    if (cachedImageInfo == null) await loadFromCache(widget.imageUrl);
-    await doesFileExist(cachedImageInfo?.cachedImageUrl) ? await showImage() : await errorImage();
+    if (cachedMediaInfo == null) await loadFromCache(widget.imageUrl);
+    await doesFileExist(cachedMediaInfo?.cachedMediaUrl) ? await showImage() : await errorImage();
     isInitiating = false;
     if (mounted) setState(() {});
   }
 
   Future<void> loadFromCache(String imageUrl) async {
-    cachedImageInfo = await findFirstCachedImageInfoOrNull(getObjectBox, imageUrl);
-    if (cachedImageInfo == null) {
+    cachedMediaInfo = await findFirstCachedMediaInfoOrNull(getObjectBox, imageUrl);
+    if (cachedMediaInfo == null) {
       await downloadAndSetInCache(imageUrl);
-    } else if (cachedImageInfo != null) {
-      if (await doesFileExist(cachedImageInfo?.cachedImageUrl)) {
+    } else if (cachedMediaInfo != null) {
+      if (await doesFileExist(cachedMediaInfo?.cachedMediaUrl)) {
         await showImage();
       } else {
-        removeCachedImageInfo(getObjectBox, cachedImageInfo!.id);
+        removeCachedMediaInfo(getObjectBox, cachedMediaInfo!.id);
         await downloadAndSetInCache(imageUrl);
       }
     }
@@ -106,13 +106,13 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
     final tmpPath = await downloadImageToCache(imageUrl);
     if (await doesFileExist(tmpPath)) {
       var file = File(tmpPath!);
-      final cachedImageInfoToSet = CachedMediaInfo(
-        imageUrl: imageUrl,
+      final cachedMediaInfoToSet = CachedMediaInfo(
+        mediaUrl: imageUrl,
         dateCreated: DateTime.now(),
         fileSize: await file.length(),
-        cachedImageUrl: tmpPath,
+        cachedMediaUrl: tmpPath,
       );
-      addCachedImageInfo(getObjectBox.store, cachedImageInfoToSet);
+      addCachedMediaInfo(getObjectBox.store, cachedMediaInfoToSet);
       await loadFromCache(imageUrl);
     } else {
       await errorImage();
@@ -171,14 +171,14 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
                   }
                 case ImageDownloadStatus.downloaded:
                   {
-                    return cachedImageInfo != null
+                    return cachedMediaInfo != null
                         ? AnimatedOpacity(
                             opacity: startFadeIn ? 1.0 : 0.0,
                             duration: fadeInDuration,
                             curve: Curves.fastOutSlowIn,
                             child: Image.file(
                               key: Key('cached-image-${widget.uniqueId}'),
-                              File(cachedImageInfo!.cachedImageUrl),
+                              File(cachedMediaInfo!.cachedMediaUrl),
                               width: widget.width,
                               height: widget.height,
                               fit: widget.fit,

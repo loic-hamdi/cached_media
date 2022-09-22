@@ -12,12 +12,12 @@ late ObjectBox _objectbox;
 
 ObjectBox get getObjectBox => _objectbox;
 
-StreamSubscription<List<CachedMediaInfo>>? streamAllCachedImageInfo;
+StreamSubscription<List<CachedMediaInfo>>? streamAllCachedMediaInfo;
 
 Directory? tempDir;
 Directory? get getTempDir => tempDir;
 
-final allCachedImageInfo = <CachedMediaInfo>[];
+final allCachedMediaInfo = <CachedMediaInfo>[];
 double currentCacheSize = 0;
 late final double cacheMaxSizeDefault;
 
@@ -30,7 +30,7 @@ bool get getShowLogs => _showLogs;
 /// You can define the size in megabytes(e.g. 100 MB) for [cacheMaxSize]. It will help maintain the performance of your app.
 /// Set [showLogs] to [true] to show logs about the cache behavior & sizes.
 /// Call [disposeCachedFadeInImage()] when closing app.
-Future<void> initializeCachedImage({double cacheMaxSize = 100, bool showLogs = false}) async {
+Future<void> initializeCachedMedia({double cacheMaxSize = 100, bool showLogs = false}) async {
   await checkPermission();
   cacheMaxSizeDefault = cacheMaxSize * 1000000;
   _showLogs = showLogs;
@@ -40,9 +40,9 @@ Future<void> initializeCachedImage({double cacheMaxSize = 100, bool showLogs = f
 }
 
 Future<void> initStreamListener() async {
-  streamAllCachedImageInfo = getObjectBox.cachedImageInfoStream.map((query) => query.find()).listen((p0) async {
-    allCachedImageInfo.clear();
-    allCachedImageInfo.addAll(p0);
+  streamAllCachedMediaInfo = getObjectBox.cachedMediaInfoStream.map((query) => query.find()).listen((p0) async {
+    allCachedMediaInfo.clear();
+    allCachedMediaInfo.addAll(p0);
     if (currentCacheSize > cacheMaxSizeDefault) await reduceCacheSize(getObjectBox, p0);
     if (getShowLogs) {
       developer.log('''
@@ -67,4 +67,4 @@ Future<void> checkPermission() async {
   }
 }
 
-void disposeCachedImage() => streamAllCachedImageInfo?.cancel();
+void disposeCachedMedia() => streamAllCachedMediaInfo?.cancel();

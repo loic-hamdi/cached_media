@@ -5,14 +5,14 @@ import 'objectbox.g.dart';
 @Entity()
 class CachedMediaInfo {
   int id;
-  String imageUrl;
-  String cachedImageUrl;
+  String mediaUrl;
+  String cachedMediaUrl;
   int fileSize;
   DateTime dateCreated;
 
   CachedMediaInfo({
-    required this.imageUrl,
-    required this.cachedImageUrl,
+    required this.mediaUrl,
+    required this.cachedMediaUrl,
     required this.fileSize,
     required this.dateCreated,
     this.id = 0,

@@ -7,14 +7,14 @@ import 'package:path_provider/path_provider.dart';
 class ObjectBox {
   late final Store store;
 
-  late final Box<CachedMediaInfo> cachedImageInfoBox;
+  late final Box<CachedMediaInfo> cachedMediaInfoBox;
 
-  late final Stream<Query<CachedMediaInfo>> cachedImageInfoStream;
+  late final Stream<Query<CachedMediaInfo>> cachedMediaInfoStream;
 
   ObjectBox._create(this.store) {
-    cachedImageInfoBox = Box<CachedMediaInfo>(store);
-    final qBuilder = cachedImageInfoBox.query()..order(CachedMediaInfo_.dateCreated, flags: Order.descending);
-    cachedImageInfoStream = qBuilder.watch(triggerImmediately: true);
+    cachedMediaInfoBox = Box<CachedMediaInfo>(store);
+    final qBuilder = cachedMediaInfoBox.query()..order(CachedMediaInfo_.dateCreated, flags: Order.descending);
+    cachedMediaInfoStream = qBuilder.watch(triggerImmediately: true);
   }
 
   static Future<ObjectBox> create() async {

@@ -19,15 +19,73 @@ import 'entity_cached_media_info.dart';
 export 'package:objectbox/objectbox.dart'; // so that callers only have to import this file
 
 final _entities = <ModelEntity>[
-  ModelEntity(id: const IdUid(1, 6005366836494755306), name: 'CachedMediaInfo', lastPropertyId: const IdUid(5, 6888725697955123402), flags: 0, properties: <ModelProperty>[ModelProperty(id: const IdUid(1, 4086520657986166650), name: 'id', type: 6, flags: 1), ModelProperty(id: const IdUid(2, 6767268004047478265), name: 'imageUrl', type: 9, flags: 0), ModelProperty(id: const IdUid(3, 1249865258270315079), name: 'cachedImageUrl', type: 9, flags: 0), ModelProperty(id: const IdUid(4, 4761769778349346017), name: 'fileSize', type: 6, flags: 0), ModelProperty(id: const IdUid(5, 6888725697955123402), name: 'dateCreated', type: 10, flags: 0)], relations: <ModelRelation>[], backlinks: <ModelBacklink>[])
+  ModelEntity(
+      id: const IdUid(1, 6592167626999928989),
+      name: 'CachedMediaInfo',
+      lastPropertyId: const IdUid(5, 6778508766390193224),
+      flags: 0,
+      properties: <ModelProperty>[
+        ModelProperty(
+            id: const IdUid(1, 6351387933669555115),
+            name: 'id',
+            type: 6,
+            flags: 1),
+        ModelProperty(
+            id: const IdUid(2, 8360129568343509210),
+            name: 'mediaUrl',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(3, 7520979403863566768),
+            name: 'cachedMediaUrl',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(4, 4568965958665357660),
+            name: 'fileSize',
+            type: 6,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(5, 6778508766390193224),
+            name: 'dateCreated',
+            type: 10,
+            flags: 0)
+      ],
+      relations: <ModelRelation>[],
+      backlinks: <ModelBacklink>[])
 ];
 
 /// Open an ObjectBox store with the model declared in this file.
-Future<Store> openStore({String? directory, int? maxDBSizeInKB, int? fileMode, int? maxReaders, bool queriesCaseSensitiveDefault = true, String? macosApplicationGroup}) async => Store(getObjectBoxModel(), directory: directory ?? (await defaultStoreDirectory()).path, maxDBSizeInKB: maxDBSizeInKB, fileMode: fileMode, maxReaders: maxReaders, queriesCaseSensitiveDefault: queriesCaseSensitiveDefault, macosApplicationGroup: macosApplicationGroup);
+Future<Store> openStore(
+        {String? directory,
+        int? maxDBSizeInKB,
+        int? fileMode,
+        int? maxReaders,
+        bool queriesCaseSensitiveDefault = true,
+        String? macosApplicationGroup}) async =>
+    Store(getObjectBoxModel(),
+        directory: directory ?? (await defaultStoreDirectory()).path,
+        maxDBSizeInKB: maxDBSizeInKB,
+        fileMode: fileMode,
+        maxReaders: maxReaders,
+        queriesCaseSensitiveDefault: queriesCaseSensitiveDefault,
+        macosApplicationGroup: macosApplicationGroup);
 
 /// ObjectBox model definition, pass it to [Store] - Store(getObjectBoxModel())
 ModelDefinition getObjectBoxModel() {
-  final model = ModelInfo(entities: _entities, lastEntityId: const IdUid(1, 6005366836494755306), lastIndexId: const IdUid(0, 0), lastRelationId: const IdUid(0, 0), lastSequenceId: const IdUid(0, 0), retiredEntityUids: const [], retiredIndexUids: const [], retiredPropertyUids: const [], retiredRelationUids: const [], modelVersion: 5, modelVersionParserMinimum: 5, version: 1);
+  final model = ModelInfo(
+      entities: _entities,
+      lastEntityId: const IdUid(1, 6592167626999928989),
+      lastIndexId: const IdUid(0, 0),
+      lastRelationId: const IdUid(0, 0),
+      lastSequenceId: const IdUid(0, 0),
+      retiredEntityUids: const [],
+      retiredIndexUids: const [],
+      retiredPropertyUids: const [],
+      retiredRelationUids: const [],
+      modelVersion: 5,
+      modelVersionParserMinimum: 5,
+      version: 1);
 
   final bindings = <Type, EntityDefinition>{
     CachedMediaInfo: EntityDefinition<CachedMediaInfo>(
@@ -39,12 +97,12 @@ ModelDefinition getObjectBoxModel() {
           object.id = id;
         },
         objectToFB: (CachedMediaInfo object, fb.Builder fbb) {
-          final imageUrlOffset = fbb.writeString(object.imageUrl);
-          final cachedImageUrlOffset = fbb.writeString(object.cachedImageUrl);
+          final mediaUrlOffset = fbb.writeString(object.mediaUrl);
+          final cachedMediaUrlOffset = fbb.writeString(object.cachedMediaUrl);
           fbb.startTable(6);
           fbb.addInt64(0, object.id);
-          fbb.addOffset(1, imageUrlOffset);
-          fbb.addOffset(2, cachedImageUrlOffset);
+          fbb.addOffset(1, mediaUrlOffset);
+          fbb.addOffset(2, cachedMediaUrlOffset);
           fbb.addInt64(3, object.fileSize);
           fbb.addInt64(4, object.dateCreated.millisecondsSinceEpoch);
           fbb.finish(fbb.endTable());
@@ -54,7 +112,16 @@ ModelDefinition getObjectBoxModel() {
           final buffer = fb.BufferContext(fbData);
           final rootOffset = buffer.derefObject(0);
 
-          final object = CachedMediaInfo(imageUrl: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 6, ''), cachedImageUrl: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 8, ''), fileSize: const fb.Int64Reader().vTableGet(buffer, rootOffset, 10, 0), dateCreated: DateTime.fromMillisecondsSinceEpoch(const fb.Int64Reader().vTableGet(buffer, rootOffset, 12, 0)), id: const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0));
+          final object = CachedMediaInfo(
+              mediaUrl: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 6, ''),
+              cachedMediaUrl: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 8, ''),
+              fileSize:
+                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 10, 0),
+              dateCreated: DateTime.fromMillisecondsSinceEpoch(
+                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 12, 0)),
+              id: const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0));
 
           return object;
         })
@@ -66,17 +133,22 @@ ModelDefinition getObjectBoxModel() {
 /// [CachedMediaInfo] entity fields to define ObjectBox queries.
 class CachedMediaInfo_ {
   /// see [CachedMediaInfo.id]
-  static final id = QueryIntegerProperty<CachedMediaInfo>(_entities[0].properties[0]);
+  static final id =
+      QueryIntegerProperty<CachedMediaInfo>(_entities[0].properties[0]);
 
-  /// see [CachedMediaInfo.imageUrl]
-  static final imageUrl = QueryStringProperty<CachedMediaInfo>(_entities[0].properties[1]);
+  /// see [CachedMediaInfo.mediaUrl]
+  static final mediaUrl =
+      QueryStringProperty<CachedMediaInfo>(_entities[0].properties[1]);
 
-  /// see [CachedMediaInfo.cachedImageUrl]
-  static final cachedImageUrl = QueryStringProperty<CachedMediaInfo>(_entities[0].properties[2]);
+  /// see [CachedMediaInfo.cachedMediaUrl]
+  static final cachedMediaUrl =
+      QueryStringProperty<CachedMediaInfo>(_entities[0].properties[2]);
 
   /// see [CachedMediaInfo.fileSize]
-  static final fileSize = QueryIntegerProperty<CachedMediaInfo>(_entities[0].properties[3]);
+  static final fileSize =
+      QueryIntegerProperty<CachedMediaInfo>(_entities[0].properties[3]);
 
   /// see [CachedMediaInfo.dateCreated]
-  static final dateCreated = QueryIntegerProperty<CachedMediaInfo>(_entities[0].properties[4]);
+  static final dateCreated =
+      QueryIntegerProperty<CachedMediaInfo>(_entities[0].properties[4]);
 }
