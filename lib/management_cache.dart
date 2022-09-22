@@ -16,7 +16,7 @@ double calculateCacheSize(List<CachedMediaInfo> allCachedMediaInfo) {
   return currentCacheSize;
 }
 
-Future<void> deleteImageInCache(String filePath) async {
+Future<void> deleteMediaInCache(String filePath) async {
   var file = File(filePath);
   if (await file.exists()) await file.delete();
 }
@@ -28,7 +28,7 @@ Future<void> reduceCacheSize(ObjectBox objectBox, List<CachedMediaInfo> allCache
     if (getShowLogs) {
       developer.log("🧽 Clearing cache from ${a.cachedMediaUrl}");
     }
-    await deleteImageInCache(a.cachedMediaUrl);
+    await deleteMediaInCache(a.cachedMediaUrl);
     removeCachedMediaInfo(objectBox, a.id);
   }
 }

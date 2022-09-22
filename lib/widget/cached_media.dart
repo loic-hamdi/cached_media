@@ -1,4 +1,4 @@
-library cached_fadein_image;
+library cached_media;
 
 import 'dart:io';
 
@@ -12,7 +12,7 @@ import 'package:visibility_detector/visibility_detector.dart';
 
 class CachedMedia extends StatefulWidget {
   const CachedMedia({
-    required this.imageUrl,
+    required this.mediaUrl,
     required this.width,
     required this.height,
     this.startLoadingOnlyWhenVisible = false,
@@ -26,33 +26,33 @@ class CachedMedia extends StatefulWidget {
     Key? key,
   }) : super(key: key);
 
-  /// Web url to get the image. The address must contains the file extension.
-  final String imageUrl;
+  /// Web url to get the media. The address must contains the file extension.
+  final String mediaUrl;
   final double width;
   final double height;
   final BoxFit? fit;
 
-  /// To save ressources & bandwidth you can delay the image download
-  /// Set [startLoadingOnlyWhenVisible] to [true] to start to download the image when the widget becomes visible on user's screen
+  /// To save ressources & bandwidth you can delay the media download
+  /// Set [startLoadingOnlyWhenVisible] to [true] to start to download the media when the widget becomes visible on user's screen
   final bool startLoadingOnlyWhenVisible;
 
-  /// Display image from 'assets' when image throw an error
+  /// Display image from 'assets' when media throw an error
   final String? assetErrorImage;
 
   /// Duration can be set to [Duration.zero] to deactivate the fadein effect
   final Duration? fadeInDuration;
 
-  /// Show the [CircularProgressIndicator] when downloading image
+  /// Show the [CircularProgressIndicator] when downloading media
   final bool showCircularProgressIndicator;
 
-  /// Show a custom loader when downloading image
+  /// Show a custom loader when downloading media
   final Widget? customLoadingProgressIndicator;
 
-  /// Widget [errorWidget] will be displayed if image loading throw an error
+  /// Widget [errorWidget] will be displayed if media loading throw an error
   final Widget? errorWidget;
 
   /// The [uniqueId] is used to generate widget keys
-  /// Important: This [String] must be unique for any image you will load with [CachedMedia]
+  /// Important: This [String] must be unique for any media you will load with [CachedMedia]
   final String uniqueId;
 
   @override
@@ -63,7 +63,7 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
   @override
   bool get wantKeepAlive => true;
 
-  ImageDownloadStatus imageDownloadStatus = ImageDownloadStatus.initial;
+  MediaDownloadStatus mediaDownloadStatus = MediaDownloadStatus.initial;
   bool isInitiating = false;
   bool startFadeIn = false;
   late Duration fadeInDuration;
@@ -74,7 +74,7 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
   void initState() {
     super.initState();
     fadeInDuration = widget.fadeInDuration ?? const Duration(milliseconds: 1000);
-    if (imageDownloadStatus == ImageDownloadStatus.initial) {
+    if (mediaDownloadStatus == MediaDownloadStatus.initial) {
       if (!widget.startLoadingOnlyWhenVisible) init();
     }
   }
@@ -82,53 +82,53 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
   Future<void> init() async {
     isInitiating = true;
     if (mounted) setState(() {});
-    if (cachedMediaInfo == null) await loadFromCache(widget.imageUrl);
-    await doesFileExist(cachedMediaInfo?.cachedMediaUrl) ? await showImage() : await errorImage();
+    if (cachedMediaInfo == null) await loadFromCache(widget.mediaUrl);
+    await doesFileExist(cachedMediaInfo?.cachedMediaUrl) ? await showMedia() : await errorMedia();
     isInitiating = false;
     if (mounted) setState(() {});
   }
 
-  Future<void> loadFromCache(String imageUrl) async {
-    cachedMediaInfo = await findFirstCachedMediaInfoOrNull(getObjectBox, imageUrl);
+  Future<void> loadFromCache(String mediaUrl) async {
+    cachedMediaInfo = await findFirstCachedMediaInfoOrNull(getObjectBox, mediaUrl);
     if (cachedMediaInfo == null) {
-      await downloadAndSetInCache(imageUrl);
+      await downloadAndSetInCache(mediaUrl);
     } else if (cachedMediaInfo != null) {
       if (await doesFileExist(cachedMediaInfo?.cachedMediaUrl)) {
-        await showImage();
+        await showMedia();
       } else {
         removeCachedMediaInfo(getObjectBox, cachedMediaInfo!.id);
-        await downloadAndSetInCache(imageUrl);
+        await downloadAndSetInCache(mediaUrl);
       }
     }
   }
 
-  Future<void> downloadAndSetInCache(String imageUrl) async {
-    final tmpPath = await downloadImageToCache(imageUrl);
+  Future<void> downloadAndSetInCache(String mediaUrl) async {
+    final tmpPath = await downloadMediaToCache(mediaUrl);
     if (await doesFileExist(tmpPath)) {
       var file = File(tmpPath!);
       final cachedMediaInfoToSet = CachedMediaInfo(
-        mediaUrl: imageUrl,
+        mediaUrl: mediaUrl,
         dateCreated: DateTime.now(),
         fileSize: await file.length(),
         cachedMediaUrl: tmpPath,
       );
       addCachedMediaInfo(getObjectBox.store, cachedMediaInfoToSet);
-      await loadFromCache(imageUrl);
+      await loadFromCache(mediaUrl);
     } else {
-      await errorImage();
+      await errorMedia();
     }
   }
 
-  Future<void> showImage() async {
-    imageDownloadStatus = ImageDownloadStatus.downloaded;
+  Future<void> showMedia() async {
+    mediaDownloadStatus = MediaDownloadStatus.downloaded;
     if (mounted) setState(() {});
     await Future.delayed(const Duration(milliseconds: 25));
     startFadeIn = true;
     if (mounted) setState(() {});
   }
 
-  Future<void> errorImage() async {
-    imageDownloadStatus = ImageDownloadStatus.error;
+  Future<void> errorMedia() async {
+    mediaDownloadStatus = MediaDownloadStatus.error;
     if (mounted) setState(() {});
   }
 
@@ -158,18 +158,18 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
             ),
           Builder(
             builder: (context) {
-              switch (imageDownloadStatus) {
-                case ImageDownloadStatus.initial:
+              switch (mediaDownloadStatus) {
+                case MediaDownloadStatus.initial:
                   {
                     return widget.startLoadingOnlyWhenVisible
                         ? VisibilityDetector(
-                            key: widget.key ?? Key('visibility-cached-image-${widget.uniqueId}'),
-                            onVisibilityChanged: !isInitiating && imageDownloadStatus == ImageDownloadStatus.initial ? (_) async => _.visibleFraction > 0 ? await init() : null : null,
+                            key: widget.key ?? Key('visibility-cached-media-${widget.uniqueId}'),
+                            onVisibilityChanged: !isInitiating && mediaDownloadStatus == MediaDownloadStatus.initial ? (_) async => _.visibleFraction > 0 ? await init() : null : null,
                             child: SizedBox(width: widget.width, height: widget.height),
                           )
                         : const SizedBox.shrink();
                   }
-                case ImageDownloadStatus.downloaded:
+                case MediaDownloadStatus.downloaded:
                   {
                     return cachedMediaInfo != null
                         ? AnimatedOpacity(
@@ -187,7 +187,7 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
                           )
                         : widget.errorWidget ?? const Text('Error');
                   }
-                case ImageDownloadStatus.error:
+                case MediaDownloadStatus.error:
                   {
                     return widget.errorWidget ?? const Text('Error');
                   }

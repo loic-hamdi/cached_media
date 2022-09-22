@@ -5,12 +5,12 @@ import 'package:uuid/uuid.dart';
 import 'package:dio/dio.dart';
 import 'dart:developer' as developer;
 
-Future<String?> downloadImageToCache(String imageUrl) async {
+Future<String?> downloadMediaToCache(String mediaUrl) async {
   String imgName = const Uuid().v1();
-  String imgUrl = imageUrl;
-  if (imgUrl.contains("?")) imgUrl = imageUrl.split("?").first;
+  String imgUrl = mediaUrl;
+  if (imgUrl.contains("?")) imgUrl = mediaUrl.split("?").first;
   final fileExtention = imgUrl.split(".").last;
-  return downloadImageToLocalCache(imageUrl, '$imgName.$fileExtention');
+  return downloadMediaToLocalCache(mediaUrl, '$imgName.$fileExtention');
 }
 
 Future<bool> doesFileExist(String? filePath) async {
@@ -27,20 +27,20 @@ Future<bool> doesFileExist(String? filePath) async {
 }
 
 /// Download locally the file and return the file path if succes, or [null] if error.
-Future<String?> downloadImageToLocalCache(String imageUrl, String imageName) async {
+Future<String?> downloadMediaToLocalCache(String mediaUrl, String mediaName) async {
   final tempDir = getTempDir;
   if (tempDir != null) {
-    String savePath = "${tempDir.path}/$imageName'";
+    String savePath = "${tempDir.path}/$mediaName'";
     try {
       var dio = Dio();
-      developer.log('📦 downloading image: $imageUrl');
-      final response = await dio.download(imageUrl, savePath);
+      developer.log('📦 downloading media: $mediaUrl');
+      final response = await dio.download(mediaUrl, savePath);
       if (response.statusCode == 200) {
         return savePath;
       }
       return null;
     } on DioError catch (e) {
-      developer.log('❌ Dio Error - image : $imageUrl');
+      developer.log('❌ Dio Error - media : $mediaUrl');
       if (e.type == DioErrorType.response) {
         return null;
       }
@@ -54,7 +54,7 @@ Future<String?> downloadImageToLocalCache(String imageUrl, String imageName) asy
         return null;
       }
     } catch (e) {
-      developer.log('❌ Error - image : $imageUrl');
+      developer.log('❌ Error - media : $mediaUrl');
     }
   } else {
     developer.log('❌  Temp directory not found!');

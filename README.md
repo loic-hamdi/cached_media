@@ -24,7 +24,7 @@ disposeCachedMedia();
 ```dart
 CachedMedia(
       uniqueId: 'abc',
-      imageUrl: 'https://www.foo.bar/image.jpg',
+      mediaUrl: 'https://www.foo.bar/image.jpg',
       width: 100,
       height: 100,
       startLoadingOnlyWhenVisible: false,

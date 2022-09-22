@@ -26,10 +26,10 @@ PermissionStatus? _permissionStatus;
 bool _showLogs = false;
 bool get getShowLogs => _showLogs;
 
-/// The function [initCachedFadeInImage()] must be placed after [WidgetsFlutterBinding.ensureInitialized()]
+/// The function [initializeCachedMedia()] must be placed after [WidgetsFlutterBinding.ensureInitialized()]
 /// You can define the size in megabytes(e.g. 100 MB) for [cacheMaxSize]. It will help maintain the performance of your app.
 /// Set [showLogs] to [true] to show logs about the cache behavior & sizes.
-/// Call [disposeCachedFadeInImage()] when closing app.
+/// Call [disposeCachedMedia()] when closing app.
 Future<void> initializeCachedMedia({double cacheMaxSize = 100, bool showLogs = false}) async {
   await checkPermission();
   cacheMaxSizeDefault = cacheMaxSize * 1000000;
@@ -47,11 +47,11 @@ Future<void> initStreamListener() async {
     if (getShowLogs) {
       developer.log('''
 - - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -
-Images in cache: ${p0.length}
+Media in cache: ${p0.length}
 Current Cache Size: ${(calculateCacheSize(p0)) / 1000000} MB
 Cache Max Size: ${cacheMaxSizeDefault / 1000000} MB
 - - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -
-''', name: 'Cached Image package');
+''', name: 'Cached Media package');
     }
   });
 }
