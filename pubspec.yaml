@@ -1,6 +1,6 @@
 name: cached_image
 description: Easily cache your images & save bandwidth
-version: 0.0.2
+version: 0.0.3
 homepage: https://github.com/zzterrozz/cached_image
 
 environment:
