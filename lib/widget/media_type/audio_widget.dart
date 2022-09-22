@@ -121,15 +121,14 @@ class _AudioWidgetState extends State<AudioWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Material(child: _buildPlayer()),
-          ],
-        ),
+    return Container(
+      key: Key('cached-audio-${widget.uniqueId}'),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Material(child: _buildPlayer()),
+        ],
       ),
     );
   }
