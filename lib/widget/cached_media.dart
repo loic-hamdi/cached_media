@@ -1,11 +1,7 @@
 library cached_media;
 
-import 'dart:io';
-
-import 'package:cached_media/cached_media.dart';
 import 'package:cached_media/entity_cached_media_info.dart';
 import 'package:cached_media/enums/enums.dart';
-import 'package:cached_media/management_store.dart';
 import 'package:cached_media/widget/download_media_snapshot.dart';
 import 'package:cached_media/widget/functions/functions.dart';
 import 'package:cached_media/widget/media_type/media_widget.dart';
@@ -28,9 +24,6 @@ class CachedMedia extends StatefulWidget {
     this.showCircularProgressIndicator = true,
     this.errorWidget,
     required this.uniqueId,
-    this.customImageWidget,
-    this.customVideoPlayerWidget,
-    this.customAudioPlayerWidget,
     this.builder,
     Key? key,
   }) : super(key: key);
@@ -67,10 +60,6 @@ class CachedMedia extends StatefulWidget {
   /// Important: This [String] must be unique for any media you will load with [CachedMedia]
   final String uniqueId;
 
-  final Widget? customImageWidget;
-  final Widget? customVideoPlayerWidget;
-  final Widget? customAudioPlayerWidget;
-
   final Widget? Function(BuildContext context, DownloadMediaSnapshot snapshot)? builder;
 
   @override
@@ -98,42 +87,13 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
   }
 
   Future<void> init() async {
-    isInitiating = true;
-    if (mounted) setState(() {});
-    if (cachedMediaInfo == null) await loadFromCache(widget.mediaUrl);
-    await doesFileExist(cachedMediaInfo?.cachedMediaUrl) ? await showMedia() : await errorMedia();
-    isInitiating = false;
-    if (mounted) setState(() {});
-  }
-
-  Future<void> loadFromCache(String mediaUrl) async {
-    cachedMediaInfo = await findFirstCachedMediaInfoOrNull(getObjectBox, mediaUrl);
     if (cachedMediaInfo == null) {
-      await downloadAndSetInCache(mediaUrl);
-    } else if (cachedMediaInfo != null) {
-      if (await doesFileExist(cachedMediaInfo?.cachedMediaUrl)) {
-        await showMedia();
-      } else {
-        removeCachedMediaInfo(getObjectBox, cachedMediaInfo!.id);
-        await downloadAndSetInCache(mediaUrl);
-      }
-    }
-  }
-
-  Future<void> downloadAndSetInCache(String mediaUrl) async {
-    final tmpPath = await downloadMediaToCache(mediaUrl);
-    if (await doesFileExist(tmpPath)) {
-      var file = File(tmpPath!);
-      final cachedMediaInfoToSet = CachedMediaInfo(
-        mediaUrl: mediaUrl,
-        dateCreated: DateTime.now(),
-        fileSize: await file.length(),
-        cachedMediaUrl: tmpPath,
-      );
-      addCachedMediaInfo(getObjectBox.store, cachedMediaInfoToSet);
-      await loadFromCache(mediaUrl);
-    } else {
-      await errorMedia();
+      isInitiating = true;
+      if (mounted) setState(() {});
+      cachedMediaInfo = await loadMedia(widget.mediaUrl);
+      await doesFileExist(cachedMediaInfo?.cachedMediaUrl) ? await showMedia() : await errorMedia();
+      isInitiating = false;
+      if (mounted) setState(() {});
     }
   }
 
@@ -195,6 +155,7 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
                             duration: fadeInDuration,
                             curve: Curves.fastOutSlowIn,
                             child: MediaWidget(
+                              mediaUrl: widget.mediaUrl,
                               mediaType: widget.mediaType,
                               cachedMediaInfo: cachedMediaInfo!,
                               uniqueId: widget.uniqueId,
@@ -202,9 +163,6 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
                               height: widget.height,
                               fit: widget.fit,
                               assetErrorImage: widget.assetErrorImage,
-                              customImageWidget: widget.customImageWidget,
-                              customVideoPlayerWidget: widget.customVideoPlayerWidget,
-                              customAudioPlayerWidget: widget.customAudioPlayerWidget,
                               builder: widget.builder,
                             ),
                           )

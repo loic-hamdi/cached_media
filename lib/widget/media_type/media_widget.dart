@@ -9,6 +9,7 @@ import 'package:flutter/widgets.dart';
 class MediaWidget extends StatefulWidget {
   const MediaWidget({
     Key? key,
+    required this.mediaUrl,
     required this.mediaType,
     required this.cachedMediaInfo,
     required this.uniqueId,
@@ -16,12 +17,10 @@ class MediaWidget extends StatefulWidget {
     required this.height,
     required this.fit,
     required this.assetErrorImage,
-    required this.customVideoPlayerWidget,
-    required this.customAudioPlayerWidget,
-    required this.customImageWidget,
     required this.builder,
   }) : super(key: key);
 
+  final String mediaUrl;
   final MediaType mediaType;
   final CachedMediaInfo cachedMediaInfo;
   final String uniqueId;
@@ -29,9 +28,6 @@ class MediaWidget extends StatefulWidget {
   final double height;
   final BoxFit? fit;
   final String? assetErrorImage;
-  final Widget? customImageWidget;
-  final Widget? customVideoPlayerWidget;
-  final Widget? customAudioPlayerWidget;
   final Widget? Function(BuildContext context, DownloadMediaSnapshot snapshot)? builder;
 
   @override
@@ -46,25 +42,17 @@ class _MediaWidgetState extends State<MediaWidget> {
   void initState() {
     super.initState();
     if (widget.builder != null) {
-      //! SNAPSHOT
       snapshot = DownloadMediaSnapshot(
         status: DownloadMediaStatus.loading,
         filePath: null,
-        progress: null,
       );
 
-      /// Initializing Widget Logic Controller
       __downloadMediaBuilderController = DownloadMediaBuilderController(
         snapshot: snapshot,
         onSnapshotChanged: (snapshot) => setState(() => this.snapshot = snapshot),
       );
 
-      /// Initializing Caching Database
-      DownloadCacheManager.init().then((value) {
-        /// Starting Caching Database
-        __downloadMediaBuilderController.getFile(widget.url);
-      });
-      //! END SNAPSHOT
+      __downloadMediaBuilderController.getFile(widget.mediaUrl);
     }
   }
 
@@ -72,11 +60,11 @@ class _MediaWidgetState extends State<MediaWidget> {
   Widget build(BuildContext context) {
     switch (widget.mediaType) {
       case MediaType.image:
-        return widget.customImageWidget != null ? widget.customImageWidget! : ImageWidget(uniqueId: widget.uniqueId, cachedMediaInfo: widget.cachedMediaInfo, width: widget.width, height: widget.height, fit: widget.fit, assetErrorImage: widget.assetErrorImage);
+        return ImageWidget(uniqueId: widget.uniqueId, cachedMediaInfo: widget.cachedMediaInfo, width: widget.width, height: widget.height, fit: widget.fit, assetErrorImage: widget.assetErrorImage);
       case MediaType.video:
-        return widget.customVideoPlayerWidget != null ? widget.customVideoPlayerWidget! : VideoWidget(uniqueId: widget.uniqueId, cachedMediaInfo: widget.cachedMediaInfo, width: widget.width, height: widget.height, fit: widget.fit, assetErrorImage: widget.assetErrorImage);
+        return VideoWidget(uniqueId: widget.uniqueId, cachedMediaInfo: widget.cachedMediaInfo, width: widget.width, height: widget.height, fit: widget.fit);
       case MediaType.audio:
-        return widget.customAudioPlayerWidget != null ? widget.customAudioPlayerWidget! : AudioWidget(uniqueId: widget.uniqueId, cachedMediaInfo: widget.cachedMediaInfo, width: widget.width, height: widget.height, fit: widget.fit, assetErrorImage: widget.assetErrorImage);
+        return AudioWidget(uniqueId: widget.uniqueId, cachedMediaInfo: widget.cachedMediaInfo, width: widget.width, height: widget.height, fit: widget.fit);
       case MediaType.custom:
         return widget.builder != null ? widget.builder!(context, snapshot) ?? const SizedBox() : const Text('Builder implementation is missing');
     }

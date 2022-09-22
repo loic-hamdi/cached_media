@@ -1,9 +1,42 @@
 import 'dart:io';
 
 import 'package:cached_media/cached_media.dart';
+import 'package:cached_media/entity_cached_media_info.dart';
+import 'package:cached_media/management_store.dart';
 import 'package:uuid/uuid.dart';
 import 'package:dio/dio.dart';
 import 'dart:developer' as developer;
+
+/// Return [CachedMediaInfo?] after either finding in cache or downloading then set in cache
+Future<CachedMediaInfo?> loadMedia(String mediaUrl) async {
+  CachedMediaInfo? cachedMediaInfo = await findFirstCachedMediaInfoOrNull(getObjectBox, mediaUrl);
+  if (cachedMediaInfo == null) {
+    await downloadAndSetInCache(mediaUrl);
+  } else {
+    if (await doesFileExist(cachedMediaInfo.cachedMediaUrl)) {
+      return cachedMediaInfo;
+    } else {
+      removeCachedMediaInfo(getObjectBox, cachedMediaInfo.id);
+      await downloadAndSetInCache(mediaUrl);
+    }
+  }
+  cachedMediaInfo = await findFirstCachedMediaInfoOrNull(getObjectBox, mediaUrl);
+  return cachedMediaInfo;
+}
+
+Future<void> downloadAndSetInCache(String mediaUrl) async {
+  final tmpPath = await downloadMediaToCache(mediaUrl);
+  if (await doesFileExist(tmpPath)) {
+    var file = File(tmpPath!);
+    final cachedMediaInfoToSet = CachedMediaInfo(
+      mediaUrl: mediaUrl,
+      dateCreated: DateTime.now(),
+      fileSize: await file.length(),
+      cachedMediaUrl: tmpPath,
+    );
+    addCachedMediaInfo(getObjectBox.store, cachedMediaInfoToSet);
+  }
+}
 
 Future<String?> downloadMediaToCache(String mediaUrl) async {
   String imgName = const Uuid().v1();

@@ -12,7 +12,6 @@ class VideoWidget extends StatefulWidget {
     required this.width,
     required this.height,
     required this.fit,
-    required this.assetErrorImage,
   }) : super(key: key);
 
   final String uniqueId;
@@ -20,7 +19,6 @@ class VideoWidget extends StatefulWidget {
   final double width;
   final double height;
   final BoxFit? fit;
-  final String? assetErrorImage;
 
   @override
   State<VideoWidget> createState() => _VideoWidgetState();

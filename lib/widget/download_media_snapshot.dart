@@ -1,4 +1,5 @@
 import 'package:cached_media/enums/enums.dart';
+import 'package:cached_media/widget/functions/functions.dart';
 
 /// DTO Class make it easy to fetch process snapshot ASAP.
 class DownloadMediaSnapshot {
@@ -8,12 +9,8 @@ class DownloadMediaSnapshot {
   /// File that you have downloaded.
   late String? filePath;
 
-  /// Progress of download process.
-  late double? progress;
-
   DownloadMediaSnapshot({
     required this.filePath,
-    required this.progress,
     required this.status,
   });
 }
@@ -27,35 +24,21 @@ class DownloadMediaBuilderController {
   /// When snapshot changes this function will called and give you the new snapshot
   late final Function(DownloadMediaSnapshot) _onSnapshotChanged;
 
-  /// Provide us a 3 Variable
-  /// 1 - Status : It's the status of the process (Success, Loading, Error).
-  /// 2 - Progress : The progress if the file is downloading.
-  /// 3 - FilePath : When Status is Success the FilePath won't be null;
+  /// Status of the process (Success, Loading, Error)
+  /// When Status is Success the FilePath won't be null
   late final DownloadMediaSnapshot _snapshot;
 
-  /// Try to get file path from cache,
-  /// If it's not exists it will download the file and cache it.
   Future<void> getFile(String url) async {
-    String? filePath = DownloadCacheManager.getCachedFilePath(url);
-    if (filePath != null) {
-      _snapshot.filePath = filePath;
-      _snapshot.status = DownloadMediaStatus.success;
-      _onSnapshotChanged(_snapshot);
-      return;
-    }
-    filePath = await Downloader.downloadFile(
-      url,
-      onProgress: (progress, total) {
-        _onSnapshotChanged(_snapshot..progress = (progress / total));
-      },
-    );
-    if (filePath != null) {
-      _snapshot.filePath = filePath;
-      _snapshot.status = DownloadMediaStatus.success;
-      _onSnapshotChanged(_snapshot);
+    _snapshot.filePath = null;
+    _snapshot.status = DownloadMediaStatus.loading;
+    _onSnapshotChanged(_snapshot);
 
-      /// Caching FilePath
-      await DownloadCacheManager.cacheFilePath(url: url, path: filePath);
+    final cmi = await loadMedia(url);
+    final filePath = cmi?.cachedMediaUrl;
+    if (filePath != null) {
+      _snapshot.filePath = filePath;
+      _snapshot.status = DownloadMediaStatus.success;
+      _onSnapshotChanged(_snapshot);
     } else {
       _onSnapshotChanged(_snapshot..status = DownloadMediaStatus.error);
     }

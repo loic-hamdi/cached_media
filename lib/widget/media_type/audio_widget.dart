@@ -10,7 +10,6 @@ class AudioWidget extends StatefulWidget {
     required this.width,
     required this.height,
     required this.fit,
-    required this.assetErrorImage,
   }) : super(key: key);
 
   final String uniqueId;
@@ -18,7 +17,6 @@ class AudioWidget extends StatefulWidget {
   final double width;
   final double height;
   final BoxFit? fit;
-  final String? assetErrorImage;
 
   @override
   State<AudioWidget> createState() => _AudioWidgetState();
