@@ -1,5 +1,5 @@
 import 'package:cached_media/entity_cached_media_info.dart';
-import 'package:cached_media/enums/enums.dart';
+import 'package:cached_media/widget/cached_media.dart';
 import 'package:cached_media/widget/download_media_snapshot.dart';
 import 'package:cached_media/widget/media_type/audio_widget.dart';
 import 'package:cached_media/widget/media_type/image_widget.dart';

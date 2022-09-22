@@ -1,14 +1,17 @@
 library cached_media;
 
 import 'package:cached_media/entity_cached_media_info.dart';
-import 'package:cached_media/enums/enums.dart';
 import 'package:cached_media/widget/download_media_snapshot.dart';
 import 'package:cached_media/widget/functions/functions.dart';
 import 'package:cached_media/widget/media_type/media_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
-typedef StringCallback = void Function(String? val);
+enum DownloadMediaStatus { success, loading, error }
+
+enum MediaDownloadStatus { initial, downloaded, error }
+
+enum MediaType { image, video, audio, custom }
 
 class CachedMedia extends StatefulWidget {
   const CachedMedia({

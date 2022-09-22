@@ -1,4 +1,4 @@
-import 'package:cached_media/enums/enums.dart';
+import 'package:cached_media/widget/cached_media.dart';
 import 'package:cached_media/widget/functions/functions.dart';
 
 /// DTO Class make it easy to fetch process snapshot ASAP.
