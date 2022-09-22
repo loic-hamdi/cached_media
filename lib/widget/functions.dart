@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:cached_image/cached_image.dart';
+import 'package:cached_media/cached_media.dart';
 import 'package:uuid/uuid.dart';
 import 'package:dio/dio.dart';
 import 'dart:developer' as developer;

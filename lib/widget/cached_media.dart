@@ -2,16 +2,16 @@ library cached_fadein_image;
 
 import 'dart:io';
 
-import 'package:cached_image/cached_image.dart';
-import 'package:cached_image/constants.dart';
-import 'package:cached_image/entity_cached_image_info.dart';
-import 'package:cached_image/management_store.dart';
-import 'package:cached_image/widget/functions.dart';
+import 'package:cached_media/cached_media.dart';
+import 'package:cached_media/constants.dart';
+import 'package:cached_media/entity_cached_media_info.dart';
+import 'package:cached_media/management_store.dart';
+import 'package:cached_media/widget/functions.dart';
 import 'package:flutter/material.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
-class CachedImage extends StatefulWidget {
-  const CachedImage({
+class CachedMedia extends StatefulWidget {
+  const CachedMedia({
     required this.imageUrl,
     required this.width,
     required this.height,
@@ -52,14 +52,14 @@ class CachedImage extends StatefulWidget {
   final Widget? errorWidget;
 
   /// The [uniqueId] is used to generate widget keys
-  /// Important: This [String] must be unique for any image you will load with [CachedImage]
+  /// Important: This [String] must be unique for any image you will load with [CachedMedia]
   final String uniqueId;
 
   @override
-  State<CachedImage> createState() => _CachedImageState();
+  State<CachedMedia> createState() => _CachedMediaState();
 }
 
-class _CachedImageState extends State<CachedImage> with AutomaticKeepAliveClientMixin<CachedImage> {
+class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClientMixin<CachedMedia> {
   @override
   bool get wantKeepAlive => true;
 
@@ -68,7 +68,7 @@ class _CachedImageState extends State<CachedImage> with AutomaticKeepAliveClient
   bool startFadeIn = false;
   late Duration fadeInDuration;
 
-  CachedImageInfo? cachedImageInfo;
+  CachedMediaInfo? cachedImageInfo;
 
   @override
   void initState() {
@@ -106,7 +106,7 @@ class _CachedImageState extends State<CachedImage> with AutomaticKeepAliveClient
     final tmpPath = await downloadImageToCache(imageUrl);
     if (await doesFileExist(tmpPath)) {
       var file = File(tmpPath!);
-      final cachedImageInfoToSet = CachedImageInfo(
+      final cachedImageInfoToSet = CachedMediaInfo(
         imageUrl: imageUrl,
         dateCreated: DateTime.now(),
         fileSize: await file.length(),

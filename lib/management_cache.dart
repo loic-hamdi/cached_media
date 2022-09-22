@@ -1,12 +1,13 @@
 import 'dart:io';
 
-import 'package:cached_image/cached_image.dart';
-import 'package:cached_image/entity_cached_image_info.dart';
-import 'package:cached_image/management_store.dart';
-import 'package:cached_image/objectbox.dart';
 import 'dart:developer' as developer;
 
-double calculateCacheSize(List<CachedImageInfo> allCachedImageInfo) {
+import 'package:cached_media/cached_media.dart';
+import 'package:cached_media/entity_cached_media_info.dart';
+import 'package:cached_media/management_store.dart';
+import 'package:cached_media/objectbox.dart';
+
+double calculateCacheSize(List<CachedMediaInfo> allCachedImageInfo) {
   double tmpCurrentCacheSize = 0;
   for (final cachedImageInfo in allCachedImageInfo) {
     tmpCurrentCacheSize += cachedImageInfo.fileSize;
@@ -20,7 +21,7 @@ Future<void> deleteImageInCache(String filePath) async {
   if (await file.exists()) await file.delete();
 }
 
-Future<void> reduceCacheSize(ObjectBox objectBox, List<CachedImageInfo> allCachedImageInfo) async {
+Future<void> reduceCacheSize(ObjectBox objectBox, List<CachedMediaInfo> allCachedImageInfo) async {
   if (allCachedImageInfo.isNotEmpty) {
     allCachedImageInfo.sort((a, b) => a.dateCreated.compareTo(b.dateCreated));
     final a = allCachedImageInfo.first;

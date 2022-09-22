@@ -1,20 +1,19 @@
 import 'dart:io';
 
-import 'package:cached_image/entity_cached_image_info.dart';
+import 'package:cached_media/entity_cached_media_info.dart';
+import 'package:cached_media/objectbox.g.dart';
 import 'package:path_provider/path_provider.dart';
-
-import 'objectbox.g.dart';
 
 class ObjectBox {
   late final Store store;
 
-  late final Box<CachedImageInfo> cachedImageInfoBox;
+  late final Box<CachedMediaInfo> cachedImageInfoBox;
 
-  late final Stream<Query<CachedImageInfo>> cachedImageInfoStream;
+  late final Stream<Query<CachedMediaInfo>> cachedImageInfoStream;
 
   ObjectBox._create(this.store) {
-    cachedImageInfoBox = Box<CachedImageInfo>(store);
-    final qBuilder = cachedImageInfoBox.query()..order(CachedImageInfo_.dateCreated, flags: Order.descending);
+    cachedImageInfoBox = Box<CachedMediaInfo>(store);
+    final qBuilder = cachedImageInfoBox.query()..order(CachedMediaInfo_.dateCreated, flags: Order.descending);
     cachedImageInfoStream = qBuilder.watch(triggerImmediately: true);
   }
 

@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:cached_image/entity_cached_image_info.dart';
-import 'package:cached_image/management_cache.dart';
-import 'package:cached_image/objectbox.dart';
+import 'package:cached_media/entity_cached_media_info.dart';
+import 'package:cached_media/management_cache.dart';
+import 'package:cached_media/objectbox.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'dart:developer' as developer;
@@ -12,12 +12,12 @@ late ObjectBox _objectbox;
 
 ObjectBox get getObjectBox => _objectbox;
 
-StreamSubscription<List<CachedImageInfo>>? streamAllCachedImageInfo;
+StreamSubscription<List<CachedMediaInfo>>? streamAllCachedImageInfo;
 
 Directory? tempDir;
 Directory? get getTempDir => tempDir;
 
-final allCachedImageInfo = <CachedImageInfo>[];
+final allCachedImageInfo = <CachedMediaInfo>[];
 double currentCacheSize = 0;
 late final double cacheMaxSizeDefault;
 
