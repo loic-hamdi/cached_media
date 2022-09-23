@@ -21,12 +21,14 @@ Future<void> deleteMediaInCache(String filePath) async {
   if (await file.exists()) await file.delete();
 }
 
-Future<void> reduceCacheSize(ObjectBox objectBox, List<CachedMediaInfo> allCachedMediaInfo) async {
+Future<void> reduceCacheSize(
+    ObjectBox objectBox, List<CachedMediaInfo> allCachedMediaInfo) async {
   if (allCachedMediaInfo.isNotEmpty) {
     allCachedMediaInfo.sort((a, b) => a.dateCreated.compareTo(b.dateCreated));
     final a = allCachedMediaInfo.first;
     if (getShowLogs) {
-      developer.log("🧽 Clearing cache from ${a.cachedMediaUrl}", name: 'Cached Media package');
+      developer.log("🧽 Clearing cache from ${a.cachedMediaUrl}",
+          name: 'Cached Media package');
     }
     await deleteMediaInCache(a.cachedMediaUrl);
     removeCachedMediaInfo(objectBox, a.id);

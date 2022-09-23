@@ -29,7 +29,10 @@ class ImageWidget extends StatelessWidget {
       width: width,
       height: height,
       fit: fit,
-      errorBuilder: assetErrorImage != null ? (context, error, stackTrace) => Image.asset(assetErrorImage!, fit: BoxFit.fitWidth) : null,
+      errorBuilder: assetErrorImage != null
+          ? (context, error, stackTrace) =>
+              Image.asset(assetErrorImage!, fit: BoxFit.fitWidth)
+          : null,
     );
   }
 }

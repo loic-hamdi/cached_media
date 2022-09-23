@@ -11,7 +11,9 @@ class CachedMediaSnapshot {
 }
 
 class CachedMediaController {
-  CachedMediaController({required CachedMediaSnapshot snapshot, required Function(CachedMediaSnapshot) onSnapshotChanged}) {
+  CachedMediaController(
+      {required CachedMediaSnapshot snapshot,
+      required Function(CachedMediaSnapshot) onSnapshotChanged}) {
     _onSnapshotChanged = onSnapshotChanged;
     _snapshot = snapshot;
   }

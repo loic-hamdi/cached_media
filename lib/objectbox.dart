@@ -13,7 +13,8 @@ class ObjectBox {
 
   ObjectBox._create(this.store) {
     cachedMediaInfoBox = Box<CachedMediaInfo>(store);
-    final qBuilder = cachedMediaInfoBox.query()..order(CachedMediaInfo_.dateCreated, flags: Order.descending);
+    final qBuilder = cachedMediaInfoBox.query()
+      ..order(CachedMediaInfo_.dateCreated, flags: Order.descending);
     cachedMediaInfoStream = qBuilder.watch(triggerImmediately: true);
   }
 
