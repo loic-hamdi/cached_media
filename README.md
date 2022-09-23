@@ -10,7 +10,7 @@ The function `initializeCachedMedia()` must be placed after `WidgetsFlutterBindi
 await initializeCachedMedia();
 ```
 
-You can define the size in megabytes(e.g. 100 MB) for `cacheMaxSize`. It will help maintain the performance of your app.
+You can define the size in megabytes (e.g. 100 MB) for `cacheMaxSize`. It will help maintain the performance of your app.
 Set `showLogs` to `true` to show logs about the cache behavior & sizes.
 
 
@@ -22,24 +22,23 @@ disposeCachedMedia();
 ### Example
 
 ```dart
-            //? Image example
+              //? Image example
               Container(
                 color: Colors.grey[200],
                 child: const CachedMedia(
-                  uniqueId: 'abc',
                   height: 250,
                   width: 250,
                   mediaType: MediaType.image,
                   mediaUrl: 'https://www.gstatic.com/webp/gallery/1.jpg',
                 ),
               ),
-               //? Custom Builder example
+
+              //? Custom Builder example
               Container(
                 color: Colors.grey[200],
                 height: 250,
                 width: 250,
                 child: CachedMedia(
-                  uniqueId: 'bcd',
                   mediaType: MediaType.custom,
                   mediaUrl: 'https://www.gstatic.com/webp/gallery/2.jpg',
                   builder: (context, snapshot) {
