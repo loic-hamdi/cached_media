@@ -1,3 +1,7 @@
+## 0.0.2+c
+
+Add example folder
+
 ## 0.0.2+b
 
 Video & Audio replaced by Custom builder
