@@ -8,7 +8,7 @@ environment:
   flutter: ">=1.17.0"
 
 dependencies:
-  audioplayer: ^0.8.1
+  audioplayers: ^1.0.1
   dio: ^4.0.6
   flat_buffers: ^2.0.5
   flutter:

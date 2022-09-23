@@ -1,5 +1,10 @@
 # This is a generated file; do not edit or check into version control.
-audioplayer=/Users/development/flutter/.pub-cache/hosted/pub.dartlang.org/audioplayer-0.8.1/
+audioplayers=/Users/development/flutter/.pub-cache/hosted/pub.dartlang.org/audioplayers-1.0.1/
+audioplayers_android=/Users/development/flutter/.pub-cache/hosted/pub.dartlang.org/audioplayers_android-1.0.1/
+audioplayers_darwin=/Users/development/flutter/.pub-cache/hosted/pub.dartlang.org/audioplayers_darwin-1.0.1/
+audioplayers_linux=/Users/development/flutter/.pub-cache/hosted/pub.dartlang.org/audioplayers_linux-1.0.0/
+audioplayers_web=/Users/development/flutter/.pub-cache/hosted/pub.dartlang.org/audioplayers_web-1.0.0/
+audioplayers_windows=/Users/development/flutter/.pub-cache/hosted/pub.dartlang.org/audioplayers_windows-1.0.0/
 objectbox_flutter_libs=/Users/development/flutter/.pub-cache/hosted/pub.dartlang.org/objectbox_flutter_libs-1.6.2/
 path_provider=/Users/development/flutter/.pub-cache/hosted/pub.dartlang.org/path_provider-2.0.11/
 path_provider_android=/Users/development/flutter/.pub-cache/hosted/pub.dartlang.org/path_provider_android-2.0.20/

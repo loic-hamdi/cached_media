@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:audioplayer/audioplayer.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:cached_media/cached_media.dart';
 import 'package:cached_media/entity_cached_media_info.dart';
 import 'package:flutter/material.dart';
@@ -58,15 +58,16 @@ class _AudioWidgetState extends State<AudioWidget> {
     super.dispose();
   }
 
-  void initAudioPlayer() {
+  Future<void> initAudioPlayer() async {
     if (getShowLogs) developer.log('🔈 Audio player initializing ');
     audioPlayer = AudioPlayer();
     if (getShowLogs) developer.log('🔈 Audio player initialized ');
-    _positionSubscription = audioPlayer!.onAudioPositionChanged.listen((p) => setState(() => position = p));
-    _audioPlayerStateSubscription = audioPlayer!.onPlayerStateChanged.listen((s) {
-      if (s == AudioPlayerState.PLAYING) {
-        setState(() => duration = audioPlayer!.duration);
-      } else if (s == AudioPlayerState.STOPPED) {
+    _positionSubscription = audioPlayer!.onPositionChanged.listen((p) => setState(() => position = p));
+    _audioPlayerStateSubscription = audioPlayer!.onPlayerStateChanged.listen((s) async {
+      if (s == PlayerState.playing) {
+        duration = await audioPlayer!.getDuration();
+        setState(() {});
+      } else if (s == PlayerState.stopped) {
         onComplete();
         setState(() {
           position = duration;
@@ -81,22 +82,22 @@ class _AudioWidgetState extends State<AudioWidget> {
     });
   }
 
-  Future _playLocal() async {
+  Future<void> _playLocal() async {
     if (getShowLogs) developer.log('🔊 Audio player started ');
     if (audioPlayer != null) {
-      await audioPlayer!.play(widget.cachedMediaInfo.cachedMediaUrl, isLocal: true);
+      await audioPlayer!.play(DeviceFileSource(widget.cachedMediaInfo.cachedMediaUrl), volume: 1.0);
       setState(() => playerState = PlayerState.playing);
     }
   }
 
-  Future pause() async {
+  Future<void> pause() async {
     if (audioPlayer != null) {
       await audioPlayer!.pause();
       setState(() => playerState = PlayerState.paused);
     }
   }
 
-  Future stop() async {
+  Future<void> stop() async {
     if (audioPlayer != null) {
       await audioPlayer!.stop();
       setState(() {
@@ -106,9 +107,9 @@ class _AudioWidgetState extends State<AudioWidget> {
     }
   }
 
-  Future mute(bool muted) async {
+  Future<void> mute(bool muted) async {
     if (audioPlayer != null) {
-      await audioPlayer!.mute(muted);
+      await audioPlayer!.setVolume(muted ? 0.0 : 1.0);
       setState(() {
         isMuted = muted;
       });
@@ -123,13 +124,7 @@ class _AudioWidgetState extends State<AudioWidget> {
   Widget build(BuildContext context) {
     return Container(
       key: Key('cached-audio-${widget.uniqueId}'),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Material(child: _buildPlayer()),
-        ],
-      ),
+      child: _buildPlayer(),
     );
   }
 
@@ -161,8 +156,8 @@ class _AudioWidgetState extends State<AudioWidget> {
             if (duration != null)
               Slider(
                 value: position?.inMilliseconds.toDouble() ?? 0.0,
-                onChanged: (double value) {
-                  audioPlayer != null ? audioPlayer!.seek((value / 1000).roundToDouble()) : 0.0;
+                onChanged: (double value) async {
+                  audioPlayer != null ? await audioPlayer!.seek(Duration(seconds: (value / 1000).roundToDouble().toInt())) : 0.0;
                 },
                 min: 0.0,
                 max: duration?.inMilliseconds.toDouble() ?? 0,
