@@ -6,7 +6,7 @@ import 'package:cached_media/widget/functions/functions.dart';
 /// DTO Class make it easy to fetch process snapshot ASAP.
 class DownloadMediaSnapshot {
   /// Status of download process (Success, Error, Loading)
-  late DownloadMediaStatus status;
+  late DownloadStatus status;
 
   /// File that you have downloaded.
   late String? filePath;
@@ -32,7 +32,7 @@ class DownloadMediaBuilderController {
 
   Future<void> getFile(String url) async {
     _snapshot.filePath = null;
-    _snapshot.status = DownloadMediaStatus.loading;
+    _snapshot.status = DownloadStatus.loading;
     _onSnapshotChanged(_snapshot);
 
     final cmi = await loadMedia(url);
@@ -41,13 +41,13 @@ class DownloadMediaBuilderController {
       final file = File(filePath);
       if (await file.exists()) {
         _snapshot.filePath = filePath;
-        _snapshot.status = DownloadMediaStatus.success;
+        _snapshot.status = DownloadStatus.success;
         _onSnapshotChanged(_snapshot);
       } else {
-        _onSnapshotChanged(_snapshot..status = DownloadMediaStatus.error);
+        _onSnapshotChanged(_snapshot..status = DownloadStatus.error);
       }
     } else {
-      _onSnapshotChanged(_snapshot..status = DownloadMediaStatus.error);
+      _onSnapshotChanged(_snapshot..status = DownloadStatus.error);
     }
   }
 }

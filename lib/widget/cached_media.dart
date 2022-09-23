@@ -5,19 +5,20 @@ import 'package:cached_media/widget/download_media_snapshot.dart';
 import 'package:cached_media/widget/functions/functions.dart';
 import 'package:cached_media/widget/media_type/media_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
-enum DownloadMediaStatus { success, loading, error }
+enum DownloadStatus { success, loading, error }
 
-enum MediaVisibilityStatus { initial, downloaded, custom, error }
+enum MediaVisibility { initial, downloaded, custom, error }
 
-enum MediaType { image, video, audio, custom }
+enum MediaType { image, custom }
 
 class CachedMedia extends StatefulWidget {
   const CachedMedia({
     required this.mediaType,
     required this.mediaUrl,
-    required this.uniqueId,
+    this.uniqueId,
     this.width,
     this.height,
     this.startLoadingOnlyWhenVisible = false,
@@ -61,7 +62,7 @@ class CachedMedia extends StatefulWidget {
 
   /// The [uniqueId] is used to generate widget keys
   /// Important: This [String] must be unique for any media you will load with [CachedMedia]
-  final String uniqueId;
+  final String? uniqueId;
 
   final Widget? Function(BuildContext context, DownloadMediaSnapshot snapshot)? builder;
 
@@ -73,7 +74,7 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
   @override
   bool get wantKeepAlive => true;
 
-  MediaVisibilityStatus mediaDownloadStatus = MediaVisibilityStatus.initial;
+  MediaVisibility mediaDownloadStatus = MediaVisibility.initial;
   bool isInitiating = false;
   bool startFadeIn = false;
   late Duration fadeInDuration;
@@ -84,7 +85,7 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
   void initState() {
     super.initState();
     fadeInDuration = widget.fadeInDuration ?? const Duration(milliseconds: 1000);
-    if (widget.mediaType != MediaType.custom && mediaDownloadStatus == MediaVisibilityStatus.initial) {
+    if (widget.mediaType != MediaType.custom && mediaDownloadStatus == MediaVisibility.initial) {
       if (!widget.startLoadingOnlyWhenVisible) init();
     }
   }
@@ -101,7 +102,7 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
   }
 
   Future<void> showMedia() async {
-    mediaDownloadStatus = MediaVisibilityStatus.downloaded;
+    mediaDownloadStatus = MediaVisibility.downloaded;
     if (mounted) setState(() {});
     await Future.delayed(const Duration(milliseconds: 25));
     startFadeIn = true;
@@ -109,7 +110,7 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
   }
 
   Future<void> errorMedia() async {
-    mediaDownloadStatus = MediaVisibilityStatus.error;
+    mediaDownloadStatus = MediaVisibility.error;
     if (mounted) setState(() {});
   }
 
@@ -123,7 +124,7 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
           mediaUrl: widget.mediaUrl,
           mediaType: widget.mediaType,
           cachedMediaInfo: cachedMediaInfo,
-          uniqueId: widget.uniqueId,
+          uniqueId: widget.uniqueId ?? const Uuid().v1(),
           width: widget.width,
           height: widget.height,
           fit: widget.fit,
@@ -156,17 +157,17 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
                 Builder(
                   builder: (context) {
                     switch (mediaDownloadStatus) {
-                      case MediaVisibilityStatus.initial:
+                      case MediaVisibility.initial:
                         {
                           return widget.startLoadingOnlyWhenVisible
                               ? VisibilityDetector(
-                                  key: widget.key ?? Key('visibility-cached-media-${widget.uniqueId}'),
-                                  onVisibilityChanged: !isInitiating && mediaDownloadStatus == MediaVisibilityStatus.initial ? (_) async => _.visibleFraction > 0 ? await init() : null : null,
+                                  key: widget.key ?? Key('visibility-cached-media-${widget.uniqueId ?? const Uuid().v1()}'),
+                                  onVisibilityChanged: !isInitiating && mediaDownloadStatus == MediaVisibility.initial ? (_) async => _.visibleFraction > 0 ? await init() : null : null,
                                   child: SizedBox(width: widget.width, height: widget.height),
                                 )
                               : const SizedBox.shrink();
                         }
-                      case MediaVisibilityStatus.downloaded:
+                      case MediaVisibility.downloaded:
                         {
                           return cachedMediaInfo != null
                               ? AnimatedOpacity(
@@ -177,7 +178,7 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
                                     mediaUrl: widget.mediaUrl,
                                     mediaType: widget.mediaType,
                                     cachedMediaInfo: cachedMediaInfo!,
-                                    uniqueId: widget.uniqueId,
+                                    uniqueId: widget.uniqueId ?? const Uuid().v1(),
                                     width: widget.width,
                                     height: widget.height,
                                     fit: widget.fit,
@@ -189,7 +190,7 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
                               : widget.errorWidget ?? const Text('Error');
                         }
 
-                      case MediaVisibilityStatus.error:
+                      case MediaVisibility.error:
                         {
                           return widget.errorWidget ?? const Text('Error');
                         }

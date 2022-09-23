@@ -1,9 +1,7 @@
 import 'package:cached_media/entity_cached_media_info.dart';
 import 'package:cached_media/widget/cached_media.dart';
 import 'package:cached_media/widget/download_media_snapshot.dart';
-import 'package:cached_media/widget/media_type/audio_widget.dart';
 import 'package:cached_media/widget/media_type/image_widget.dart';
-import 'package:cached_media/widget/media_type/video_widget.dart';
 import 'package:flutter/widgets.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
@@ -55,7 +53,7 @@ class _MediaWidgetState extends State<MediaWidget> {
     initiating = true;
     if (mounted) setState(() {});
     if (widget.builder != null) {
-      snapshot = DownloadMediaSnapshot(status: DownloadMediaStatus.loading, filePath: null);
+      snapshot = DownloadMediaSnapshot(status: DownloadStatus.loading, filePath: null);
 
       __downloadMediaBuilderController = DownloadMediaBuilderController(
         snapshot: snapshot,
@@ -124,10 +122,6 @@ class MediaWidgetType extends StatelessWidget {
       switch (mediaType) {
         case MediaType.image:
           return ImageWidget(uniqueId: uniqueId, cachedMediaInfo: cachedMediaInfo!, width: width ?? 100, height: height ?? 100, fit: fit, assetErrorImage: assetErrorImage);
-        case MediaType.video:
-          return VideoWidget(uniqueId: uniqueId, cachedMediaInfo: cachedMediaInfo!, width: width ?? 100, height: height ?? 100, fit: fit);
-        case MediaType.audio:
-          return AudioWidget(uniqueId: uniqueId, cachedMediaInfo: cachedMediaInfo!, width: width ?? 100, height: height ?? 100, fit: fit);
         default:
           {
             return const Text('Media Error');
