@@ -1,10 +1,4 @@
 # This is a generated file; do not edit or check into version control.
-audioplayers=/Users/loic/.pub-cache/hosted/pub.dartlang.org/audioplayers-1.0.1/
-audioplayers_android=/Users/loic/.pub-cache/hosted/pub.dartlang.org/audioplayers_android-1.0.1/
-audioplayers_darwin=/Users/loic/.pub-cache/hosted/pub.dartlang.org/audioplayers_darwin-1.0.1/
-audioplayers_linux=/Users/loic/.pub-cache/hosted/pub.dartlang.org/audioplayers_linux-1.0.0/
-audioplayers_web=/Users/loic/.pub-cache/hosted/pub.dartlang.org/audioplayers_web-1.0.0/
-audioplayers_windows=/Users/loic/.pub-cache/hosted/pub.dartlang.org/audioplayers_windows-1.0.0/
 objectbox_flutter_libs=/Users/loic/.pub-cache/hosted/pub.dartlang.org/objectbox_flutter_libs-1.6.2/
 path_provider=/Users/loic/.pub-cache/hosted/pub.dartlang.org/path_provider-2.0.11/
 path_provider_android=/Users/loic/.pub-cache/hosted/pub.dartlang.org/path_provider_android-2.0.20/
@@ -16,7 +10,3 @@ permission_handler=/Users/loic/.pub-cache/hosted/pub.dartlang.org/permission_han
 permission_handler_android=/Users/loic/.pub-cache/hosted/pub.dartlang.org/permission_handler_android-10.0.0/
 permission_handler_apple=/Users/loic/.pub-cache/hosted/pub.dartlang.org/permission_handler_apple-9.0.4/
 permission_handler_windows=/Users/loic/.pub-cache/hosted/pub.dartlang.org/permission_handler_windows-0.1.0/
-video_player=/Users/loic/.pub-cache/hosted/pub.dartlang.org/video_player-2.4.7/
-video_player_android=/Users/loic/.pub-cache/hosted/pub.dartlang.org/video_player_android-2.3.9/
-video_player_avfoundation=/Users/loic/.pub-cache/hosted/pub.dartlang.org/video_player_avfoundation-2.3.5/
-video_player_web=/Users/loic/.pub-cache/hosted/pub.dartlang.org/video_player_web-2.0.12/

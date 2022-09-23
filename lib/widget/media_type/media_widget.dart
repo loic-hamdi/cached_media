@@ -1,6 +1,6 @@
 import 'package:cached_media/entity_cached_media_info.dart';
 import 'package:cached_media/widget/cached_media.dart';
-import 'package:cached_media/widget/download_media_snapshot.dart';
+import 'package:cached_media/widget/cached_media_controller.dart';
 import 'package:cached_media/widget/media_type/image_widget.dart';
 import 'package:flutter/widgets.dart';
 import 'package:visibility_detector/visibility_detector.dart';
@@ -28,7 +28,7 @@ class MediaWidget extends StatefulWidget {
   final double? height;
   final BoxFit? fit;
   final String? assetErrorImage;
-  final Widget? Function(BuildContext context, DownloadMediaSnapshot snapshot)? builder;
+  final Widget? Function(BuildContext context, CachedMediaSnapshot snapshot)? builder;
   final bool startLoadingOnlyWhenVisible;
 
   @override
@@ -36,8 +36,8 @@ class MediaWidget extends StatefulWidget {
 }
 
 class _MediaWidgetState extends State<MediaWidget> {
-  late DownloadMediaBuilderController __downloadMediaBuilderController;
-  late DownloadMediaSnapshot snapshot;
+  late CachedMediaController __cachedMediaController;
+  late CachedMediaSnapshot snapshot;
   bool initiating = false;
   bool initiated = false;
 
@@ -53,14 +53,12 @@ class _MediaWidgetState extends State<MediaWidget> {
     initiating = true;
     if (mounted) setState(() {});
     if (widget.builder != null) {
-      snapshot = DownloadMediaSnapshot(status: DownloadStatus.loading, filePath: null);
-
-      __downloadMediaBuilderController = DownloadMediaBuilderController(
+      snapshot = CachedMediaSnapshot(status: DownloadStatus.loading, filePath: null);
+      __cachedMediaController = CachedMediaController(
         snapshot: snapshot,
         onSnapshotChanged: (snapshot) => setState(() => this.snapshot = snapshot),
       );
-
-      __downloadMediaBuilderController.getFile(widget.mediaUrl);
+      __cachedMediaController.getFile(widget.mediaUrl);
     }
     initiating = false;
     initiated = true;

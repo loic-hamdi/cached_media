@@ -1,7 +1,7 @@
 library cached_media;
 
 import 'package:cached_media/entity_cached_media_info.dart';
-import 'package:cached_media/widget/download_media_snapshot.dart';
+import 'package:cached_media/widget/cached_media_controller.dart';
 import 'package:cached_media/widget/functions/functions.dart';
 import 'package:cached_media/widget/media_type/media_widget.dart';
 import 'package:flutter/material.dart';
@@ -64,7 +64,7 @@ class CachedMedia extends StatefulWidget {
   /// Important: This [String] must be unique for any media you will load with [CachedMedia]
   final String? uniqueId;
 
-  final Widget? Function(BuildContext context, DownloadMediaSnapshot snapshot)? builder;
+  final Widget? Function(BuildContext context, CachedMediaSnapshot snapshot)? builder;
 
   @override
   State<CachedMedia> createState() => _CachedMediaState();

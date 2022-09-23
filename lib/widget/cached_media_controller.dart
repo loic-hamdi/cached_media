@@ -3,32 +3,22 @@ import 'dart:io';
 import 'package:cached_media/widget/cached_media.dart';
 import 'package:cached_media/widget/functions/functions.dart';
 
-/// DTO Class make it easy to fetch process snapshot ASAP.
-class DownloadMediaSnapshot {
-  /// Status of download process (Success, Error, Loading)
+class CachedMediaSnapshot {
   late DownloadStatus status;
-
-  /// File that you have downloaded.
   late String? filePath;
 
-  DownloadMediaSnapshot({
-    required this.filePath,
-    required this.status,
-  });
+  CachedMediaSnapshot({required this.filePath, required this.status});
 }
 
-class DownloadMediaBuilderController {
-  DownloadMediaBuilderController({required DownloadMediaSnapshot snapshot, required Function(DownloadMediaSnapshot) onSnapshotChanged}) {
+class CachedMediaController {
+  CachedMediaController({required CachedMediaSnapshot snapshot, required Function(CachedMediaSnapshot) onSnapshotChanged}) {
     _onSnapshotChanged = onSnapshotChanged;
     _snapshot = snapshot;
   }
 
-  /// When snapshot changes this function will called and give you the new snapshot
-  late final Function(DownloadMediaSnapshot) _onSnapshotChanged;
+  late final Function(CachedMediaSnapshot) _onSnapshotChanged;
 
-  /// Status of the process (Success, Loading, Error)
-  /// When Status is Success the FilePath won't be null
-  late final DownloadMediaSnapshot _snapshot;
+  late final CachedMediaSnapshot _snapshot;
 
   Future<void> getFile(String url) async {
     _snapshot.filePath = null;

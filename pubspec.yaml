@@ -8,18 +8,15 @@ environment:
   flutter: ">=1.17.0"
 
 dependencies:
-  audioplayers: ^1.0.1
-  dio: ^4.0.6
-  flat_buffers: ^2.0.5
   flutter:
     sdk: flutter
+  dio: ^4.0.6
+  flat_buffers: ^2.0.5
   objectbox: ^1.6.2
   objectbox_flutter_libs: ^1.6.2
-  path: ^1.8.2
   path_provider: ^2.0.11
   permission_handler: ^10.0.0
   uuid: ^3.0.6
-  video_player: ^2.4.7
   visibility_detector: ^0.3.3
 
 dev_dependencies:
