@@ -1,6 +1,6 @@
 name: cached_media
 description: Easily cache your media & save bandwidth
-version: 0.0.2a
+version: 0.0.2+a
 homepage: https://github.com/zzterrozz/cached_media
 
 environment:
