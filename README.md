@@ -7,7 +7,7 @@ This package will store locally your media in order to save bandwidth & ressourc
 
 The function `initializeCachedMedia()` must be placed after `WidgetsFlutterBinding.ensureInitialized()`
 ```dart
-initializeCachedMedia();
+await initializeCachedMedia();
 ```
 
 You can define the size in megabytes(e.g. 100 MB) for `cacheMaxSize`. It will help maintain the performance of your app.
@@ -22,15 +22,35 @@ disposeCachedMedia();
 ### Example
 
 ```dart
-CachedMedia(
-      uniqueId: 'abc',
-      mediaUrl: 'https://www.foo.bar/image.jpg',
-      width: 100,
-      height: 100,
-      startLoadingOnlyWhenVisible: false,
-      assetErrorImage: 'assets/error.jpg',
-      showCircularProgressIndicator: false,
-      customLoadingProgressIndicator: CustomCircularProgressIndicator(),
-      fadeInDuration: const Duration(milliseconds: 2000),
-    );
+            //? Image example
+              Container(
+                color: Colors.grey[200],
+                child: const CachedMedia(
+                  uniqueId: 'abc',
+                  height: 250,
+                  width: 250,
+                  mediaType: MediaType.image,
+                  mediaUrl: 'https://www.gstatic.com/webp/gallery/1.jpg',
+                ),
+              ),
+               //? Custom Builder example
+              Container(
+                color: Colors.grey[200],
+                height: 250,
+                width: 250,
+                child: CachedMedia(
+                  uniqueId: 'bcd',
+                  mediaType: MediaType.custom,
+                  mediaUrl: 'https://www.gstatic.com/webp/gallery/2.jpg',
+                  builder: (context, snapshot) {
+                    if (snapshot.status == DownloadStatus.loading) {
+                      return const Center(child: CircularProgressIndicator.adaptive());
+                    } else if (snapshot.status == DownloadStatus.success) {
+                      return Image.asset(snapshot.filePath!);
+                    } else {
+                      return const Center(child: Text('Error'));
+                    }
+                  },
+                ),
+              ),
 ```
