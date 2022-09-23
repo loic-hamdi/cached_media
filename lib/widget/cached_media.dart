@@ -9,7 +9,7 @@ import 'package:visibility_detector/visibility_detector.dart';
 
 enum DownloadMediaStatus { success, loading, error }
 
-enum MediaDownloadStatus { initial, downloaded, error }
+enum MediaVisibilityStatus { initial, downloaded, custom, error }
 
 enum MediaType { image, video, audio, custom }
 
@@ -17,8 +17,9 @@ class CachedMedia extends StatefulWidget {
   const CachedMedia({
     required this.mediaType,
     required this.mediaUrl,
-    required this.width,
-    required this.height,
+    required this.uniqueId,
+    this.width,
+    this.height,
     this.startLoadingOnlyWhenVisible = false,
     this.fit,
     this.assetErrorImage,
@@ -26,7 +27,6 @@ class CachedMedia extends StatefulWidget {
     this.customLoadingProgressIndicator,
     this.showCircularProgressIndicator = true,
     this.errorWidget,
-    required this.uniqueId,
     this.builder,
     Key? key,
   }) : super(key: key);
@@ -36,8 +36,8 @@ class CachedMedia extends StatefulWidget {
 
   /// Web url to get the media. The address must contains the file extension.
   final String mediaUrl;
-  final double width;
-  final double height;
+  final double? width;
+  final double? height;
   final BoxFit? fit;
 
   /// To save ressources & bandwidth you can delay the media download
@@ -73,7 +73,7 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
   @override
   bool get wantKeepAlive => true;
 
-  MediaDownloadStatus mediaDownloadStatus = MediaDownloadStatus.initial;
+  MediaVisibilityStatus mediaDownloadStatus = MediaVisibilityStatus.initial;
   bool isInitiating = false;
   bool startFadeIn = false;
   late Duration fadeInDuration;
@@ -84,7 +84,7 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
   void initState() {
     super.initState();
     fadeInDuration = widget.fadeInDuration ?? const Duration(milliseconds: 1000);
-    if (mediaDownloadStatus == MediaDownloadStatus.initial) {
+    if (widget.mediaType != MediaType.custom && mediaDownloadStatus == MediaVisibilityStatus.initial) {
       if (!widget.startLoadingOnlyWhenVisible) init();
     }
   }
@@ -101,7 +101,7 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
   }
 
   Future<void> showMedia() async {
-    mediaDownloadStatus = MediaDownloadStatus.downloaded;
+    mediaDownloadStatus = MediaVisibilityStatus.downloaded;
     if (mounted) setState(() {});
     await Future.delayed(const Duration(milliseconds: 25));
     startFadeIn = true;
@@ -109,7 +109,7 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
   }
 
   Future<void> errorMedia() async {
-    mediaDownloadStatus = MediaDownloadStatus.error;
+    mediaDownloadStatus = MediaVisibilityStatus.error;
     if (mounted) setState(() {});
   }
 
@@ -117,69 +117,93 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
   Widget build(BuildContext context) {
     super.build(context);
 
-    return SizedBox(
-      width: widget.width,
-      height: widget.height,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          if (widget.showCircularProgressIndicator && widget.customLoadingProgressIndicator == null)
-            AnimatedOpacity(
-              opacity: startFadeIn ? 0.0 : 1.0,
-              duration: fadeInDuration,
-              curve: Curves.fastOutSlowIn,
-              child: const SizedBox(width: 30, height: 30, child: CircularProgressIndicator.adaptive()),
+    switch (widget.mediaType) {
+      case MediaType.custom:
+        return MediaWidget(
+          mediaUrl: widget.mediaUrl,
+          mediaType: widget.mediaType,
+          cachedMediaInfo: cachedMediaInfo!,
+          uniqueId: widget.uniqueId,
+          width: widget.width,
+          height: widget.height,
+          fit: widget.fit,
+          assetErrorImage: widget.assetErrorImage,
+          builder: widget.builder,
+          startLoadingOnlyWhenVisible: widget.startLoadingOnlyWhenVisible,
+        );
+      default:
+        {
+          return SizedBox(
+            width: widget.width,
+            height: widget.height,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                if (widget.showCircularProgressIndicator && widget.customLoadingProgressIndicator == null)
+                  AnimatedOpacity(
+                    opacity: startFadeIn ? 0.0 : 1.0,
+                    duration: fadeInDuration,
+                    curve: Curves.fastOutSlowIn,
+                    child: const SizedBox(width: 30, height: 30, child: CircularProgressIndicator.adaptive()),
+                  ),
+                if (widget.customLoadingProgressIndicator != null)
+                  AnimatedOpacity(
+                    opacity: startFadeIn ? 0.0 : 1.0,
+                    duration: fadeInDuration,
+                    curve: Curves.fastOutSlowIn,
+                    child: widget.customLoadingProgressIndicator!,
+                  ),
+                Builder(
+                  builder: (context) {
+                    switch (mediaDownloadStatus) {
+                      case MediaVisibilityStatus.initial:
+                        {
+                          return widget.startLoadingOnlyWhenVisible
+                              ? VisibilityDetector(
+                                  key: widget.key ?? Key('visibility-cached-media-${widget.uniqueId}'),
+                                  onVisibilityChanged: !isInitiating && mediaDownloadStatus == MediaVisibilityStatus.initial ? (_) async => _.visibleFraction > 0 ? await init() : null : null,
+                                  child: SizedBox(width: widget.width, height: widget.height),
+                                )
+                              : const SizedBox.shrink();
+                        }
+                      case MediaVisibilityStatus.downloaded:
+                        {
+                          return cachedMediaInfo != null
+                              ? AnimatedOpacity(
+                                  opacity: startFadeIn ? 1.0 : 0.0,
+                                  duration: fadeInDuration,
+                                  curve: Curves.fastOutSlowIn,
+                                  child: MediaWidget(
+                                    mediaUrl: widget.mediaUrl,
+                                    mediaType: widget.mediaType,
+                                    cachedMediaInfo: cachedMediaInfo!,
+                                    uniqueId: widget.uniqueId,
+                                    width: widget.width,
+                                    height: widget.height,
+                                    fit: widget.fit,
+                                    assetErrorImage: widget.assetErrorImage,
+                                    builder: widget.builder,
+                                    startLoadingOnlyWhenVisible: widget.startLoadingOnlyWhenVisible,
+                                  ),
+                                )
+                              : widget.errorWidget ?? const Text('Error');
+                        }
+
+                      case MediaVisibilityStatus.error:
+                        {
+                          return widget.errorWidget ?? const Text('Error');
+                        }
+                      default:
+                        {
+                          return const Text('Error');
+                        }
+                    }
+                  },
+                ),
+              ],
             ),
-          if (widget.customLoadingProgressIndicator != null)
-            AnimatedOpacity(
-              opacity: startFadeIn ? 0.0 : 1.0,
-              duration: fadeInDuration,
-              curve: Curves.fastOutSlowIn,
-              child: widget.customLoadingProgressIndicator!,
-            ),
-          Builder(
-            builder: (context) {
-              switch (mediaDownloadStatus) {
-                case MediaDownloadStatus.initial:
-                  {
-                    return widget.startLoadingOnlyWhenVisible
-                        ? VisibilityDetector(
-                            key: widget.key ?? Key('visibility-cached-media-${widget.uniqueId}'),
-                            onVisibilityChanged: !isInitiating && mediaDownloadStatus == MediaDownloadStatus.initial ? (_) async => _.visibleFraction > 0 ? await init() : null : null,
-                            child: SizedBox(width: widget.width, height: widget.height),
-                          )
-                        : const SizedBox.shrink();
-                  }
-                case MediaDownloadStatus.downloaded:
-                  {
-                    return cachedMediaInfo != null
-                        ? AnimatedOpacity(
-                            opacity: startFadeIn ? 1.0 : 0.0,
-                            duration: fadeInDuration,
-                            curve: Curves.fastOutSlowIn,
-                            child: MediaWidget(
-                              mediaUrl: widget.mediaUrl,
-                              mediaType: widget.mediaType,
-                              cachedMediaInfo: cachedMediaInfo!,
-                              uniqueId: widget.uniqueId,
-                              width: widget.width,
-                              height: widget.height,
-                              fit: widget.fit,
-                              assetErrorImage: widget.assetErrorImage,
-                              builder: widget.builder,
-                            ),
-                          )
-                        : widget.errorWidget ?? const Text('Error');
-                  }
-                case MediaDownloadStatus.error:
-                  {
-                    return widget.errorWidget ?? const Text('Error');
-                  }
-              }
-            },
-          ),
-        ],
-      ),
-    );
+          );
+        }
+    }
   }
 }
