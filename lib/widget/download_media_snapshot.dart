@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cached_media/widget/cached_media.dart';
 import 'package:cached_media/widget/functions/functions.dart';
 
@@ -36,9 +38,14 @@ class DownloadMediaBuilderController {
     final cmi = await loadMedia(url);
     final filePath = cmi?.cachedMediaUrl;
     if (filePath != null) {
-      _snapshot.filePath = filePath;
-      _snapshot.status = DownloadMediaStatus.success;
-      _onSnapshotChanged(_snapshot);
+      final file = File(filePath);
+      if (await file.exists()) {
+        _snapshot.filePath = filePath;
+        _snapshot.status = DownloadMediaStatus.success;
+        _onSnapshotChanged(_snapshot);
+      } else {
+        _onSnapshotChanged(_snapshot..status = DownloadMediaStatus.error);
+      }
     } else {
       _onSnapshotChanged(_snapshot..status = DownloadMediaStatus.error);
     }
