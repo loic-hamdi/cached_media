@@ -24,7 +24,7 @@ class MediaWidget extends StatefulWidget {
 
   final String mediaUrl;
   final MediaType mediaType;
-  final CachedMediaInfo cachedMediaInfo;
+  final CachedMediaInfo? cachedMediaInfo;
   final String uniqueId;
   final double? width;
   final double? height;
@@ -72,12 +72,6 @@ class _MediaWidgetState extends State<MediaWidget> {
   @override
   Widget build(BuildContext context) {
     switch (widget.mediaType) {
-      case MediaType.image:
-        return ImageWidget(uniqueId: widget.uniqueId, cachedMediaInfo: widget.cachedMediaInfo, width: widget.width ?? 100, height: widget.height ?? 100, fit: widget.fit, assetErrorImage: widget.assetErrorImage);
-      case MediaType.video:
-        return VideoWidget(uniqueId: widget.uniqueId, cachedMediaInfo: widget.cachedMediaInfo, width: widget.width ?? 100, height: widget.height ?? 100, fit: widget.fit);
-      case MediaType.audio:
-        return AudioWidget(uniqueId: widget.uniqueId, cachedMediaInfo: widget.cachedMediaInfo, width: widget.width ?? 100, height: widget.height ?? 100, fit: widget.fit);
       case MediaType.custom:
         return widget.startLoadingOnlyWhenVisible
             ? VisibilityDetector(
@@ -88,6 +82,59 @@ class _MediaWidgetState extends State<MediaWidget> {
             : widget.builder != null
                 ? widget.builder!(context, snapshot) ?? const SizedBox()
                 : const Text('Builder implementation is missing');
+      default:
+        {
+          return MediaWidgetType(
+            cachedMediaInfo: widget.cachedMediaInfo,
+            mediaType: widget.mediaType,
+            uniqueId: widget.uniqueId,
+            width: widget.width,
+            height: widget.height,
+            fit: widget.fit,
+            assetErrorImage: widget.assetErrorImage,
+          );
+        }
+    }
+  }
+}
+
+class MediaWidgetType extends StatelessWidget {
+  const MediaWidgetType({
+    required this.cachedMediaInfo,
+    required this.mediaType,
+    required this.uniqueId,
+    required this.width,
+    required this.height,
+    required this.fit,
+    required this.assetErrorImage,
+    Key? key,
+  }) : super(key: key);
+
+  final CachedMediaInfo? cachedMediaInfo;
+  final MediaType mediaType;
+  final String uniqueId;
+  final double? width;
+  final double? height;
+  final BoxFit? fit;
+  final String? assetErrorImage;
+
+  @override
+  Widget build(BuildContext context) {
+    if (cachedMediaInfo != null) {
+      switch (mediaType) {
+        case MediaType.image:
+          return ImageWidget(uniqueId: uniqueId, cachedMediaInfo: cachedMediaInfo!, width: width ?? 100, height: height ?? 100, fit: fit, assetErrorImage: assetErrorImage);
+        case MediaType.video:
+          return VideoWidget(uniqueId: uniqueId, cachedMediaInfo: cachedMediaInfo!, width: width ?? 100, height: height ?? 100, fit: fit);
+        case MediaType.audio:
+          return AudioWidget(uniqueId: uniqueId, cachedMediaInfo: cachedMediaInfo!, width: width ?? 100, height: height ?? 100, fit: fit);
+        default:
+          {
+            return const Text('Media Error');
+          }
+      }
+    } else {
+      return const Text('Media Error');
     }
   }
 }

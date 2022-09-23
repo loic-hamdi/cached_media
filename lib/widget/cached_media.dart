@@ -122,7 +122,7 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
         return MediaWidget(
           mediaUrl: widget.mediaUrl,
           mediaType: widget.mediaType,
-          cachedMediaInfo: cachedMediaInfo!,
+          cachedMediaInfo: cachedMediaInfo,
           uniqueId: widget.uniqueId,
           width: widget.width,
           height: widget.height,
