@@ -56,7 +56,7 @@ class _MediaWidgetState extends State<MediaWidget> {
       snapshot = CachedMediaSnapshot(status: DownloadStatus.loading, filePath: null);
       __cachedMediaController = CachedMediaController(
         snapshot: snapshot,
-        onSnapshotChanged: (snapshot) => setState(() => this.snapshot = snapshot),
+        onSnapshotChanged: (snapshot) => mounted ? setState(() => this.snapshot = snapshot) : null,
       );
       __cachedMediaController.getFile(widget.mediaUrl);
     }
