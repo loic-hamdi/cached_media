@@ -1,3 +1,7 @@
+## 0.0.2+e
+
+DIO fix
+
 ## 0.0.2+d
 
 Example update

@@ -1,6 +1,6 @@
 name: cached_media
 description: Easily cache your media & save bandwidth
-version: 0.0.2+d
+version: 0.0.2+e
 homepage: https://github.com/zzterrozz/cached_media
 
 environment:
@@ -18,6 +18,7 @@ dependencies:
   permission_handler: ^10.0.0
   uuid: ^3.0.6
   visibility_detector: ^0.3.3
+  http: ^0.13.5
 
 dev_dependencies:
   flutter_test:

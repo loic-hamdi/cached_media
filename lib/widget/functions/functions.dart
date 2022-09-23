@@ -63,7 +63,7 @@ Future<bool> doesFileExist(String? filePath) async {
 Future<String?> downloadMediaToLocalCache(String mediaUrl, String mediaName) async {
   final tempDir = getTempDir;
   if (tempDir != null) {
-    String savePath = "${tempDir.path}/$mediaName'";
+    String savePath = "${tempDir.path}/$mediaName";
     try {
       var dio = Dio();
       developer.log('📦 downloading media: $mediaUrl', name: 'Cached Media package');
