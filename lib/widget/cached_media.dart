@@ -140,14 +140,14 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
             child: Stack(
               alignment: Alignment.center,
               children: [
-                if (widget.showCircularProgressIndicator && widget.customLoadingProgressIndicator == null)
+                if (widget.showCircularProgressIndicator && widget.customLoadingProgressIndicator == null && mediaDownloadStatus != MediaVisibility.error)
                   AnimatedOpacity(
                     opacity: startFadeIn ? 0.0 : 1.0,
                     duration: fadeInDuration,
                     curve: Curves.fastOutSlowIn,
                     child: const SizedBox(width: 30, height: 30, child: CircularProgressIndicator.adaptive()),
                   ),
-                if (widget.customLoadingProgressIndicator != null)
+                if (widget.customLoadingProgressIndicator != null && mediaDownloadStatus != MediaVisibility.error)
                   AnimatedOpacity(
                     opacity: startFadeIn ? 0.0 : 1.0,
                     duration: fadeInDuration,

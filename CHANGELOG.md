@@ -1,3 +1,8 @@
+
+## 0.0.2+k
+
+Image Loader fix
+
 ## 0.0.2+j
 
 KeepAlive custom files
