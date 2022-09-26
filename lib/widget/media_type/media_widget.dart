@@ -28,15 +28,17 @@ class MediaWidget extends StatefulWidget {
   final double? height;
   final BoxFit? fit;
   final String? assetErrorImage;
-  final Widget? Function(BuildContext context, CachedMediaSnapshot snapshot)?
-      builder;
+  final Widget? Function(BuildContext context, CachedMediaSnapshot snapshot)? builder;
   final bool startLoadingOnlyWhenVisible;
 
   @override
   State<MediaWidget> createState() => _MediaWidgetState();
 }
 
-class _MediaWidgetState extends State<MediaWidget> {
+class _MediaWidgetState extends State<MediaWidget> with AutomaticKeepAliveClientMixin<MediaWidget> {
+  @override
+  bool get wantKeepAlive => true;
+
   late CachedMediaController __cachedMediaController;
   late CachedMediaSnapshot snapshot;
   bool initiating = false;
@@ -54,12 +56,10 @@ class _MediaWidgetState extends State<MediaWidget> {
     initiating = true;
     if (mounted) setState(() {});
     if (widget.builder != null) {
-      snapshot =
-          CachedMediaSnapshot(status: DownloadStatus.loading, filePath: null);
+      snapshot = CachedMediaSnapshot(status: DownloadStatus.loading, filePath: null);
       __cachedMediaController = CachedMediaController(
         snapshot: snapshot,
-        onSnapshotChanged: (snapshot) =>
-            mounted ? setState(() => this.snapshot = snapshot) : null,
+        onSnapshotChanged: (snapshot) => mounted ? setState(() => this.snapshot = snapshot) : null,
       );
       __cachedMediaController.getFile(widget.mediaUrl);
     }
@@ -70,18 +70,15 @@ class _MediaWidgetState extends State<MediaWidget> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     switch (widget.mediaType) {
       case MediaType.custom:
         return widget.startLoadingOnlyWhenVisible
             ? VisibilityDetector(
-                key: widget.key ??
-                    Key('visibility-cached-media-${widget.uniqueId}'),
-                onVisibilityChanged: !initiating && !initiated
-                    ? (_) async => _.visibleFraction > 0 ? await init() : null
-                    : null,
-                child: widget.builder != null
-                    ? widget.builder!(context, snapshot) ?? const SizedBox()
-                    : const Text('Builder implementation is missing'),
+                key: widget.key ?? Key('visibility-cached-media-${widget.uniqueId}'),
+                onVisibilityChanged: !initiating && !initiated ? (_) async => _.visibleFraction > 0 ? await init() : null : null,
+                child: widget.builder != null ? widget.builder!(context, snapshot) ?? const SizedBox() : const Text('Builder implementation is missing'),
               )
             : widget.builder != null
                 ? widget.builder!(context, snapshot) ?? const SizedBox()
@@ -127,13 +124,7 @@ class MediaWidgetType extends StatelessWidget {
     if (cachedMediaInfo != null) {
       switch (mediaType) {
         case MediaType.image:
-          return ImageWidget(
-              uniqueId: uniqueId,
-              cachedMediaInfo: cachedMediaInfo!,
-              width: width ?? 100,
-              height: height ?? 100,
-              fit: fit,
-              assetErrorImage: assetErrorImage);
+          return ImageWidget(uniqueId: uniqueId, cachedMediaInfo: cachedMediaInfo!, width: width ?? 100, height: height ?? 100, fit: fit, assetErrorImage: assetErrorImage);
         default:
           {
             return const Text('Media Error');
