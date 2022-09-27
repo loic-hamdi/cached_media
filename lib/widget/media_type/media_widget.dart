@@ -41,7 +41,7 @@ class _MediaWidgetState extends State<MediaWidget> with AutomaticKeepAliveClient
   @override
   bool get wantKeepAlive => widget.wantKeepAlive;
 
-  late CachedMediaController __cachedMediaController;
+  late CachedMediaController _cachedMediaController;
   late CachedMediaSnapshot snapshot;
   bool initiating = false;
   bool initiated = false;
@@ -59,11 +59,11 @@ class _MediaWidgetState extends State<MediaWidget> with AutomaticKeepAliveClient
     if (mounted) setState(() {});
     if (widget.builder != null) {
       snapshot = CachedMediaSnapshot(status: DownloadStatus.loading, filePath: null);
-      __cachedMediaController = CachedMediaController(
+      _cachedMediaController = CachedMediaController(
         snapshot: snapshot,
         onSnapshotChanged: (snapshot) => mounted ? setState(() => this.snapshot = snapshot) : null,
       );
-      __cachedMediaController.getFile(widget.mediaUrl);
+      _cachedMediaController.getFile(widget.mediaUrl);
     }
     initiating = false;
     initiated = true;

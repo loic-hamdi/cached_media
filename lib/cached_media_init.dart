@@ -29,13 +29,14 @@ bool get getShowLogs => _showLogs;
 /// You can define the size in megabytes(e.g. 100 MB) for [cacheMaxSize]. It will help maintain the performance of your app.
 /// Set [showLogs] to [true] to show logs about the cache behavior & sizes.
 /// Call [disposeCachedMedia()] when closing app.
-Future<void> initializeCachedMedia({double cacheMaxSize = 100, bool showLogs = false}) async {
+Future<void> initializeCachedMedia({double cacheMaxSize = 100, bool showLogs = false, bool clearCache = false}) async {
   await checkPermission();
   cacheMaxSizeDefault = cacheMaxSize * 1000000;
   _showLogs = showLogs;
   _objectbox = await ObjectBox.create();
   await initStreamListener();
   tempDir = await getTemporaryDirectory();
+  if (clearCache) await clearCacheOnInit(getObjectBox);
 }
 
 Future<void> initStreamListener() async {
