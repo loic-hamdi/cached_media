@@ -18,6 +18,7 @@ class MediaWidget extends StatefulWidget {
     required this.assetErrorImage,
     required this.builder,
     required this.startLoadingOnlyWhenVisible,
+    required this.wantKeepAlive,
   }) : super(key: key);
 
   final String mediaUrl;
@@ -30,6 +31,7 @@ class MediaWidget extends StatefulWidget {
   final String? assetErrorImage;
   final Widget? Function(BuildContext context, CachedMediaSnapshot snapshot)? builder;
   final bool startLoadingOnlyWhenVisible;
+  final bool wantKeepAlive;
 
   @override
   State<MediaWidget> createState() => _MediaWidgetState();
@@ -37,7 +39,7 @@ class MediaWidget extends StatefulWidget {
 
 class _MediaWidgetState extends State<MediaWidget> with AutomaticKeepAliveClientMixin<MediaWidget> {
   @override
-  bool get wantKeepAlive => true;
+  bool get wantKeepAlive => widget.wantKeepAlive;
 
   late CachedMediaController __cachedMediaController;
   late CachedMediaSnapshot snapshot;

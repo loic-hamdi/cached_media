@@ -2,6 +2,7 @@
 ## 0.0.2+k
 
 Image Loader fix
+AutomaticKeepAliveClientMixin update
 
 ## 0.0.2+j
 

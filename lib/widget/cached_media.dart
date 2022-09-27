@@ -30,6 +30,7 @@ class CachedMedia extends StatefulWidget {
     this.errorWidget,
     this.builder,
     Key? key,
+    this.wantKeepAlive = false,
   }) : super(key: key);
 
   /// Define the type of media you want to display. You can show: image, video or audio
@@ -66,13 +67,15 @@ class CachedMedia extends StatefulWidget {
 
   final Widget? Function(BuildContext context, CachedMediaSnapshot snapshot)? builder;
 
+  final bool wantKeepAlive;
+
   @override
   State<CachedMedia> createState() => _CachedMediaState();
 }
 
 class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClientMixin<CachedMedia> {
   @override
-  bool get wantKeepAlive => true;
+  bool get wantKeepAlive => widget.wantKeepAlive;
 
   MediaVisibility mediaDownloadStatus = MediaVisibility.initial;
   bool isInitiating = false;
@@ -131,6 +134,7 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
           assetErrorImage: widget.assetErrorImage,
           builder: widget.builder,
           startLoadingOnlyWhenVisible: widget.startLoadingOnlyWhenVisible,
+          wantKeepAlive: wantKeepAlive,
         );
       default:
         {
@@ -185,6 +189,7 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
                                     assetErrorImage: widget.assetErrorImage,
                                     builder: widget.builder,
                                     startLoadingOnlyWhenVisible: widget.startLoadingOnlyWhenVisible,
+                                    wantKeepAlive: widget.wantKeepAlive,
                                   ),
                                 )
                               : widget.errorWidget ?? const Text('Error');
