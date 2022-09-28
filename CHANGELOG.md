@@ -1,3 +1,7 @@
+## 0.0.2+o
+
+cacheMaxSizeDefault type
+
 ## 0.0.2+n
 
 Add Example

@@ -18,7 +18,7 @@ Directory? get getTempDir => tempDir;
 
 final allCachedMediaInfo = <CachedMediaInfo>[];
 double currentCacheSize = 0;
-late final double cacheMaxSizeDefault;
+late double cacheMaxSizeDefault;
 
 PermissionStatus? _permissionStatus;
 
