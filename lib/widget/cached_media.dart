@@ -65,7 +65,8 @@ class CachedMedia extends StatefulWidget {
   /// Important: This [String] must be unique for any media you will load with [CachedMedia]
   final String? uniqueId;
 
-  final Widget? Function(BuildContext context, CachedMediaSnapshot snapshot)? builder;
+  final Widget? Function(BuildContext context, CachedMediaSnapshot snapshot)?
+      builder;
 
   final bool wantKeepAlive;
 
@@ -73,7 +74,8 @@ class CachedMedia extends StatefulWidget {
   State<CachedMedia> createState() => _CachedMediaState();
 }
 
-class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClientMixin<CachedMedia> {
+class _CachedMediaState extends State<CachedMedia>
+    with AutomaticKeepAliveClientMixin<CachedMedia> {
   @override
   bool get wantKeepAlive => widget.wantKeepAlive;
 
@@ -87,8 +89,10 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
   @override
   void initState() {
     super.initState();
-    fadeInDuration = widget.fadeInDuration ?? const Duration(milliseconds: 1000);
-    if (widget.mediaType != MediaType.custom && mediaDownloadStatus == MediaVisibility.initial) {
+    fadeInDuration =
+        widget.fadeInDuration ?? const Duration(milliseconds: 1000);
+    if (widget.mediaType != MediaType.custom &&
+        mediaDownloadStatus == MediaVisibility.initial) {
       if (!widget.startLoadingOnlyWhenVisible) init();
     }
   }
@@ -98,7 +102,9 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
       isInitiating = true;
       if (mounted) setState(() {});
       cachedMediaInfo = await loadMedia(widget.mediaUrl);
-      await doesFileExist(cachedMediaInfo?.cachedMediaUrl) ? await showMedia() : await errorMedia();
+      await doesFileExist(cachedMediaInfo?.cachedMediaUrl)
+          ? await showMedia()
+          : await errorMedia();
       isInitiating = false;
       if (mounted) setState(() {});
     }
@@ -144,14 +150,20 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
             child: Stack(
               alignment: Alignment.center,
               children: [
-                if (widget.showCircularProgressIndicator && widget.customLoadingProgressIndicator == null && mediaDownloadStatus != MediaVisibility.error)
+                if (widget.showCircularProgressIndicator &&
+                    widget.customLoadingProgressIndicator == null &&
+                    mediaDownloadStatus != MediaVisibility.error)
                   AnimatedOpacity(
                     opacity: startFadeIn ? 0.0 : 1.0,
                     duration: fadeInDuration,
                     curve: Curves.fastOutSlowIn,
-                    child: const SizedBox(width: 30, height: 30, child: CircularProgressIndicator.adaptive()),
+                    child: const SizedBox(
+                        width: 30,
+                        height: 30,
+                        child: CircularProgressIndicator.adaptive()),
                   ),
-                if (widget.customLoadingProgressIndicator != null && mediaDownloadStatus != MediaVisibility.error)
+                if (widget.customLoadingProgressIndicator != null &&
+                    mediaDownloadStatus != MediaVisibility.error)
                   AnimatedOpacity(
                     opacity: startFadeIn ? 0.0 : 1.0,
                     duration: fadeInDuration,
@@ -165,9 +177,18 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
                         {
                           return widget.startLoadingOnlyWhenVisible
                               ? VisibilityDetector(
-                                  key: widget.key ?? Key('visibility-cached-media-${widget.uniqueId ?? const Uuid().v1()}'),
-                                  onVisibilityChanged: !isInitiating && mediaDownloadStatus == MediaVisibility.initial ? (_) async => _.visibleFraction > 0 ? await init() : null : null,
-                                  child: SizedBox(width: widget.width, height: widget.height),
+                                  key: widget.key ??
+                                      Key('visibility-cached-media-${widget.uniqueId ?? const Uuid().v1()}'),
+                                  onVisibilityChanged: !isInitiating &&
+                                          mediaDownloadStatus ==
+                                              MediaVisibility.initial
+                                      ? (_) async => _.visibleFraction > 0
+                                          ? await init()
+                                          : null
+                                      : null,
+                                  child: SizedBox(
+                                      width: widget.width,
+                                      height: widget.height),
                                 )
                               : const SizedBox.shrink();
                         }
@@ -182,13 +203,15 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
                                     mediaUrl: widget.mediaUrl,
                                     mediaType: widget.mediaType,
                                     cachedMediaInfo: cachedMediaInfo!,
-                                    uniqueId: widget.uniqueId ?? const Uuid().v1(),
+                                    uniqueId:
+                                        widget.uniqueId ?? const Uuid().v1(),
                                     width: widget.width,
                                     height: widget.height,
                                     fit: widget.fit,
                                     assetErrorImage: widget.assetErrorImage,
                                     builder: widget.builder,
-                                    startLoadingOnlyWhenVisible: widget.startLoadingOnlyWhenVisible,
+                                    startLoadingOnlyWhenVisible:
+                                        widget.startLoadingOnlyWhenVisible,
                                     wantKeepAlive: widget.wantKeepAlive,
                                   ),
                                 )
