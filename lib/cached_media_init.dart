@@ -25,18 +25,25 @@ PermissionStatus? _permissionStatus;
 bool _showLogs = false;
 bool get getShowLogs => _showLogs;
 
+bool isInitialized = false;
+
 /// The function [initializeCachedMedia()] must be placed after [WidgetsFlutterBinding.ensureInitialized()]
 /// You can define the size in megabytes(e.g. 100 MB) for [cacheMaxSize]. It will help maintain the performance of your app.
 /// Set [showLogs] to [true] to show logs about the cache behavior & sizes.
 /// Call [disposeCachedMedia()] when closing app.
 Future<void> initializeCachedMedia({double cacheMaxSize = 100, bool showLogs = false, bool clearCache = false}) async {
-  await checkPermission();
-  cacheMaxSizeDefault = cacheMaxSize * 1000000;
-  _showLogs = showLogs;
-  _objectbox = await ObjectBox.create();
-  await initStreamListener();
-  tempDir = await getTemporaryDirectory();
-  if (clearCache) await clearCacheOnInit(getObjectBox);
+  if (!isInitialized) {
+    final hasAccess = await hasPermission();
+    if (hasAccess) {
+      cacheMaxSizeDefault = cacheMaxSize * 1000000;
+      _showLogs = showLogs;
+      _objectbox = await ObjectBox.create();
+      await initStreamListener();
+      tempDir = await getTemporaryDirectory();
+      if (clearCache) await clearCacheOnInit(getObjectBox);
+      isInitialized = true;
+    }
+  }
 }
 
 Future<void> initStreamListener() async {
@@ -58,14 +65,18 @@ Cache Max Size: ${cacheMaxSizeDefault / 1000000} MB
   });
 }
 
-Future<void> checkPermission() async {
+Future<bool> hasPermission() async {
   _permissionStatus = await Permission.storage.status;
   if (_permissionStatus != PermissionStatus.granted) {
     PermissionStatus permissionStatus1 = await Permission.storage.request();
     _permissionStatus = permissionStatus1;
     if (_permissionStatus != PermissionStatus.granted) {
-      throw Exception('Permission error');
+      return false;
+    } else {
+      return true;
     }
+  } else {
+    return true;
   }
 }
 

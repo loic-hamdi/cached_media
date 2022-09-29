@@ -1,3 +1,7 @@
+## 0.0.2+p
+
+Single Initialization in isolate
+
 ## 0.0.2+o
 
 cacheMaxSizeDefault type
