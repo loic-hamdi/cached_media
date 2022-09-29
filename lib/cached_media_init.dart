@@ -31,7 +31,10 @@ bool isInitialized = false;
 /// You can define the size in megabytes(e.g. 100 MB) for [cacheMaxSize]. It will help maintain the performance of your app.
 /// Set [showLogs] to [true] to show logs about the cache behavior & sizes.
 /// Call [disposeCachedMedia()] when closing app.
-Future<void> initializeCachedMedia({double cacheMaxSize = 100, bool showLogs = false, bool clearCache = false}) async {
+Future<void> initializeCachedMedia(
+    {double cacheMaxSize = 100,
+    bool showLogs = false,
+    bool clearCache = false}) async {
   if (!isInitialized) {
     final hasAccess = await hasPermission();
     if (hasAccess) {
@@ -47,7 +50,9 @@ Future<void> initializeCachedMedia({double cacheMaxSize = 100, bool showLogs = f
 }
 
 Future<void> initStreamListener() async {
-  streamAllCachedMediaInfo = getObjectBox.cachedMediaInfoStream.map((query) => query.find()).listen((p0) async {
+  streamAllCachedMediaInfo = getObjectBox.cachedMediaInfoStream
+      .map((query) => query.find())
+      .listen((p0) async {
     allCachedMediaInfo.clear();
     allCachedMediaInfo.addAll(p0);
     if (currentCacheSize > cacheMaxSizeDefault) {
