@@ -1,3 +1,7 @@
+## 0.0.2+s
+
+Logs console
+
 ## 0.0.2+r
 
 Pub.dev data

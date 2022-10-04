@@ -69,16 +69,20 @@ Future<String?> downloadMediaToLocalCache(
     String savePath = "${tempDir.path}/$mediaName";
     try {
       var dio = Dio();
-      developer.log('📦 downloading media: $mediaUrl',
-          name: 'Cached Media package');
+      if (getShowLogs) {
+        developer.log('📦 downloading media: $mediaUrl',
+            name: 'Cached Media package');
+      }
       final response = await dio.download(mediaUrl, savePath);
       if (response.statusCode == 200) {
         return savePath;
       }
       return null;
     } on DioError catch (e) {
-      developer.log('❌ Dio Error - media : $mediaUrl',
-          name: 'Cached Media package');
+      if (getShowLogs) {
+        developer.log('❌ Dio Error - media : $mediaUrl',
+            name: 'Cached Media package');
+      }
       if (e.type == DioErrorType.response) {
         return null;
       }
@@ -92,11 +96,16 @@ Future<String?> downloadMediaToLocalCache(
         return null;
       }
     } catch (e) {
-      developer.log('❌ Error - media : $mediaUrl',
-          name: 'Cached Media package');
+      if (getShowLogs) {
+        developer.log('❌ Error - media : $mediaUrl',
+            name: 'Cached Media package');
+      }
     }
   } else {
-    developer.log('❌  Temp directory not found!', name: 'Cached Media package');
+    if (getShowLogs) {
+      developer.log('❌  Temp directory not found!',
+          name: 'Cached Media package');
+    }
   }
   return null;
 }
