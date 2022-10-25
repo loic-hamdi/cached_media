@@ -13,14 +13,18 @@ class ObjectBox {
 
   ObjectBox._create(this.store) {
     cachedMediaInfoBox = Box<CachedMediaInfo>(store);
-    final qBuilder = cachedMediaInfoBox.query()
-      ..order(CachedMediaInfo_.dateCreated, flags: Order.descending);
+    final qBuilder = cachedMediaInfoBox.query()..order(CachedMediaInfo_.dateCreated, flags: Order.descending);
     cachedMediaInfoStream = qBuilder.watch(triggerImmediately: true);
   }
 
   static Future<ObjectBox> create() async {
     Directory dir = await getApplicationDocumentsDirectory();
-    final store = await openStore(directory: dir.path);
-    return ObjectBox._create(store);
+    if (Store.isOpen(dir.path)) {
+      final store = Store.attach(getObjectBoxModel(), dir.path);
+      return ObjectBox._create(store);
+    } else {
+      final store = await openStore(directory: dir.path);
+      return ObjectBox._create(store);
+    }
   }
 }
