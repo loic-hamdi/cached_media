@@ -52,7 +52,7 @@ Future<void> initializeCachedMedia({
 }
 
 Future<void> initStreamListener() async {
-  streamAllCachedMediaInfo = getObjectBox.cachedMediaInfoStream.map((query) => query.find()).listen((p0) async {
+  streamAllCachedMediaInfo = getObjectBox.cachedMediaInfoStream.asBroadcastStream().map((query) => query.find()).listen((p0) async {
     allCachedMediaInfo.clear();
     allCachedMediaInfo.addAll(p0);
     if (currentCacheSize > cacheMaxSizeDefault) {
