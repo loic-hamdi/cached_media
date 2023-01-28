@@ -1,3 +1,7 @@
+## 0.0.2+v
+
+Clean cache manually
+
 ## 0.0.2+u
 
 Clean cache manually
