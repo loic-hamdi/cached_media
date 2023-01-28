@@ -35,14 +35,13 @@ Future<void> initializeCachedMedia({
   double cacheMaxSize = 100,
   bool showLogs = false,
   bool clearCache = false,
-  bool forceCleanCache = false,
 }) async {
-  if (!isInitialized || forceCleanCache) {
+  if (!isInitialized) {
     final hasAccess = await hasPermission();
     if (hasAccess) {
       cacheMaxSizeDefault = cacheMaxSize * 1000000;
       _showLogs = showLogs;
-      if (!clearCache) _objectbox = await ObjectBox.create();
+      _objectbox = await ObjectBox.create();
       await initStreamListener();
       tempDir = await getTemporaryDirectory();
       if (clearCache) await clearCacheOnInit(getObjectBox);
@@ -83,6 +82,15 @@ Future<bool> hasPermission() async {
   } else {
     return true;
   }
+}
+
+Future<void> cleanCache() async {
+  await clearCacheOnInit(getObjectBox);
+  developer.log('''
+- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -
+Cache has been cleaned  ✅
+- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -
+''', name: 'Cached Media package');
 }
 
 void disposeCachedMedia() => streamAllCachedMediaInfo?.cancel();
