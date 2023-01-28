@@ -42,7 +42,7 @@ Future<void> initializeCachedMedia({
     if (hasAccess) {
       cacheMaxSizeDefault = cacheMaxSize * 1000000;
       _showLogs = showLogs;
-      _objectbox = await ObjectBox.create();
+      if (!clearCache) _objectbox = await ObjectBox.create();
       await initStreamListener();
       tempDir = await getTemporaryDirectory();
       if (clearCache) await clearCacheOnInit(getObjectBox);
