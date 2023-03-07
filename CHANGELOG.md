@@ -1,6 +1,6 @@
 ## 0.9.0+1
 
-Switch to get_storage to target web
+Switch to get_storage to target web in the near future
 
 ## 0.0.2+y
 
