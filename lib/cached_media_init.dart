@@ -1,17 +1,16 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'package:cached_media/entity_cached_media_info.dart';
 import 'package:cached_media/management_cache.dart';
-import 'package:cached_media/objectbox.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'dart:developer' as developer;
 
-late ObjectBox _objectbox;
+late GetStorage _objectbox;
 
-ObjectBox get getObjectBox => _objectbox;
-
-StreamSubscription<List<CachedMediaInfo>>? streamAllCachedMediaInfo;
+GetStorage get getObjectBox => _objectbox;
 
 Directory? tempDir;
 Directory? get getTempDir => tempDir;
@@ -27,6 +26,8 @@ bool get getShowLogs => _showLogs;
 
 bool isInitialized = false;
 
+const keyName = 'all_media';
+
 /// The function [initializeCachedMedia()] must be placed after [WidgetsFlutterBinding.ensureInitialized()]
 /// You can define the size in megabytes(e.g. 100 MB) for [cacheMaxSize]. It will help maintain the performance of your app.
 /// Set [showLogs] to [true] to show logs about the cache behavior & sizes.
@@ -41,7 +42,8 @@ Future<void> initializeCachedMedia({
     if (hasAccess) {
       cacheMaxSizeDefault = cacheMaxSize * 1000000;
       _showLogs = showLogs;
-      _objectbox = await ObjectBox.create();
+      await GetStorage.init('cached_media');
+      _objectbox = GetStorage('cached_media');
       await initStreamListener();
       tempDir = await getTemporaryDirectory();
       if (clearCache) await clearCacheOnInit(getObjectBox);
@@ -51,7 +53,10 @@ Future<void> initializeCachedMedia({
 }
 
 Future<void> initStreamListener() async {
-  streamAllCachedMediaInfo = getObjectBox.cachedMediaInfoStream.asBroadcastStream().map((query) => query.find()).listen((p0) async {
+  getObjectBox.listenKey(keyName, (all) async {
+    final allData = AllCachedMediaInfo.fromJson(json.decode(all));
+    final p0 = <CachedMediaInfo>[];
+    p0.addAll(allData.cachedMediaInfo ?? []);
     allCachedMediaInfo.clear();
     allCachedMediaInfo.addAll(p0);
     if (currentCacheSize > cacheMaxSizeDefault) {
@@ -92,5 +97,3 @@ Cache has been cleaned  ✅
 - - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -
 ''', name: 'Cached Media package');
 }
-
-void disposeCachedMedia() => streamAllCachedMediaInfo?.cancel();

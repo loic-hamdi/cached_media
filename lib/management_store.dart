@@ -1,41 +1,57 @@
+import 'dart:convert';
 import 'dart:core';
-
+import 'package:cached_media/cached_media_init.dart';
 import 'package:cached_media/entity_cached_media_info.dart';
-import 'package:cached_media/objectbox.dart';
-import 'package:cached_media/objectbox.g.dart';
+import 'package:collection/collection.dart';
+import 'package:get_storage/get_storage.dart';
 
-void addCachedMediaInfo(Store store, CachedMediaInfo cachedMediaInfo) {
-  store.box<CachedMediaInfo>().put(cachedMediaInfo);
+void addCachedMediaInfo(GetStorage objectbox, CachedMediaInfo cachedMediaInfo) {
+  final all = objectbox.read(keyName);
+  final tmp = AllCachedMediaInfo(cachedMediaInfo: []);
+  if (all != null) {
+    final allData = AllCachedMediaInfo.fromJson(json.decode(all));
+    tmp.cachedMediaInfo!.addAll(allData.cachedMediaInfo ?? []);
+  }
+  tmp.cachedMediaInfo!.add(cachedMediaInfo);
+  objectbox.write(keyName, json.encode(tmp.toJson()));
 }
 
-void removeCachedMediaInfo(ObjectBox objectbox, int id) {
-  objectbox.cachedMediaInfoBox.remove(id);
+void removeCachedMediaInfo(GetStorage objectbox, String id) {
+  final all = objectbox.read(keyName);
+  if (all != null) {
+    final allData = AllCachedMediaInfo.fromJson(json.decode(all));
+    if (allData.cachedMediaInfo != null) {
+      allData.cachedMediaInfo!.removeWhere((e) => e.id == id);
+      objectbox.write(keyName, json.encode(allData.toJson()));
+    }
+  }
 }
 
-Future<CachedMediaInfo?> findFirstCachedMediaInfoOrNull(
-    ObjectBox objectbox, String mediaUrl) async {
-  final query = objectbox.cachedMediaInfoBox
-      .query(CachedMediaInfo_.mediaUrl.equals(mediaUrl))
-      .build();
-  final cachedMediaQuantity = query.find();
-  return cachedMediaQuantity.isNotEmpty ? cachedMediaQuantity.first : null;
+Future<CachedMediaInfo?> findFirstCachedMediaInfoOrNull(GetStorage objectbox, String mediaUrl) async {
+  final all = objectbox.read(keyName);
+  if (all != null) {
+    final allData = AllCachedMediaInfo.fromJson(json.decode(all));
+    if (allData.cachedMediaInfo != null && allData.cachedMediaInfo!.isNotEmpty) {
+      return allData.cachedMediaInfo!.firstWhereOrNull((e) => e.mediaUrl == mediaUrl);
+    }
+  }
+  return null;
 }
 
-Future<List<CachedMediaInfo>?> findAllCachedMediaInfoOrNull(
-    ObjectBox objectbox, String mediaUrl) async {
-  final query = objectbox.cachedMediaInfoBox
-      .query(CachedMediaInfo_.mediaUrl.equals(mediaUrl))
-      .build();
-  final cachedMediaInfo = query.find(); // find() returns List<CachedMediaInfo>
-  return cachedMediaInfo.isNotEmpty ? cachedMediaInfo : null;
+Future<List<CachedMediaInfo>> findAllCachedMediaInfo(GetStorage objectbox) async {
+  final all = objectbox.read(keyName);
+  if (all != null) {
+    final allData = AllCachedMediaInfo.fromJson(json.decode(all));
+    return allData.cachedMediaInfo ?? <CachedMediaInfo>[];
+  }
+  return <CachedMediaInfo>[];
 }
 
-Future<List<CachedMediaInfo>> findAllCachedMediaInfo(
-    ObjectBox objectbox) async {
-  return objectbox.cachedMediaInfoBox.getAll();
-}
-
-Future<int> countAllCachedMedia(ObjectBox objectbox) async {
-  final query = objectbox.cachedMediaInfoBox.getAll();
-  return query.length;
+Future<int> countAllCachedMedia(GetStorage objectbox) async {
+  final all = objectbox.read(keyName);
+  if (all != null) {
+    final allData = AllCachedMediaInfo.fromJson(json.decode(all));
+    return allData.cachedMediaInfo?.length ?? 0;
+  }
+  return 0;
 }

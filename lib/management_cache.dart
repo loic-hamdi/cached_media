@@ -5,7 +5,7 @@ import 'dart:developer' as developer;
 import 'package:cached_media/cached_media.dart';
 import 'package:cached_media/entity_cached_media_info.dart';
 import 'package:cached_media/management_store.dart';
-import 'package:cached_media/objectbox.dart';
+import 'package:get_storage/get_storage.dart';
 
 double calculateCacheSize(List<CachedMediaInfo> allCachedMediaInfo) {
   double tmpCurrentCacheSize = 0;
@@ -21,7 +21,7 @@ Future<void> deleteMediaInCache(String filePath) async {
   if (await file.exists()) await file.delete();
 }
 
-Future<void> reduceCacheSize(ObjectBox objectBox, List<CachedMediaInfo> allCachedMediaInfo) async {
+Future<void> reduceCacheSize(GetStorage objectBox, List<CachedMediaInfo> allCachedMediaInfo) async {
   if (allCachedMediaInfo.isNotEmpty) {
     allCachedMediaInfo.sort((a, b) => a.dateCreated.compareTo(b.dateCreated));
     final a = allCachedMediaInfo.first;
@@ -33,7 +33,7 @@ Future<void> reduceCacheSize(ObjectBox objectBox, List<CachedMediaInfo> allCache
   }
 }
 
-Future<void> clearCacheOnInit(ObjectBox objectbox) async {
+Future<void> clearCacheOnInit(GetStorage objectbox) async {
   final allCmi = await findAllCachedMediaInfo(objectbox);
   var i = 1;
   for (final cmi in allCmi) {
