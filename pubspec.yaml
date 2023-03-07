@@ -10,13 +10,13 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  collection: ^1.17.0
-  dio: ^5.0.1
-  get_storage: ^2.1.1
-  path_provider: ^2.0.11 # NO WEB SUPPORT
-  permission_handler: ^10.0.0 # NO WEB SUPPORT
-  uuid: ^3.0.6
-  visibility_detector: ^0.3.3
+  collection: 
+  dio: 
+  get_storage: 
+  path_provider:  # NO WEB SUPPORT
+  permission_handler:  # NO WEB SUPPORT
+  uuid: 
+  visibility_detector: 
 
 dev_dependencies:
   flutter_test:
