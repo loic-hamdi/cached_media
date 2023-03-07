@@ -1,10 +1,9 @@
 # This is a generated file; do not edit or check into version control.
-objectbox_flutter_libs=/Users/loic/.pub-cache/hosted/pub.dev/objectbox_flutter_libs-1.7.1/
-path_provider=/Users/loic/.pub-cache/hosted/pub.dev/path_provider-2.0.12/
-path_provider_android=/Users/loic/.pub-cache/hosted/pub.dev/path_provider_android-2.0.22/
-path_provider_foundation=/Users/loic/.pub-cache/hosted/pub.dev/path_provider_foundation-2.1.1/
-path_provider_linux=/Users/loic/.pub-cache/hosted/pub.dev/path_provider_linux-2.1.7/
-path_provider_windows=/Users/loic/.pub-cache/hosted/pub.dev/path_provider_windows-2.1.3/
+path_provider=/Users/loic/.pub-cache/hosted/pub.dev/path_provider-2.0.13/
+path_provider_android=/Users/loic/.pub-cache/hosted/pub.dev/path_provider_android-2.0.23/
+path_provider_foundation=/Users/loic/.pub-cache/hosted/pub.dev/path_provider_foundation-2.1.2/
+path_provider_linux=/Users/loic/.pub-cache/hosted/pub.dev/path_provider_linux-2.1.9/
+path_provider_windows=/Users/loic/.pub-cache/hosted/pub.dev/path_provider_windows-2.1.4/
 permission_handler=/Users/loic/.pub-cache/hosted/pub.dev/permission_handler-10.2.0/
 permission_handler_android=/Users/loic/.pub-cache/hosted/pub.dev/permission_handler_android-10.2.0/
 permission_handler_apple=/Users/loic/.pub-cache/hosted/pub.dev/permission_handler_apple-9.0.7/

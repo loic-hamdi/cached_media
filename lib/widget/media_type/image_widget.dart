@@ -23,16 +23,15 @@ class ImageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Image.file(
-      key: Key('cached-image-$uniqueId'),
-      File(cachedMediaInfo.cachedMediaUrl),
-      width: width,
-      height: height,
-      fit: fit,
-      errorBuilder: assetErrorImage != null
-          ? (context, error, stackTrace) =>
-              Image.asset(assetErrorImage!, fit: BoxFit.fitWidth)
-          : null,
-    );
+    return cachedMediaInfo.cachedMediaUrl != null
+        ? Image.file(
+            key: Key('cached-image-$uniqueId'),
+            File(cachedMediaInfo.cachedMediaUrl!),
+            width: width,
+            height: height,
+            fit: fit,
+            errorBuilder: assetErrorImage != null ? (context, error, stackTrace) => Image.asset(assetErrorImage!, fit: BoxFit.fitWidth) : null,
+          )
+        : const Text('Image URL is missing');
   }
 }

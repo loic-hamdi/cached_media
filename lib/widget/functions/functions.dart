@@ -9,8 +9,7 @@ import 'dart:developer' as developer;
 
 /// Return [CachedMediaInfo?] after either finding in cache or downloading then set in cache
 Future<CachedMediaInfo?> loadMedia(String mediaUrl) async {
-  CachedMediaInfo? cachedMediaInfo =
-      await findFirstCachedMediaInfoOrNull(getObjectBox, mediaUrl);
+  CachedMediaInfo? cachedMediaInfo = await findFirstCachedMediaInfoOrNull(getObjectBox, mediaUrl);
   if (cachedMediaInfo == null) {
     await downloadAndSetInCache(mediaUrl);
   } else {
@@ -21,8 +20,7 @@ Future<CachedMediaInfo?> loadMedia(String mediaUrl) async {
       await downloadAndSetInCache(mediaUrl);
     }
   }
-  cachedMediaInfo =
-      await findFirstCachedMediaInfoOrNull(getObjectBox, mediaUrl);
+  cachedMediaInfo = await findFirstCachedMediaInfoOrNull(getObjectBox, mediaUrl);
   return cachedMediaInfo;
 }
 
@@ -31,12 +29,13 @@ Future<void> downloadAndSetInCache(String mediaUrl) async {
   if (await doesFileExist(tmpPath)) {
     var file = File(tmpPath!);
     final cachedMediaInfoToSet = CachedMediaInfo(
+      id: const Uuid().v1(),
       mediaUrl: mediaUrl,
-      dateCreated: DateTime.now(),
+      dateCreated: DateTime.now().millisecondsSinceEpoch ~/ 1000,
       fileSize: await file.length(),
       cachedMediaUrl: tmpPath,
     );
-    addCachedMediaInfo(getObjectBox.store, cachedMediaInfoToSet);
+    addCachedMediaInfo(getObjectBox, cachedMediaInfoToSet);
   }
 }
 
@@ -62,49 +61,33 @@ Future<bool> doesFileExist(String? filePath) async {
 }
 
 /// Download locally the file and return the file path if succes, or [null] if error.
-Future<String?> downloadMediaToLocalCache(
-    String mediaUrl, String mediaName) async {
+Future<String?> downloadMediaToLocalCache(String mediaUrl, String mediaName) async {
   final tempDir = getTempDir;
   if (tempDir != null) {
     String savePath = "${tempDir.path}/$mediaName";
     try {
       var dio = Dio();
       if (getShowLogs) {
-        developer.log('📦 downloading media: $mediaUrl',
-            name: 'Cached Media package');
+        developer.log('📦 downloading media: $mediaUrl', name: 'Cached Media package');
       }
       final response = await dio.download(mediaUrl, savePath);
       if (response.statusCode == 200) {
         return savePath;
       }
       return null;
-    } on DioError catch (e) {
+    } on DioError {
       if (getShowLogs) {
-        developer.log('❌ Dio Error - media : $mediaUrl',
-            name: 'Cached Media package');
+        developer.log('❌ Dio Error - media : $mediaUrl', name: 'Cached Media package');
       }
-      if (e.type == DioErrorType.response) {
-        return null;
-      }
-      if (e.type == DioErrorType.connectTimeout) {
-        return null;
-      }
-      if (e.type == DioErrorType.receiveTimeout) {
-        return null;
-      }
-      if (e.type == DioErrorType.other) {
-        return null;
-      }
+      return null;
     } catch (e) {
       if (getShowLogs) {
-        developer.log('❌ Error - media : $mediaUrl',
-            name: 'Cached Media package');
+        developer.log('❌ Error - media : $mediaUrl', name: 'Cached Media package');
       }
     }
   } else {
     if (getShowLogs) {
-      developer.log('❌  Temp directory not found!',
-          name: 'Cached Media package');
+      developer.log('❌  Temp directory not found!', name: 'Cached Media package');
     }
   }
   return null;

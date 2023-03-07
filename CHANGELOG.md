@@ -1,3 +1,7 @@
+## 1.0.0+1
+
+Switch to get_storage to target web
+
 ## 0.0.2+y
 
 Clean cache manually
