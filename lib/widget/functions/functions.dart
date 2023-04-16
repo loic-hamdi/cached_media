@@ -9,18 +9,18 @@ import 'dart:developer' as developer;
 
 /// Return [CachedMediaInfo?] after either finding in cache or downloading then set in cache
 Future<CachedMediaInfo?> loadMedia(String mediaUrl) async {
-  CachedMediaInfo? cachedMediaInfo = await findFirstCachedMediaInfoOrNull(getObjectBox, mediaUrl);
+  CachedMediaInfo? cachedMediaInfo = await findFirstCachedMediaInfoOrNull(getGetStorage, mediaUrl);
   if (cachedMediaInfo == null) {
     await downloadAndSetInCache(mediaUrl);
   } else {
     if (await doesFileExist(cachedMediaInfo.cachedMediaUrl)) {
       return cachedMediaInfo;
     } else {
-      removeCachedMediaInfo(getObjectBox, cachedMediaInfo.id);
+      removeCachedMediaInfo(getGetStorage, cachedMediaInfo.id);
       await downloadAndSetInCache(mediaUrl);
     }
   }
-  cachedMediaInfo = await findFirstCachedMediaInfoOrNull(getObjectBox, mediaUrl);
+  cachedMediaInfo = await findFirstCachedMediaInfoOrNull(getGetStorage, mediaUrl);
   return cachedMediaInfo;
 }
 
@@ -35,7 +35,7 @@ Future<void> downloadAndSetInCache(String mediaUrl) async {
       fileSize: await file.length(),
       cachedMediaUrl: tmpPath,
     );
-    addCachedMediaInfo(getObjectBox, cachedMediaInfoToSet);
+    addCachedMediaInfo(getGetStorage, cachedMediaInfoToSet);
   }
 }
 

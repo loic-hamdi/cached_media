@@ -1,3 +1,7 @@
+## 0.9.1+1
+
+Init GetStorage
+
 ## 0.9.0+1
 
 Switch to get_storage to target web in the near future

@@ -21,7 +21,7 @@ Future<void> deleteMediaInCache(String filePath) async {
   if (await file.exists()) await file.delete();
 }
 
-Future<void> reduceCacheSize(GetStorage objectBox, List<CachedMediaInfo> allCachedMediaInfo) async {
+Future<void> reduceCacheSize(GetStorage getStorage, List<CachedMediaInfo> allCachedMediaInfo) async {
   if (allCachedMediaInfo.isNotEmpty) {
     allCachedMediaInfo.sort((a, b) => a.dateCreated.compareTo(b.dateCreated));
     final a = allCachedMediaInfo.first;
@@ -29,19 +29,19 @@ Future<void> reduceCacheSize(GetStorage objectBox, List<CachedMediaInfo> allCach
       developer.log("🧽 Clearing cache from ${a.cachedMediaUrl}", name: 'Cached Media package');
     }
     await deleteMediaInCache(a.cachedMediaUrl);
-    removeCachedMediaInfo(objectBox, a.id);
+    removeCachedMediaInfo(getStorage, a.id);
   }
 }
 
-Future<void> clearCacheOnInit(GetStorage objectbox) async {
-  final allCmi = await findAllCachedMediaInfo(objectbox);
+Future<void> clearCacheOnInit(GetStorage getStorage) async {
+  final allCmi = await findAllCachedMediaInfo(getStorage);
   var i = 1;
   for (final cmi in allCmi) {
     if (getShowLogs) {
       developer.log("🧽 [$i/${allCmi.length}] Clearing cache from ${cmi.cachedMediaUrl}", name: 'Cached Media package');
     }
     await deleteMediaInCache(cmi.cachedMediaUrl);
-    removeCachedMediaInfo(objectbox, cmi.id);
+    removeCachedMediaInfo(getStorage, cmi.id);
     i++;
   }
 }

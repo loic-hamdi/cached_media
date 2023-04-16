@@ -8,9 +8,9 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'dart:developer' as developer;
 
-late GetStorage _objectbox;
+final GetStorage _getstorage = GetStorage('cached_media');
 
-GetStorage get getObjectBox => _objectbox;
+GetStorage get getGetStorage => _getstorage;
 
 Directory? tempDir;
 Directory? get getTempDir => tempDir;
@@ -31,7 +31,6 @@ const keyName = 'all_media';
 /// The function [initializeCachedMedia()] must be placed after [WidgetsFlutterBinding.ensureInitialized()]
 /// You can define the size in megabytes(e.g. 100 MB) for [cacheMaxSize]. It will help maintain the performance of your app.
 /// Set [showLogs] to [true] to show logs about the cache behavior & sizes.
-/// Call [disposeCachedMedia()] when closing app.
 Future<void> initializeCachedMedia({
   double cacheMaxSize = 100,
   bool showLogs = false,
@@ -43,24 +42,23 @@ Future<void> initializeCachedMedia({
       cacheMaxSizeDefault = cacheMaxSize * 1000000;
       _showLogs = showLogs;
       await GetStorage.init('cached_media');
-      _objectbox = GetStorage('cached_media');
       await initStreamListener();
       tempDir = await getTemporaryDirectory();
-      if (clearCache) await clearCacheOnInit(getObjectBox);
+      if (clearCache) await clearCacheOnInit(getGetStorage);
       isInitialized = true;
     }
   }
 }
 
 Future<void> initStreamListener() async {
-  getObjectBox.listenKey(keyName, (all) async {
+  getGetStorage.listenKey(keyName, (all) async {
     final allData = AllCachedMediaInfo.fromJson(json.decode(all));
     final p0 = <CachedMediaInfo>[];
     p0.addAll(allData.cachedMediaInfo ?? []);
     allCachedMediaInfo.clear();
     allCachedMediaInfo.addAll(p0);
     if (currentCacheSize > cacheMaxSizeDefault) {
-      await reduceCacheSize(getObjectBox, p0);
+      await reduceCacheSize(getGetStorage, p0);
     }
     if (getShowLogs) {
       developer.log('''
@@ -90,7 +88,7 @@ Future<bool> hasPermission() async {
 }
 
 Future<void> cleanCache() async {
-  await clearCacheOnInit(getObjectBox);
+  await clearCacheOnInit(getGetStorage);
   developer.log('''
 - - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -
 Cache has been cleaned  ✅
