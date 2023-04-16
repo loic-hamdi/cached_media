@@ -1,6 +1,6 @@
 name: cached_media
 description: Easily cache your media & save bandwidth. You will be able to quickly and easily handle your media into a powerfull widget.
-version: 0.9.1+1
+version: 0.9.2+1
 homepage: https://github.com/loic-hamdi/cached_media
 
 environment:
