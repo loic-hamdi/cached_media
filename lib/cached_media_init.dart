@@ -8,9 +8,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'dart:developer' as developer;
 
-GetStorage? _getstorage;
-
-GetStorage? get getGetStorage => _getstorage;
+GetStorage? _getStorage;
+GetStorage? get getGetStorage => _getStorage;
 
 Directory? tempDir;
 Directory? get getTempDir => tempDir;
@@ -35,19 +34,21 @@ Future<void> initializeCachedMedia({
   double cacheMaxSize = 100,
   bool showLogs = false,
   bool clearCache = false,
+  required GetStorage getStorage,
 }) async {
   if (!isInitialized) {
     final hasAccess = await hasPermission();
     if (hasAccess) {
       cacheMaxSizeDefault = cacheMaxSize * 1000000;
       _showLogs = showLogs;
-      await GetStorage.init('cached_media');
-      _getstorage = GetStorage('cached_media');
+      _getStorage = getStorage;
       await initStreamListener(showLogs: showLogs);
       tempDir = await getTemporaryDirectory();
       if (clearCache && getGetStorage != null) await clearCacheOnInit(getGetStorage!);
       if (getGetStorage == null && showLogs) developer.log('❌  initializeCachedMedia() getGetStorage is NULL!', name: 'Cached Media package');
       isInitialized = true;
+    } else {
+      developer.log('❌  Permission access denied', name: 'Cached Media package');
     }
   }
 }
