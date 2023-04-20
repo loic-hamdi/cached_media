@@ -36,15 +36,14 @@ Future<void> initializeCachedMedia({
   if (!isInitialized) {
     final hasAccess = await hasPermission();
     if (hasAccess) {
-      cacheMaxSizeDefault = cacheMaxSize * 1000000;
-      _showLogs = showLogs;
-      await initStreamListener(showLogs: showLogs, getStorage: getStorage);
-      tempDir = await getTemporaryDirectory();
-      if (clearCache) await clearCacheOnInit(getStorage);
-      isInitialized = true;
-    } else {
       developer.log('❌  Permission access denied', name: 'Cached Media package');
     }
+    cacheMaxSizeDefault = cacheMaxSize * 1000000;
+    _showLogs = showLogs;
+    await initStreamListener(showLogs: showLogs, getStorage: getStorage);
+    tempDir = await getTemporaryDirectory();
+    if (clearCache) await clearCacheOnInit(getStorage);
+    isInitialized = true;
   }
 }
 
@@ -80,6 +79,7 @@ Future<bool> hasPermission() async {
       await Permission.manageExternalStorage.request();
       final access = Permission.manageExternalStorage.isGranted;
       developer.log('ℹ️  Permission Manage External Storage status: $access', name: 'Cached Media package');
+      return access;
     }
     developer.log('🕵️‍♂️  Permission requested', name: 'Cached Media package');
     _permissionStatus = permissionStatus1;
