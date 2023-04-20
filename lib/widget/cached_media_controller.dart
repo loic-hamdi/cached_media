@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cached_media/widget/cached_media.dart';
 import 'package:cached_media/widget/functions/functions.dart';
+import 'package:get_storage/get_storage.dart';
 
 class CachedMediaSnapshot {
   late DownloadStatus status;
@@ -23,12 +24,12 @@ class CachedMediaController {
 
   late final CachedMediaSnapshot _snapshot;
 
-  Future<void> getFile(String url) async {
+  Future<void> getFile(String url, {required GetStorage getStorage}) async {
     _snapshot.filePath = null;
     _snapshot.status = DownloadStatus.loading;
     _onSnapshotChanged(_snapshot);
 
-    final cmi = await loadMedia(url);
+    final cmi = await loadMedia(url, getStorage: getStorage);
     final filePath = cmi?.cachedMediaUrl;
     if (filePath != null) {
       final file = File(filePath);

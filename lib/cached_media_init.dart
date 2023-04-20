@@ -8,9 +8,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'dart:developer' as developer;
 
-GetStorage? _getStorage;
-GetStorage? get getGetStorage => _getStorage;
-
 Directory? tempDir;
 Directory? get getTempDir => tempDir;
 
@@ -41,11 +38,9 @@ Future<void> initializeCachedMedia({
     if (hasAccess) {
       cacheMaxSizeDefault = cacheMaxSize * 1000000;
       _showLogs = showLogs;
-      _getStorage = getStorage;
-      await initStreamListener(showLogs: showLogs);
+      await initStreamListener(showLogs: showLogs, getStorage: getStorage);
       tempDir = await getTemporaryDirectory();
-      if (clearCache && getGetStorage != null) await clearCacheOnInit(getGetStorage!);
-      if (getGetStorage == null && showLogs) developer.log('❌  initializeCachedMedia() getGetStorage is NULL!', name: 'Cached Media package');
+      if (clearCache) await clearCacheOnInit(getStorage);
       isInitialized = true;
     } else {
       developer.log('❌  Permission access denied', name: 'Cached Media package');
@@ -53,31 +48,26 @@ Future<void> initializeCachedMedia({
   }
 }
 
-Future<void> initStreamListener({bool showLogs = false}) async {
-  if (getGetStorage == null) {
-    developer.log('❌  initStreamListener() getGetStorage is NULL!', name: 'Cached Media package');
-  } else {
-    getGetStorage!.listenKey(keyName, (all) async {
-      final allData = AllCachedMediaInfo.fromJson(json.decode(all));
-      final p0 = <CachedMediaInfo>[];
-      p0.addAll(allData.cachedMediaInfo ?? []);
-      allCachedMediaInfo.clear();
-      allCachedMediaInfo.addAll(p0);
-      if (currentCacheSize > cacheMaxSizeDefault) {
-        if (getGetStorage != null) await reduceCacheSize(getGetStorage!, p0);
-        if (getGetStorage == null && showLogs) developer.log('❌  getGetStorage is NULL!', name: 'Cached Media package');
-      }
-      if (getShowLogs) {
-        developer.log('''
+Future<void> initStreamListener({bool showLogs = false, required GetStorage getStorage}) async {
+  getStorage.listenKey(keyName, (all) async {
+    final allData = AllCachedMediaInfo.fromJson(json.decode(all));
+    final p0 = <CachedMediaInfo>[];
+    p0.addAll(allData.cachedMediaInfo ?? []);
+    allCachedMediaInfo.clear();
+    allCachedMediaInfo.addAll(p0);
+    if (currentCacheSize > cacheMaxSizeDefault) {
+      await reduceCacheSize(getStorage, p0);
+    }
+    if (getShowLogs) {
+      developer.log('''
 - - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -
 Media in cache: ${p0.length}
 Current Cache Size: ${(calculateCacheSize(p0)) / 1000000} MB
 Cache Max Size: ${cacheMaxSizeDefault / 1000000} MB
 - - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -
 ''', name: 'Cached Media package');
-      }
-    });
-  }
+    }
+  });
 }
 
 Future<bool> hasPermission() async {
@@ -95,12 +85,8 @@ Future<bool> hasPermission() async {
   }
 }
 
-Future<void> cleanCache() async {
-  if (getGetStorage != null) {
-    await clearCacheOnInit(getGetStorage!);
-  } else {
-    developer.log('❌  cleanCache() is NULL!', name: 'Cached Media package');
-  }
+Future<void> cleanCache({required GetStorage getStorage}) async {
+  await clearCacheOnInit(getStorage);
   developer.log('''
 - - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -
 Cache has been cleaned  ✅

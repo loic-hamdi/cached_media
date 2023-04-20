@@ -5,6 +5,7 @@ import 'package:cached_media/widget/cached_media_controller.dart';
 import 'package:cached_media/widget/functions/functions.dart';
 import 'package:cached_media/widget/media_type/media_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:uuid/uuid.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
@@ -18,6 +19,7 @@ class CachedMedia extends StatefulWidget {
   const CachedMedia({
     required this.mediaType,
     required this.mediaUrl,
+    required this.getStorage,
     this.uniqueId,
     this.width,
     this.height,
@@ -65,17 +67,17 @@ class CachedMedia extends StatefulWidget {
   /// Important: This [String] must be unique for any media you will load with [CachedMedia]
   final String? uniqueId;
 
-  final Widget? Function(BuildContext context, CachedMediaSnapshot snapshot)?
-      builder;
+  final Widget? Function(BuildContext context, CachedMediaSnapshot snapshot)? builder;
 
   final bool wantKeepAlive;
+
+  final GetStorage getStorage;
 
   @override
   State<CachedMedia> createState() => _CachedMediaState();
 }
 
-class _CachedMediaState extends State<CachedMedia>
-    with AutomaticKeepAliveClientMixin<CachedMedia> {
+class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClientMixin<CachedMedia> {
   @override
   bool get wantKeepAlive => widget.wantKeepAlive;
 
@@ -89,10 +91,8 @@ class _CachedMediaState extends State<CachedMedia>
   @override
   void initState() {
     super.initState();
-    fadeInDuration =
-        widget.fadeInDuration ?? const Duration(milliseconds: 1000);
-    if (widget.mediaType != MediaType.custom &&
-        mediaDownloadStatus == MediaVisibility.initial) {
+    fadeInDuration = widget.fadeInDuration ?? const Duration(milliseconds: 1000);
+    if (widget.mediaType != MediaType.custom && mediaDownloadStatus == MediaVisibility.initial) {
       if (!widget.startLoadingOnlyWhenVisible) init();
     }
   }
@@ -101,10 +101,8 @@ class _CachedMediaState extends State<CachedMedia>
     if (cachedMediaInfo == null) {
       isInitiating = true;
       if (mounted) setState(() {});
-      cachedMediaInfo = await loadMedia(widget.mediaUrl);
-      await doesFileExist(cachedMediaInfo?.cachedMediaUrl)
-          ? await showMedia()
-          : await errorMedia();
+      cachedMediaInfo = await loadMedia(widget.mediaUrl, getStorage: widget.getStorage);
+      await doesFileExist(cachedMediaInfo?.cachedMediaUrl) ? await showMedia() : await errorMedia();
       isInitiating = false;
       if (mounted) setState(() {});
     }
@@ -130,6 +128,7 @@ class _CachedMediaState extends State<CachedMedia>
     switch (widget.mediaType) {
       case MediaType.custom:
         return MediaWidget(
+          getStorage: widget.getStorage,
           mediaUrl: widget.mediaUrl,
           mediaType: widget.mediaType,
           cachedMediaInfo: cachedMediaInfo,
@@ -150,20 +149,14 @@ class _CachedMediaState extends State<CachedMedia>
             child: Stack(
               alignment: Alignment.center,
               children: [
-                if (widget.showCircularProgressIndicator &&
-                    widget.customLoadingProgressIndicator == null &&
-                    mediaDownloadStatus != MediaVisibility.error)
+                if (widget.showCircularProgressIndicator && widget.customLoadingProgressIndicator == null && mediaDownloadStatus != MediaVisibility.error)
                   AnimatedOpacity(
                     opacity: startFadeIn ? 0.0 : 1.0,
                     duration: fadeInDuration,
                     curve: Curves.fastOutSlowIn,
-                    child: const SizedBox(
-                        width: 30,
-                        height: 30,
-                        child: CircularProgressIndicator.adaptive()),
+                    child: const SizedBox(width: 30, height: 30, child: CircularProgressIndicator.adaptive()),
                   ),
-                if (widget.customLoadingProgressIndicator != null &&
-                    mediaDownloadStatus != MediaVisibility.error)
+                if (widget.customLoadingProgressIndicator != null && mediaDownloadStatus != MediaVisibility.error)
                   AnimatedOpacity(
                     opacity: startFadeIn ? 0.0 : 1.0,
                     duration: fadeInDuration,
@@ -177,18 +170,9 @@ class _CachedMediaState extends State<CachedMedia>
                         {
                           return widget.startLoadingOnlyWhenVisible
                               ? VisibilityDetector(
-                                  key: widget.key ??
-                                      Key('visibility-cached-media-${widget.uniqueId ?? const Uuid().v1()}'),
-                                  onVisibilityChanged: !isInitiating &&
-                                          mediaDownloadStatus ==
-                                              MediaVisibility.initial
-                                      ? (_) async => _.visibleFraction > 0
-                                          ? await init()
-                                          : null
-                                      : null,
-                                  child: SizedBox(
-                                      width: widget.width,
-                                      height: widget.height),
+                                  key: widget.key ?? Key('visibility-cached-media-${widget.uniqueId ?? const Uuid().v1()}'),
+                                  onVisibilityChanged: !isInitiating && mediaDownloadStatus == MediaVisibility.initial ? (_) async => _.visibleFraction > 0 ? await init() : null : null,
+                                  child: SizedBox(width: widget.width, height: widget.height),
                                 )
                               : const SizedBox.shrink();
                         }
@@ -200,18 +184,17 @@ class _CachedMediaState extends State<CachedMedia>
                                   duration: fadeInDuration,
                                   curve: Curves.fastOutSlowIn,
                                   child: MediaWidget(
+                                    getStorage: widget.getStorage,
                                     mediaUrl: widget.mediaUrl,
                                     mediaType: widget.mediaType,
                                     cachedMediaInfo: cachedMediaInfo!,
-                                    uniqueId:
-                                        widget.uniqueId ?? const Uuid().v1(),
+                                    uniqueId: widget.uniqueId ?? const Uuid().v1(),
                                     width: widget.width,
                                     height: widget.height,
                                     fit: widget.fit,
                                     assetErrorImage: widget.assetErrorImage,
                                     builder: widget.builder,
-                                    startLoadingOnlyWhenVisible:
-                                        widget.startLoadingOnlyWhenVisible,
+                                    startLoadingOnlyWhenVisible: widget.startLoadingOnlyWhenVisible,
                                     wantKeepAlive: widget.wantKeepAlive,
                                   ),
                                 )

@@ -3,33 +3,29 @@ import 'dart:io';
 import 'package:cached_media/cached_media.dart';
 import 'package:cached_media/entity_cached_media_info.dart';
 import 'package:cached_media/management_store.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:uuid/uuid.dart';
 import 'package:dio/dio.dart';
 import 'dart:developer' as developer;
 
 /// Return [CachedMediaInfo?] after either finding in cache or downloading then set in cache
-Future<CachedMediaInfo?> loadMedia(String mediaUrl) async {
-  if (getGetStorage != null) {
-    CachedMediaInfo? cachedMediaInfo = await findFirstCachedMediaInfoOrNull(getGetStorage!, mediaUrl);
-    if (cachedMediaInfo == null) {
-      await downloadAndSetInCache(mediaUrl);
-    } else {
-      if (await doesFileExist(cachedMediaInfo.cachedMediaUrl)) {
-        return cachedMediaInfo;
-      } else {
-        removeCachedMediaInfo(getGetStorage!, cachedMediaInfo.id);
-        await downloadAndSetInCache(mediaUrl);
-      }
-    }
-    cachedMediaInfo = await findFirstCachedMediaInfoOrNull(getGetStorage!, mediaUrl);
-    return cachedMediaInfo;
+Future<CachedMediaInfo?> loadMedia(String mediaUrl, {required GetStorage getStorage}) async {
+  CachedMediaInfo? cachedMediaInfo = await findFirstCachedMediaInfoOrNull(getStorage, mediaUrl);
+  if (cachedMediaInfo == null) {
+    await downloadAndSetInCache(mediaUrl, getStorage: getStorage);
   } else {
-    developer.log('❌  loadMedia() is NULL!', name: 'Cached Media package');
+    if (await doesFileExist(cachedMediaInfo.cachedMediaUrl)) {
+      return cachedMediaInfo;
+    } else {
+      removeCachedMediaInfo(getStorage, cachedMediaInfo.id);
+      await downloadAndSetInCache(mediaUrl, getStorage: getStorage);
+    }
   }
-  return null;
+  cachedMediaInfo = await findFirstCachedMediaInfoOrNull(getStorage, mediaUrl);
+  return cachedMediaInfo;
 }
 
-Future<void> downloadAndSetInCache(String mediaUrl) async {
+Future<void> downloadAndSetInCache(String mediaUrl, {required GetStorage getStorage}) async {
   final tmpPath = await downloadMediaToCache(mediaUrl);
   if (await doesFileExist(tmpPath)) {
     var file = File(tmpPath!);
@@ -40,11 +36,7 @@ Future<void> downloadAndSetInCache(String mediaUrl) async {
       fileSize: await file.length(),
       cachedMediaUrl: tmpPath,
     );
-    if (getGetStorage != null) {
-      addCachedMediaInfo(getGetStorage!, cachedMediaInfoToSet);
-    } else {
-      developer.log('❌  downloadAndSetInCache() is NULL!', name: 'Cached Media package');
-    }
+    addCachedMediaInfo(getStorage, cachedMediaInfoToSet);
   }
 }
 
