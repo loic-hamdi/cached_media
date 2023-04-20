@@ -72,15 +72,21 @@ Cache Max Size: ${cacheMaxSizeDefault / 1000000} MB
 
 Future<bool> hasPermission() async {
   _permissionStatus = await Permission.storage.status;
+  developer.log('ℹ️  Permission status: $_permissionStatus', name: 'Cached Media package');
   if (_permissionStatus != PermissionStatus.granted) {
+    developer.log('❌  Permission access was not granted', name: 'Cached Media package');
     PermissionStatus permissionStatus1 = await Permission.storage.request();
+    developer.log('🕵️‍♂️  Permission requested', name: 'Cached Media package');
     _permissionStatus = permissionStatus1;
     if (_permissionStatus != PermissionStatus.granted) {
+      developer.log('❌  Permission denied', name: 'Cached Media package');
       return false;
     } else {
+      developer.log('✅  Permission access granted', name: 'Cached Media package');
       return true;
     }
   } else {
+    developer.log('✅  Permission access granted', name: 'Cached Media package');
     return true;
   }
 }

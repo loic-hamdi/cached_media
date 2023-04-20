@@ -1,4 +1,8 @@
 
+## 0.9.5+1
+
+Permissions logs
+
 ## 0.9.4+1
 
 Init GetStorage
