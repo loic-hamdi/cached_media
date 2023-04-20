@@ -75,12 +75,6 @@ Future<bool> hasPermission() async {
   if (_permissionStatus != PermissionStatus.granted) {
     developer.log('❌  Permission access was not granted', name: 'Cached Media package');
     PermissionStatus permissionStatus1 = await Permission.storage.request();
-    if (Platform.isAndroid) {
-      await Permission.manageExternalStorage.request();
-      final access = Permission.manageExternalStorage.isGranted;
-      developer.log('ℹ️  Permission Manage External Storage status: $access', name: 'Cached Media package');
-      return access;
-    }
     developer.log('🕵️‍♂️  Permission requested', name: 'Cached Media package');
     _permissionStatus = permissionStatus1;
     if (_permissionStatus != PermissionStatus.granted) {
