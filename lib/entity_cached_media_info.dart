@@ -47,9 +47,9 @@ class CachedMediaInfo {
     dateCreated = json['dateCreated'];
     mimeType = json['mimeType'];
     if (json['bytes'] != null) {
-      // final intlist = (json['bytes']).cast<int>().tolist();
-      // bytes = Uint8List.fromList(intlist);
-      bytes = Uint8List.fromList(json['bytes']);
+      final intlist = (json['bytes']).cast<int>().tolist();
+      bytes = Uint8List.fromList(intlist);
+      // bytes = Uint8List.fromList(json['bytes']);
     } else {
       bytes = null;
     }
