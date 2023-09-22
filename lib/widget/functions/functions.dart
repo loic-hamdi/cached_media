@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:uuid/uuid.dart';
 import 'dart:developer' as developer;
+import 'package:http/http.dart' as http;
 
 String? getMimeType(String fileExtension) {
   final f = fileExtension.toLowerCase();
@@ -56,24 +57,29 @@ Future<CachedMediaInfo?> downloadMediaToCache(String mediaUrl) async {
     if (getShowLogs) {
       developer.log('🪫 Downloading (Mime: $mimeType) : $mediaUrl', name: 'Cached Media package');
     }
-    Uint8List bytes = (await NetworkAssetBundle(Uri.parse(mediaUrl)).load(mediaUrl)).buffer.asUint8List();
-    if (bytes.isNotEmpty) {
-      int sizeInBytes = bytes.length;
-      final sizeInMb = sizeInBytes ~/ (1024 * 1024);
-      final cachedMediaInfoToSet = CachedMediaInfo(
-        id: const Uuid().v1(),
-        mediaUrl: mediaUrl,
-        dateCreated: DateTime.now().millisecondsSinceEpoch ~/ 1000,
-        bytes: bytes,
-        mimeType: mimeType,
-        fileSize: sizeInMb,
-      );
-      if (getShowLogs) {
-        final length = bytes.length;
-        developer.log('🔋 Downloaded (Length:$length - sizeInMb: $sizeInMb) : $mediaUrl', name: 'Cached Media package');
+    // Uint8List bytes = (await NetworkAssetBundle(Uri.parse(mediaUrl)).load(mediaUrl)).buffer.asUint8List();
+    await http.get(Uri.parse(mediaUrl)).then((response) {
+      if (response.statusCode == 200) {
+        Uint8List bytes = response.bodyBytes;
+        if (bytes.isNotEmpty) {
+          int sizeInBytes = bytes.length;
+          final sizeInMb = sizeInBytes ~/ (1024 * 1024);
+          final cachedMediaInfoToSet = CachedMediaInfo(
+            id: const Uuid().v1(),
+            mediaUrl: mediaUrl,
+            dateCreated: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+            bytes: bytes,
+            mimeType: mimeType,
+            fileSize: sizeInMb,
+          );
+          if (getShowLogs) {
+            final length = bytes.length;
+            developer.log('🔋 Downloaded (Length:$length - sizeInMb: $sizeInMb) : $mediaUrl', name: 'Cached Media package');
+          }
+          return cachedMediaInfoToSet;
+        }
       }
-      return cachedMediaInfoToSet;
-    }
+    });
     return null;
   } catch (e) {
     if (getShowLogs) {
