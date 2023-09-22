@@ -38,7 +38,7 @@ Future<CachedMediaInfo?> loadMedia(String mediaUrl, {required GetStorage getStor
     if (cachedMediaInfo.bytes != null) {
       return cachedMediaInfo;
     } else {
-      removeCachedMediaInfo(getStorage, cachedMediaInfo.id);
+      await removeCachedMediaInfo(getStorage, cachedMediaInfo.id);
       await downloadAndSetInCache(mediaUrl, getStorage: getStorage);
     }
   }
@@ -108,6 +108,6 @@ Future<CachedMediaInfo?> downloadMediaToCache(String mediaUrl, {required GetStor
 Future<void> downloadAndSetInCache(String mediaUrl, {required GetStorage getStorage}) async {
   final cachedMediaInfoToSet = await downloadMediaToCache(mediaUrl, getStorage: getStorage);
   if (cachedMediaInfoToSet != null) {
-    addCachedMediaInfo(getStorage, cachedMediaInfoToSet);
+    await addCachedMediaInfo(getStorage, cachedMediaInfoToSet);
   }
 }

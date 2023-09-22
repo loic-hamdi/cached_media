@@ -19,7 +19,7 @@ Future<void> reduceCacheSize(GetStorage getStorage, List<CachedMediaInfo> allCac
     if (getShowLogs) {
       developer.log("🧽 Clearing cache from ${a.mediaUrl}", name: 'Cached Media package');
     }
-    removeCachedMediaInfo(getStorage, a.id);
+    await removeCachedMediaInfo(getStorage, a.id);
   }
 }
 

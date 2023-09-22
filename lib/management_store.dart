@@ -4,32 +4,33 @@ import 'package:cached_media/cached_media_init.dart';
 import 'package:cached_media/entity_cached_media_info.dart';
 import 'package:collection/collection.dart';
 import 'package:get_storage/get_storage.dart';
+import 'dart:developer' as developer;
 
-void addCachedMediaInfo(GetStorage getStorage, CachedMediaInfo cachedMediaInfo) {
+Future<void> addCachedMediaInfo(GetStorage getStorage, CachedMediaInfo cachedMediaInfo) async {
   final all = getStorage.read(keyName);
   final tmp = AllCachedMediaInfo(cachedMediaInfo: []);
   if (all != null) {
     //? We store the media in a separate location for speed
-    getStorage.write(cachedMediaInfo.id, json.encode(cachedMediaInfo.toJson()));
+    await getStorage.write(cachedMediaInfo.id, json.encode(cachedMediaInfo.toJson()));
     //? We don't store the media in long index list
     final allData = AllCachedMediaInfo.fromJson(json.decode(all));
     tmp.cachedMediaInfo!.addAll(allData.cachedMediaInfo ?? []);
   }
   cachedMediaInfo.bytes = null;
   tmp.cachedMediaInfo!.add(cachedMediaInfo);
-  getStorage.write(keyName, json.encode(tmp.toJson()));
+  await getStorage.write(keyName, json.encode(tmp.toJson()));
 }
 
-void removeCachedMediaInfo(GetStorage getStorage, String id) {
+Future<void> removeCachedMediaInfo(GetStorage getStorage, String id) async {
   final all = getStorage.read(keyName);
   if (all != null) {
     final allData = AllCachedMediaInfo.fromJson(json.decode(all));
     if (allData.cachedMediaInfo != null) {
       //? We remove the media data
-      getStorage.remove(id);
+      await getStorage.remove(id);
       //? We remove the media from indexed list
       allData.cachedMediaInfo!.removeWhere((e) => e.id == id);
-      getStorage.write(keyName, json.encode(allData.toJson()));
+      await getStorage.write(keyName, json.encode(allData.toJson()));
     }
   }
 }
@@ -42,8 +43,12 @@ Future<CachedMediaInfo?> findFirstCachedMediaInfoOrNull(GetStorage getStorage, S
       final cmi = allData.cachedMediaInfo!.firstWhereOrNull((e) => e.mediaUrl == mediaUrl);
       if (cmi != null) {
         final cmiTmpJson = getStorage.read(cmi.id);
-        final cachedMediaInfoFull = CachedMediaInfo.fromJson(json.decode(cmiTmpJson));
-        return cachedMediaInfoFull;
+        if (cmiTmpJson == null) {
+          developer.log('❌  Media not found: ${cmi.id}', name: 'Cached Media package');
+        } else {
+          final cachedMediaInfoFull = CachedMediaInfo.fromJson(json.decode(cmiTmpJson));
+          return cachedMediaInfoFull;
+        }
       }
       return null;
     }
