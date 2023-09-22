@@ -24,13 +24,6 @@ Future<void> reduceCacheSize(GetStorage getStorage, List<CachedMediaInfo> allCac
 }
 
 Future<void> clearCacheOnInit(GetStorage getStorage) async {
-  final allCmi = await findAllCachedMediaInfo(getStorage);
-  var i = 1;
-  for (final cmi in allCmi) {
-    if (getShowLogs) {
-      developer.log("🧽 [$i/${allCmi.length}] Clearing cache from ${cmi.mediaUrl}", name: 'Cached Media package');
-    }
-    removeCachedMediaInfo(getStorage, cmi.id);
-    i++;
-  }
+  await getStorage.erase();
+  developer.log("🧽 Erasing all storage box", name: 'Cached Media package');
 }
