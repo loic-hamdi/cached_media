@@ -10,11 +10,14 @@ String? getMimeType(String fileExtension) {
   final f = fileExtension.toLowerCase();
   final images = ['png', 'jpg', 'jpeg', 'gif', 'tiff', 'heic'];
   final videos = ['mp4', 'mpeg', 'mpeg2'];
+  final audio = ['mp3', 'ogg', 'wav', 'x-wav', 'x-ms-wma', 'aac', 'opus', 'webm', '3gpp2'];
 
   if (images.contains(f)) {
     return 'image/$fileExtension';
   } else if (videos.contains(f)) {
     return 'video/$fileExtension';
+  } else if (audio.contains(f)) {
+    return ' audio/$fileExtension';
   } else if (f == 'mov') {
     return 'video/quicktime';
   } else if (f == 'avi') {
@@ -47,8 +50,8 @@ Future<CachedMediaInfo?> loadMedia(String mediaUrl, {required GetStorage getStor
 Future<CachedMediaInfo?> downloadMediaToCache(String mediaUrl) async {
   try {
     String imgUrl = mediaUrl;
-    if (imgUrl.contains("?")) imgUrl = mediaUrl.split("?").first;
-    final fileExtension = imgUrl.split(".").last;
+    if (imgUrl.contains('?')) imgUrl = mediaUrl.split('?').first;
+    final fileExtension = imgUrl.split('.').last;
 
     Uint8List bytes = (await NetworkAssetBundle(Uri.parse(mediaUrl)).load(mediaUrl)).buffer.asUint8List();
     final mimeType = getMimeType(fileExtension.toLowerCase());
