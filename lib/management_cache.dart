@@ -9,8 +9,7 @@ double calculateCacheSize(List<CachedMediaInfo> allCachedMediaInfo) {
   for (final cachedMediaInfo in allCachedMediaInfo) {
     tmpCurrentCacheSize += cachedMediaInfo.fileSize;
   }
-  currentCacheSize = tmpCurrentCacheSize;
-  return currentCacheSize;
+  return tmpCurrentCacheSize;
 }
 
 Future<void> reduceCacheSize(GetStorage getStorage, List<CachedMediaInfo> allCachedMediaInfo) async {

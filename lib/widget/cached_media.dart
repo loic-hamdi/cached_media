@@ -128,6 +128,7 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
     switch (widget.mediaType) {
       case MediaType.custom:
         return MediaWidget(
+          key: Key('Media-widget-${widget.mediaUrl}'),
           getStorage: widget.getStorage,
           mediaUrl: widget.mediaUrl,
           mediaType: widget.mediaType,
@@ -144,6 +145,7 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
       default:
         {
           return SizedBox(
+            key: Key('SB-Media-widget-${widget.mediaUrl}'),
             width: widget.width,
             height: widget.height,
             child: Stack(

@@ -53,15 +53,10 @@ Future<CachedMediaInfo?> downloadMediaToCache(String mediaUrl) async {
     if (imgUrl.contains('?')) imgUrl = mediaUrl.split('?').first;
     final fileExtension = imgUrl.split('.').last;
     final mimeType = getMimeType(fileExtension.toLowerCase());
-
     if (getShowLogs) {
       developer.log('🪫 Downloading (Mime: $mimeType) : $mediaUrl', name: 'Cached Media package');
     }
     Uint8List bytes = (await NetworkAssetBundle(Uri.parse(mediaUrl)).load(mediaUrl)).buffer.asUint8List();
-    if (getShowLogs) {
-      final length = bytes.length;
-      developer.log('🔋 Downloaded (Length:$length) : $mediaUrl', name: 'Cached Media package');
-    }
     if (bytes.isNotEmpty) {
       int sizeInBytes = bytes.length;
       final sizeInMb = sizeInBytes ~/ (1024 * 1024);
@@ -73,7 +68,10 @@ Future<CachedMediaInfo?> downloadMediaToCache(String mediaUrl) async {
         mimeType: mimeType,
         fileSize: sizeInMb,
       );
-
+      if (getShowLogs) {
+        final length = bytes.length;
+        developer.log('🔋 Downloaded (Length:$length - sizeInMb: $sizeInMb) : $mediaUrl', name: 'Cached Media package');
+      }
       return cachedMediaInfoToSet;
     }
     return null;
