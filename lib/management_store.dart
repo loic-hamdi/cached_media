@@ -12,6 +12,16 @@ Future<void> addCachedMediaInfo(GetStorage getStorage, CachedMediaInfo cachedMed
   if (all != null) {
     //? We store the media in a separate location for speed
     await getStorage.write(cachedMediaInfo.id, json.encode(cachedMediaInfo.toJson()));
+    if (getShowLogs) {
+      final cmiTmpJson = getStorage.read(cachedMediaInfo.id);
+      if (cmiTmpJson == null) {
+        developer.log('❌  After download - Media not found: ${cachedMediaInfo.id}', name: 'Cached Media package');
+      } else {
+        developer.log('✅  After download - Media found: ${cachedMediaInfo.id}', name: 'Cached Media package');
+        developer.log('✅  After download - Media found: ${cachedMediaInfo.bytes}', name: 'Cached Media package');
+      }
+    }
+
     //? We don't store the media in long index list
     final allData = AllCachedMediaInfo.fromJson(json.decode(all));
     tmp.cachedMediaInfo!.addAll(allData.cachedMediaInfo ?? []);
@@ -26,8 +36,11 @@ Future<void> removeCachedMediaInfo(GetStorage getStorage, String id) async {
   if (all != null) {
     final allData = AllCachedMediaInfo.fromJson(json.decode(all));
     if (allData.cachedMediaInfo != null) {
-      //? We remove the media data
-      await getStorage.remove(id);
+      final cmi = getStorage.read(id);
+      if (cmi != null) {
+        //? We remove the media data
+        await getStorage.remove(id);
+      }
       //? We remove the media from indexed list
       allData.cachedMediaInfo!.removeWhere((e) => e.id == id);
       await getStorage.write(keyName, json.encode(allData.toJson()));
@@ -50,7 +63,6 @@ Future<CachedMediaInfo?> findFirstCachedMediaInfoOrNull(GetStorage getStorage, S
           return cachedMediaInfoFull;
         }
       }
-      return null;
     }
   }
   return null;
