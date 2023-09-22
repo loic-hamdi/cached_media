@@ -45,11 +45,12 @@ class CachedMediaInfo {
     mediaUrl = json['mediaUrl'];
     fileSize = json['fileSize'];
     dateCreated = json['dateCreated'];
-    bytes = json['bytes'];
     mimeType = json['mimeType'];
     if (json['bytes'] != null) {
       List<int> intlist = (json['bytes']).cast<int>().tolist(); //this is the magical line.
       bytes = Uint8List.fromList(intlist);
+    } else {
+      bytes = null;
     }
   }
 
