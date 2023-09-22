@@ -8,6 +8,7 @@ import 'package:get_storage/get_storage.dart';
 class CachedMediaSnapshot {
   late DownloadStatus status;
   late Uint8List? bytes;
+  late String? mimeType;
 
   CachedMediaSnapshot({required this.bytes, required this.status});
 }
@@ -27,20 +28,22 @@ class CachedMediaController {
 
   Future<void> getFile(String url, {required GetStorage getStorage}) async {
     _snapshot.bytes = null;
+    _snapshot.mimeType = null;
     _snapshot.status = DownloadStatus.loading;
     _onSnapshotChanged(_snapshot);
 
     final cmi = await loadMedia(url, getStorage: getStorage);
-    final bytes = cmi?.bytes;
-    if (cmi != null && bytes != null) {
+    if (cmi != null && cmi.bytes != null) {
       final file = XFile.fromData(
-        bytes,
+        cmi.bytes!,
         mimeType: cmi.mimeType,
-        length: bytes.length,
+        length: cmi.bytes!.length,
       );
       final fileLength = await file.length();
       if (fileLength > 0) {
-        _snapshot.bytes = bytes;
+        _snapshot.bytes = cmi.bytes;
+        _snapshot.mimeType = cmi.mimeType;
+
         _snapshot.status = DownloadStatus.success;
         _onSnapshotChanged(_snapshot);
       } else {
