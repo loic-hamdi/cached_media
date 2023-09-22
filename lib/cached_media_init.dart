@@ -31,7 +31,7 @@ Future<void> initializeCachedMedia({
     if (!hasAccess) {
       developer.log('❌  Permission access denied', name: 'Cached Media package');
     }
-    cacheMaxSizeDefault = cacheMaxSize * 1000000;
+    cacheMaxSizeDefault = cacheMaxSize;
     _showLogs = showLogs;
     await initStreamListener(showLogs: showLogs, getStorage: getStorage);
     if (clearCache) await clearCacheOnInit(getStorage);
@@ -53,8 +53,8 @@ Future<void> initStreamListener({bool showLogs = false, required GetStorage getS
       developer.log('''
 - - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -
 Media in cache: ${p0.length}
-Current Cache Size: ${(calculateCacheSize(p0)) / 1000000} MB
-Cache Max Size: ${cacheMaxSizeDefault / 1000000} MB
+Current Cache Size: ${(calculateCacheSize(p0))} MB
+Cache Max Size: $cacheMaxSizeDefault  MB
 - - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -
 ''', name: 'Cached Media package');
     }
