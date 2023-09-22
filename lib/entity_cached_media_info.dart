@@ -47,8 +47,9 @@ class CachedMediaInfo {
     dateCreated = json['dateCreated'];
     mimeType = json['mimeType'];
     if (json['bytes'] != null) {
-      List<int> intlist = (json['bytes']).cast<int>().tolist(); //this is the magical line.
-      bytes = Uint8List.fromList(intlist);
+      // final intlist = (json['bytes']).cast<int>().tolist();
+      // bytes = Uint8List.fromList(intlist);
+      bytes = Uint8List.fromList(json['bytes']);
     } else {
       bytes = null;
     }
@@ -60,7 +61,7 @@ class CachedMediaInfo {
     data['mediaUrl'] = mediaUrl;
     data['fileSize'] = fileSize;
     data['dateCreated'] = dateCreated;
-    data['bytes'] = bytes;
+    data['bytes'] = bytes?.toList();
     data['mimeType'] = mimeType;
     return data;
   }
