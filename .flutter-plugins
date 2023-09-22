@@ -1,10 +1,10 @@
 # This is a generated file; do not edit or check into version control.
-path_provider=/Users/loichamdi/.pub-cache/hosted/pub.dev/path_provider-2.0.14/
-path_provider_android=/Users/loichamdi/.pub-cache/hosted/pub.dev/path_provider_android-2.0.25/
-path_provider_foundation=/Users/loichamdi/.pub-cache/hosted/pub.dev/path_provider_foundation-2.2.2/
-path_provider_linux=/Users/loichamdi/.pub-cache/hosted/pub.dev/path_provider_linux-2.1.10/
-path_provider_windows=/Users/loichamdi/.pub-cache/hosted/pub.dev/path_provider_windows-2.1.5/
-permission_handler=/Users/loichamdi/.pub-cache/hosted/pub.dev/permission_handler-10.2.0/
-permission_handler_android=/Users/loichamdi/.pub-cache/hosted/pub.dev/permission_handler_android-10.2.0/
-permission_handler_apple=/Users/loichamdi/.pub-cache/hosted/pub.dev/permission_handler_apple-9.0.8/
-permission_handler_windows=/Users/loichamdi/.pub-cache/hosted/pub.dev/permission_handler_windows-0.1.2/
+path_provider=/Users/loic/.pub-cache/hosted/pub.dev/path_provider-2.0.15/
+path_provider_android=/Users/loic/.pub-cache/hosted/pub.dev/path_provider_android-2.0.27/
+path_provider_foundation=/Users/loic/.pub-cache/hosted/pub.dev/path_provider_foundation-2.2.3/
+path_provider_linux=/Users/loic/.pub-cache/hosted/pub.dev/path_provider_linux-2.1.11/
+path_provider_windows=/Users/loic/.pub-cache/hosted/pub.dev/path_provider_windows-2.1.7/
+permission_handler=/Users/loic/.pub-cache/hosted/pub.dev/permission_handler-10.3.0/
+permission_handler_android=/Users/loic/.pub-cache/hosted/pub.dev/permission_handler_android-10.2.3/
+permission_handler_apple=/Users/loic/.pub-cache/hosted/pub.dev/permission_handler_apple-9.1.0/
+permission_handler_windows=/Users/loic/.pub-cache/hosted/pub.dev/permission_handler_windows-0.1.2/

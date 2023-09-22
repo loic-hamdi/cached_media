@@ -1,6 +1,6 @@
 name: cached_media
 description: Easily cache your media & save bandwidth. You will be able to quickly and easily handle your media into a powerfull widget.
-version: 0.9.8+1
+version: 0.9.9+1
 homepage: https://github.com/loic-hamdi/cached_media
 
 environment:
@@ -11,9 +11,10 @@ dependencies:
   flutter:
     sdk: flutter
   collection: 
+  cross_file:
+  cross_file_image: 
   dio: 
   get_storage: 
-  path_provider:  # NO WEB SUPPORT
   permission_handler:  # NO WEB SUPPORT
   uuid: 
   visibility_detector: 
@@ -21,10 +22,9 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^2.0.0
   build_runner: ^2.0.0
   objectbox_generator: any
-
+  flutter_lints: ^2.0.1
 flutter:
 
   # To add assets to your package, add an assets section, like this:

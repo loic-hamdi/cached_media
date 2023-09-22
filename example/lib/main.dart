@@ -67,10 +67,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   mediaUrl: 'https://www.gstatic.com/webp/gallery/2.jpg',
                   builder: (context, snapshot) {
                     if (snapshot.status == DownloadStatus.loading) {
-                      return const Center(
-                          child: CircularProgressIndicator.adaptive());
-                    } else if (snapshot.status == DownloadStatus.success) {
-                      return Image.asset(snapshot.filePath!);
+                      return const Center(child: CircularProgressIndicator.adaptive());
+                    } else if (snapshot.status == DownloadStatus.success && snapshot.bytes != null) {
+                      return Image.memory(snapshot.bytes!);
                     } else {
                       return const Center(child: Text('Error'));
                     }

@@ -102,7 +102,7 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
       isInitiating = true;
       if (mounted) setState(() {});
       cachedMediaInfo = await loadMedia(widget.mediaUrl, getStorage: widget.getStorage);
-      await doesFileExist(cachedMediaInfo?.cachedMediaUrl) ? await showMedia() : await errorMedia();
+      cachedMediaInfo?.bytes != null ? await showMedia() : await errorMedia();
       isInitiating = false;
       if (mounted) setState(() {});
     }

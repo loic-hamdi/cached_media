@@ -61,7 +61,7 @@ class _MediaWidgetState extends State<MediaWidget> with AutomaticKeepAliveClient
     initiating = true;
     if (mounted) setState(() {});
     if (widget.builder != null) {
-      snapshot = CachedMediaSnapshot(status: DownloadStatus.loading, filePath: null);
+      snapshot = CachedMediaSnapshot(status: DownloadStatus.loading, bytes: null);
       _cachedMediaController = CachedMediaController(
         snapshot: snapshot,
         onSnapshotChanged: (snapshot) => mounted ? setState(() => this.snapshot = snapshot) : null,
@@ -129,7 +129,14 @@ class MediaWidgetType extends StatelessWidget {
     if (cachedMediaInfo != null) {
       switch (mediaType) {
         case MediaType.image:
-          return ImageWidget(uniqueId: uniqueId, cachedMediaInfo: cachedMediaInfo!, width: width ?? 100, height: height ?? 100, fit: fit, assetErrorImage: assetErrorImage);
+          return ImageWidget(
+            uniqueId: uniqueId,
+            cachedMediaInfo: cachedMediaInfo!,
+            width: width ?? 100,
+            height: height ?? 100,
+            fit: fit,
+            assetErrorImage: assetErrorImage,
+          );
         default:
           {
             return const Text('Media Error');

@@ -1,12 +1,30 @@
-import 'dart:io';
-
 import 'package:cached_media/cached_media.dart';
 import 'package:cached_media/entity_cached_media_info.dart';
 import 'package:cached_media/management_store.dart';
+import 'package:flutter/services.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:uuid/uuid.dart';
-import 'package:dio/dio.dart';
 import 'dart:developer' as developer;
+
+String? getMimeType(String fileExtension) {
+  final f = fileExtension.toLowerCase();
+  final images = ['png', 'jpg', 'jpeg', 'gif', 'tiff', 'heic'];
+  final videos = ['mp4', 'mpeg', 'mpeg2'];
+
+  if (images.contains(f)) {
+    return 'image/$fileExtension';
+  } else if (videos.contains(f)) {
+    return 'video/$fileExtension';
+  } else if (f == 'mov') {
+    return 'video/quicktime';
+  } else if (f == 'avi') {
+    return 'video/x-msvideo';
+  } else if (f == 'wmv') {
+    return 'video/x-ms-wmv';
+  } else {
+    return null;
+  }
+}
 
 /// Return [CachedMediaInfo?] after either finding in cache or downloading then set in cache
 Future<CachedMediaInfo?> loadMedia(String mediaUrl, {required GetStorage getStorage}) async {
@@ -14,7 +32,7 @@ Future<CachedMediaInfo?> loadMedia(String mediaUrl, {required GetStorage getStor
   if (cachedMediaInfo == null) {
     await downloadAndSetInCache(mediaUrl, getStorage: getStorage);
   } else {
-    if (await doesFileExist(cachedMediaInfo.cachedMediaUrl)) {
+    if (cachedMediaInfo.bytes != null) {
       return cachedMediaInfo;
     } else {
       removeCachedMediaInfo(getStorage, cachedMediaInfo.id);
@@ -25,71 +43,41 @@ Future<CachedMediaInfo?> loadMedia(String mediaUrl, {required GetStorage getStor
   return cachedMediaInfo;
 }
 
-Future<void> downloadAndSetInCache(String mediaUrl, {required GetStorage getStorage}) async {
-  final tmpPath = await downloadMediaToCache(mediaUrl);
-  if (await doesFileExist(tmpPath)) {
-    var file = File(tmpPath!);
-    final cachedMediaInfoToSet = CachedMediaInfo(
-      id: const Uuid().v1(),
-      mediaUrl: mediaUrl,
-      dateCreated: DateTime.now().millisecondsSinceEpoch ~/ 1000,
-      fileSize: await file.length(),
-      cachedMediaUrl: tmpPath,
-    );
-    addCachedMediaInfo(getStorage, cachedMediaInfoToSet);
-  }
-}
-
-Future<String?> downloadMediaToCache(String mediaUrl) async {
-  String imgName = const Uuid().v1();
-  String imgUrl = mediaUrl;
-  if (imgUrl.contains("?")) imgUrl = mediaUrl.split("?").first;
-  final fileExtention = imgUrl.split(".").last;
-  return downloadMediaToLocalCache(mediaUrl, '$imgName.$fileExtention');
-}
-
-Future<bool> doesFileExist(String? filePath) async {
-  int fileSize = 0;
-  bool fileExists = false;
-  if (filePath != null) {
-    var file = File(filePath);
-    if (await file.exists()) {
-      fileSize = await file.length();
-      if (fileSize > 0) fileExists = true;
-    }
-  }
-  return fileExists;
-}
-
 /// Download locally the file and return the file path if succes, or [null] if error.
-Future<String?> downloadMediaToLocalCache(String mediaUrl, String mediaName) async {
-  final tempDir = getTempDir;
-  if (tempDir != null) {
-    String savePath = "${tempDir.path}/$mediaName";
-    try {
-      var dio = Dio();
-      if (getShowLogs) {
-        developer.log('📦 downloading media: $mediaUrl', name: 'Cached Media package');
-      }
-      final response = await dio.download(mediaUrl, savePath);
-      if (response.statusCode == 200) {
-        return savePath;
-      }
-      return null;
-    } on DioError {
-      if (getShowLogs) {
-        developer.log('❌ Dio Error - media : $mediaUrl', name: 'Cached Media package');
-      }
-      return null;
-    } catch (e) {
-      if (getShowLogs) {
-        developer.log('❌ Error - media : $mediaUrl', name: 'Cached Media package');
-      }
+Future<CachedMediaInfo?> downloadMediaToCache(String mediaUrl) async {
+  try {
+    String imgUrl = mediaUrl;
+    if (imgUrl.contains("?")) imgUrl = mediaUrl.split("?").first;
+    final fileExtension = imgUrl.split(".").last;
+
+    Uint8List bytes = (await NetworkAssetBundle(Uri.parse(mediaUrl)).load(mediaUrl)).buffer.asUint8List();
+    final mimeType = getMimeType(fileExtension.toLowerCase());
+    if (bytes.isNotEmpty) {
+      int sizeInBytes = bytes.length;
+      final sizeInMb = sizeInBytes ~/ (1024 * 1024);
+      final cachedMediaInfoToSet = CachedMediaInfo(
+        id: const Uuid().v1(),
+        mediaUrl: mediaUrl,
+        dateCreated: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+        bytes: bytes,
+        mimeType: mimeType,
+        fileSize: sizeInMb,
+      );
+
+      return cachedMediaInfoToSet;
     }
-  } else {
+    return null;
+  } catch (e) {
     if (getShowLogs) {
-      developer.log('❌  Temp directory not found!', name: 'Cached Media package');
+      developer.log('❌ Error - media : $mediaUrl', name: 'Cached Media package');
     }
   }
   return null;
+}
+
+Future<void> downloadAndSetInCache(String mediaUrl, {required GetStorage getStorage}) async {
+  final cachedMediaInfoToSet = await downloadMediaToCache(mediaUrl);
+  if (cachedMediaInfoToSet != null) {
+    addCachedMediaInfo(getStorage, cachedMediaInfoToSet);
+  }
 }

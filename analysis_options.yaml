@@ -1,4 +1,11 @@
 include: package:flutter_lints/flutter.yaml
 
-# Additional information about this file can be found at
-# https://dart.dev/guides/language/analysis-options
+linter:
+  rules:
+    # sort_pub_dependencies: false
+    #prefer_trailing_comma:
+     # severity: none
+    prefer_const_constructors: true
+    prefer_const_constructors_in_immutables: true
+    prefer_const_declarations: true
+    cancel_subscriptions: true

@@ -1,21 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 import 'package:cached_media/entity_cached_media_info.dart';
 import 'package:cached_media/management_cache.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'dart:developer' as developer;
-
-Directory? tempDir;
-Directory? get getTempDir => tempDir;
+import 'package:cached_media/widget/functions/has_permission_web.dart' if (dart.library.io) 'package:cached_media/widget/functions/has_permission_io.dart';
 
 final allCachedMediaInfo = <CachedMediaInfo>[];
 double currentCacheSize = 0;
 late double cacheMaxSizeDefault;
-
-PermissionStatus? _permissionStatus;
 
 bool _showLogs = false;
 bool get getShowLogs => _showLogs;
@@ -35,13 +28,12 @@ Future<void> initializeCachedMedia({
 }) async {
   if (!isInitialized) {
     final hasAccess = await hasPermission();
-    if (hasAccess) {
+    if (!hasAccess) {
       developer.log('❌  Permission access denied', name: 'Cached Media package');
     }
     cacheMaxSizeDefault = cacheMaxSize * 1000000;
     _showLogs = showLogs;
     await initStreamListener(showLogs: showLogs, getStorage: getStorage);
-    tempDir = await getTemporaryDirectory();
     if (clearCache) await clearCacheOnInit(getStorage);
     isInitialized = true;
   }
@@ -70,24 +62,7 @@ Cache Max Size: ${cacheMaxSizeDefault / 1000000} MB
 }
 
 Future<bool> hasPermission() async {
-  _permissionStatus = await Permission.storage.status;
-  developer.log('ℹ️  Permission status: $_permissionStatus', name: 'Cached Media package');
-  if (_permissionStatus != PermissionStatus.granted) {
-    developer.log('❌  Permission access was not granted', name: 'Cached Media package');
-    PermissionStatus permissionStatus1 = await Permission.storage.request();
-    developer.log('🕵️‍♂️  Permission requested', name: 'Cached Media package');
-    _permissionStatus = permissionStatus1;
-    if (_permissionStatus != PermissionStatus.granted) {
-      developer.log('❌  Permission denied', name: 'Cached Media package');
-      return false;
-    } else {
-      developer.log('✅  Permission access granted', name: 'Cached Media package');
-      return true;
-    }
-  } else {
-    developer.log('✅  Permission access granted', name: 'Cached Media package');
-    return true;
-  }
+  return await hasPermissionIoWeb();
 }
 
 Future<void> cleanCache({required GetStorage getStorage}) async {
