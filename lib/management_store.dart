@@ -18,7 +18,7 @@ Future<void> addCachedMediaInfo(GetStorage getStorage, CachedMediaInfo cachedMed
         developer.log('❌  After download - Media not found: ${cachedMediaInfo.id}', name: 'Cached Media package');
       } else {
         developer.log('✅  After download - Media found: ${cachedMediaInfo.id}', name: 'Cached Media package');
-        developer.log('✅  After download - Media found: ${cachedMediaInfo.bytes}', name: 'Cached Media package');
+        developer.log('✅  After download - Media found: ${cachedMediaInfo.bytes!.first} || ${cachedMediaInfo.bytes!.last}', name: 'Cached Media package');
       }
     }
 
