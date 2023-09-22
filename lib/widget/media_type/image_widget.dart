@@ -26,7 +26,7 @@ class ImageWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return cachedMediaInfo.bytes != null
         ? Image(
-            key: Key('cached-image-$uniqueId'),
+            key: Key('cached-image-$uniqueId-${cachedMediaInfo.bytes!.first}'),
             image: XFileImage(XFile.fromData(
               (cachedMediaInfo.bytes!),
               length: cachedMediaInfo.bytes!.length,
@@ -35,7 +35,12 @@ class ImageWidget extends StatelessWidget {
             width: width,
             height: height,
             fit: fit,
-            errorBuilder: assetErrorImage != null ? (context, error, stackTrace) => Image.asset(assetErrorImage!, fit: BoxFit.fitWidth) : null,
+            errorBuilder: assetErrorImage != null
+                ? (context, error, stackTrace) => Image.asset(
+                      assetErrorImage!,
+                      fit: BoxFit.fitWidth,
+                    )
+                : null,
           )
         : const Text('Not bytes found');
   }
