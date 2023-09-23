@@ -1,7 +1,5 @@
 // import 'dart:io';
 import 'package:cached_media/entity_cached_media_info.dart';
-import 'package:cross_file/cross_file.dart';
-import 'package:cross_file_image/cross_file_image.dart';
 import 'package:flutter/material.dart';
 
 class ImageWidget extends StatelessWidget {
@@ -25,34 +23,9 @@ class ImageWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return cachedMediaInfo.bytes != null
-        ? Container(
-            decoration: BoxDecoration(border: Border.all(color: Colors.purple)),
-            child: Image.memory(
-              key: Key('CM-ImageWidget-$uniqueId'),
-              cachedMediaInfo.bytes!,
-              width: width,
-              height: height,
-              fit: fit,
-              errorBuilder: assetErrorImage != null
-                  ? (context, error, stackTrace) => Image.asset(
-                        assetErrorImage!,
-                        fit: BoxFit.fitWidth,
-                      )
-                  : null,
-            ),
-          )
-        : const Text('Not bytes found');
-
-    return cachedMediaInfo.bytes != null
-        ? Image(
+        ? Image.memory(
             key: Key('CM-ImageWidget-$uniqueId'),
-            image: XFileImage(
-              XFile.fromData(
-                (cachedMediaInfo.bytes!),
-                length: cachedMediaInfo.bytes!.length,
-                mimeType: cachedMediaInfo.mimeType,
-              ),
-            ),
+            cachedMediaInfo.bytes!,
             width: width,
             height: height,
             fit: fit,
@@ -62,7 +35,20 @@ class ImageWidget extends StatelessWidget {
                       fit: BoxFit.fitWidth,
                     )
                 : null,
+            frameBuilder: ((context, child, frame, wasSynchronouslyLoaded) {
+              if (wasSynchronouslyLoaded) return child;
+              return AnimatedSwitcher(
+                duration: const Duration(milliseconds: 200),
+                child: frame != null
+                    ? child
+                    : SizedBox(
+                        height: height,
+                        width: width,
+                        child: const CircularProgressIndicator.adaptive(strokeWidth: 2),
+                      ),
+              );
+            }),
           )
-        : const Text('Not bytes found');
+        : const Text('Not found');
   }
 }
