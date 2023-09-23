@@ -24,7 +24,7 @@ class CachedMedia extends StatefulWidget {
   /// Set [startLoadingOnlyWhenVisible] to [true] to start to download the media when the widget becomes visible on user's screen
   final bool startLoadingOnlyWhenVisible;
 
-  final Widget? Function(BuildContext context, CachedMediaSnapshot snapshot)? builder;
+  final Widget Function(BuildContext context, CachedMediaSnapshot snapshot) builder;
 
   final GetStorage getStorage;
 
@@ -49,10 +49,11 @@ class _CachedMediaState extends State<CachedMedia> {
     //! if (mounted) setState(() {});
     snapshot = CachedMediaSnapshot(status: DownloadStatus.loading, bytes: null);
     _cachedMediaController = CachedMediaController(
-      snapshot: snapshot,
-      onSnapshotChanged: (snapshot) {
+      onSnapshotChanged: (value) {
         if (mounted) {
-          setState(() => this.snapshot = snapshot);
+          snapshot = value;
+          widget.builder(context, snapshot);
+          setState(() {});
         }
       },
     );
@@ -68,14 +69,8 @@ class _CachedMediaState extends State<CachedMedia> {
         ? VisibilityDetector(
             key: widget.key ?? Key(const Uuid().v1()),
             onVisibilityChanged: !initiating && !initiated ? (_) async => _.visibleFraction > 0 ? await init() : null : null,
-            child: widget.builder != null
-                ? widget.builder!(context, snapshot) ?? const SizedBox()
-                : const Text(
-                    'Builder implementation is missing',
-                  ),
+            child: widget.builder(context, snapshot),
           )
-        : widget.builder != null
-            ? widget.builder!(context, snapshot) ?? const SizedBox()
-            : const Text('Builder implementation is missing');
+        : widget.builder(context, snapshot);
   }
 }

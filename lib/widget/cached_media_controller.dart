@@ -8,21 +8,18 @@ class CachedMediaSnapshot {
   late DownloadStatus status;
   late Uint8List? bytes;
   late String? mimeType;
-
   CachedMediaSnapshot({required this.bytes, required this.status});
 }
 
 class CachedMediaController {
   CachedMediaController({
-    required CachedMediaSnapshot snapshot,
     required Function(CachedMediaSnapshot) onSnapshotChanged,
   }) {
     _onSnapshotChanged = onSnapshotChanged;
-    _snapshot = snapshot;
   }
 
   late Function(CachedMediaSnapshot) _onSnapshotChanged;
-  late CachedMediaSnapshot _snapshot;
+  final CachedMediaSnapshot _snapshot = CachedMediaSnapshot(bytes: null, status: DownloadStatus.loading);
 
   Future<void> getFile(String url, {required GetStorage getStorage}) async {
     _snapshot.bytes = null;
