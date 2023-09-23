@@ -91,6 +91,7 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
 🗣️  getFile() - from: await loadMedia()
 cmi != null: ${cmi != null}
 cmi.bytes != null: ${cmi?.bytes != null}
+cmi.fileSize: ${cmi?.fileSize}
 url: $url
 ''', name: 'Cached Media package');
     }
