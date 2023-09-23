@@ -66,7 +66,7 @@ class _MediaWidgetState extends State<MediaWidget> with AutomaticKeepAliveClient
         snapshot: snapshot,
         onSnapshotChanged: (snapshot) => mounted ? setState(() => this.snapshot = snapshot) : null,
       );
-      _cachedMediaController.getFile(widget.mediaUrl, getStorage: widget.getStorage);
+      await _cachedMediaController.getFile(widget.mediaUrl, getStorage: widget.getStorage);
     }
     initiating = false;
     initiated = true;

@@ -2,7 +2,6 @@ import 'dart:typed_data';
 
 import 'package:cached_media/widget/cached_media.dart';
 import 'package:cached_media/widget/functions/functions.dart';
-import 'package:cross_file/cross_file.dart';
 import 'package:get_storage/get_storage.dart';
 
 class CachedMediaSnapshot {
@@ -34,21 +33,10 @@ class CachedMediaController {
 
     final cmi = await loadMedia(url, getStorage: getStorage);
     if (cmi != null && cmi.bytes != null) {
-      final file = XFile.fromData(
-        cmi.bytes!,
-        mimeType: cmi.mimeType,
-        length: cmi.bytes!.length,
-      );
-      final fileLength = await file.length();
-      if (fileLength > 0) {
-        _snapshot.bytes = cmi.bytes;
-        _snapshot.mimeType = cmi.mimeType;
-
-        _snapshot.status = DownloadStatus.success;
-        _onSnapshotChanged(_snapshot);
-      } else {
-        _onSnapshotChanged(_snapshot..status = DownloadStatus.error);
-      }
+      _snapshot.bytes = cmi.bytes;
+      _snapshot.mimeType = cmi.mimeType;
+      _snapshot.status = DownloadStatus.success;
+      _onSnapshotChanged(_snapshot);
     } else {
       _onSnapshotChanged(_snapshot..status = DownloadStatus.error);
     }
