@@ -76,10 +76,19 @@ class _CachedMediaState extends State<CachedMedia> {
     _snapshot.bytes = null;
     _snapshot.mimeType = null;
     _snapshot.status = DownloadStatus.loading;
-    if (mounted) widget.builder(_snapshot);
-    if (mounted) setState(() {});
+    widget.builder(_snapshot);
 
     final cmi = await loadMedia(url, getStorage: getStorage);
+    await Future.delayed(const Duration(seconds: 1));
+    developer.log('🗣️ 1 ', name: 'Cached Media package');
+    await Future.delayed(const Duration(seconds: 1));
+    developer.log('🗣️ 2 ', name: 'Cached Media package');
+    await Future.delayed(const Duration(seconds: 1));
+    developer.log('🗣️ 3 ', name: 'Cached Media package');
+    await Future.delayed(const Duration(seconds: 1));
+    developer.log('🗣️ 4 ', name: 'Cached Media package');
+    await Future.delayed(const Duration(seconds: 1));
+    developer.log('🗣️ 5 ', name: 'Cached Media package');
     if (getShowLogs) {
       developer.log('''
 🗣️  getFile() - from: await loadMedia()
@@ -93,12 +102,10 @@ url: $url
       _snapshot.bytes = cmi.bytes;
       _snapshot.mimeType = cmi.mimeType;
       _snapshot.status = DownloadStatus.success;
-      if (mounted) widget.builder(_snapshot);
-      // if (mounted) setState(() {});
+      widget.builder(_snapshot);
       printSnapshot(url, 'Success');
     } else {
-      if (mounted) widget.builder(_snapshot..status = DownloadStatus.error);
-      // if (mounted) setState(() {});
+      widget.builder(_snapshot..status = DownloadStatus.error);
       printSnapshot(url, 'Error');
     }
   }
