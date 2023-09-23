@@ -35,7 +35,6 @@ class CachedMedia extends StatefulWidget {
   final bool startLoadingOnlyWhenVisible;
 
   final Widget Function(CachedMediaSnapshot snapshot) builder;
-
   final GetStorage getStorage;
 
   @override
