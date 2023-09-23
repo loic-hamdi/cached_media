@@ -24,7 +24,7 @@ class CachedMedia extends StatefulWidget {
     required this.mediaUrl,
     required this.getStorage,
     required this.builder,
-    this.startLoadingOnlyWhenVisible = false,
+    this.startLoadingOnlyWhenVisible = true,
   });
 
   /// Web url to get the media. The address must contains the file extension.
@@ -34,7 +34,7 @@ class CachedMedia extends StatefulWidget {
   /// Set [startLoadingOnlyWhenVisible] to [true] to start to download the media when the widget becomes visible on user's screen
   final bool startLoadingOnlyWhenVisible;
 
-  final Widget Function(BuildContext context, CachedMediaSnapshot snapshot) builder;
+  final Widget Function(CachedMediaSnapshot snapshot) builder;
 
   final GetStorage getStorage;
 
@@ -68,29 +68,36 @@ class _CachedMediaState extends State<CachedMedia> {
         ? VisibilityDetector(
             key: widget.key ?? Key(const Uuid().v1()),
             onVisibilityChanged: !initiating && !initiated ? (_) async => _.visibleFraction > 0 ? await init() : null : null,
-            child: widget.builder(context, _snapshot),
+            child: widget.builder(_snapshot),
           )
-        : widget.builder(context, _snapshot);
+        : widget.builder(_snapshot);
   }
 
   Future<void> getFile(String url, {required GetStorage getStorage}) async {
     _snapshot.bytes = null;
     _snapshot.mimeType = null;
     _snapshot.status = DownloadStatus.loading;
-    if (mounted) widget.builder(context, _snapshot);
+    if (mounted) widget.builder(_snapshot);
     if (mounted) setState(() {});
 
     final cmi = await loadMedia(url, getStorage: getStorage);
+    if (getShowLogs) {
+      developer.log('''
+🗣️  getFile() - from: await loadMedia()
+cmi != null: ${cmi != null}
+url: $url
+''', name: 'Cached Media package');
+    }
 
     if (cmi != null && cmi.bytes != null) {
       _snapshot.bytes = cmi.bytes;
       _snapshot.mimeType = cmi.mimeType;
       _snapshot.status = DownloadStatus.success;
-      if (mounted) widget.builder(context, _snapshot);
+      if (mounted) widget.builder(_snapshot);
       if (mounted) setState(() {});
       printSnapshot('Success');
     } else {
-      if (mounted) widget.builder(context, _snapshot..status = DownloadStatus.error);
+      if (mounted) widget.builder(_snapshot..status = DownloadStatus.error);
       if (mounted) setState(() {});
       printSnapshot('Error');
     }
