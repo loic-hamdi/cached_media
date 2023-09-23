@@ -43,14 +43,14 @@ Future<CachedMediaInfo?> loadMedia(String mediaUrl, {required GetStorage getStor
     var count = 0;
     while (cachedMediaInfo == null && count < 30) {
       if (getShowLogs) {
-        developer.log('🔍 Is Already Downloading, wating to have cachedMediaInfo avaible (count: $count) - $mediaUrl', name: 'Cached Media package');
+        developer.log('🟩  Is Already Downloading, wating to have cachedMediaInfo avaible (count: $count) - $mediaUrl', name: 'Cached Media package');
       }
       cachedMediaInfo = await findFirstCachedMediaInfoOrNull(getStorage, mediaUrl);
       if (cachedMediaInfo == null) await Future.delayed(const Duration(milliseconds: 1000));
     }
   } else if (!isAlreadyDownloading) {
     if (getShowLogs) {
-      developer.log('➕ Not already downloading, adding to list to download - $mediaUrl', name: 'Cached Media package');
+      developer.log('🟪  Not already downloading, adding to list to download - $mediaUrl', name: 'Cached Media package');
     }
     isBeingDownloaded.add(mediaUrl);
     cachedMediaInfo = await findFirstCachedMediaInfoOrNull(getStorage, mediaUrl);
