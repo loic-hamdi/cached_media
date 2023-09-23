@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:core';
 import 'package:cached_media/cached_media_init.dart';
-import 'package:cached_media/entity_cached_media_info.dart';
+import 'package:cached_media/model/all_cached_media_info.dart';
 import 'package:collection/collection.dart';
 import 'package:get_storage/get_storage.dart';
 import 'dart:developer' as developer;

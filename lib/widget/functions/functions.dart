@@ -1,5 +1,5 @@
 import 'package:cached_media/cached_media.dart';
-import 'package:cached_media/entity_cached_media_info.dart';
+import 'package:cached_media/model/all_cached_media_info.dart';
 import 'package:cached_media/management_store.dart';
 import 'package:flutter/services.dart';
 import 'package:get_storage/get_storage.dart';

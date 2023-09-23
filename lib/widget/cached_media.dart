@@ -1,6 +1,6 @@
 library cached_media;
 
-import 'package:cached_media/entity_cached_media_info.dart';
+import 'package:cached_media/model/all_cached_media_info.dart';
 import 'package:cached_media/widget/cached_media_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
@@ -13,9 +13,9 @@ class CachedMedia extends StatefulWidget {
     required Key? key,
     required this.mediaUrl,
     required this.getStorage,
-    this.uniqueId,
+    required this.uniqueId,
+    required this.builder,
     this.startLoadingOnlyWhenVisible = false,
-    this.builder,
     this.wantKeepAlive = false,
   }) : super(key: key);
 
@@ -47,7 +47,7 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
   CachedMediaInfo? cachedMediaInfo;
 
   late CachedMediaController _cachedMediaController;
-  late CachedMediaSnapshot snapshot;
+  CachedMediaSnapshot snapshot = CachedMediaSnapshot(bytes: null, status: DownloadStatus.loading);
   bool initiating = false;
   bool initiated = false;
 

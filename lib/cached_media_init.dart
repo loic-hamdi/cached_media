@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:cached_media/entity_cached_media_info.dart';
+import 'package:cached_media/model/all_cached_media_info.dart';
 import 'package:cached_media/management_cache.dart';
 import 'package:get_storage/get_storage.dart';
 import 'dart:developer' as developer;
