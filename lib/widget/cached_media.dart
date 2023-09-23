@@ -41,11 +41,11 @@ class CachedMedia extends StatefulWidget {
   State<CachedMedia> createState() => _CachedMediaState();
 }
 
-class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClientMixin {
+class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClientMixin<CachedMedia> {
   @override
   bool get wantKeepAlive => true;
 
-  final CachedMediaSnapshot _snapshot = CachedMediaSnapshot(bytes: null, status: DownloadStatus.loading);
+  final _snapshot = CachedMediaSnapshot(bytes: null, status: DownloadStatus.loading);
   bool initiating = false;
   bool initiated = false;
 

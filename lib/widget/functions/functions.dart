@@ -29,17 +29,36 @@ String? getMimeType(String fileExtension) {
   }
 }
 
+/// Avoid multiple download of same content
+final isBeingDownloaded = <String>[];
+
 /// Return [CachedMediaInfo?] after either finding in cache or downloading then set in cache
 Future<CachedMediaInfo?> loadMedia(String mediaUrl, {required GetStorage getStorage}) async {
-  CachedMediaInfo? cachedMediaInfo = await findFirstCachedMediaInfoOrNull(getStorage, mediaUrl);
-  if (cachedMediaInfo == null) {
-    return await downloadAndSetInCache(mediaUrl, getStorage: getStorage);
+  CachedMediaInfo? cachedMediaInfo;
+  final isAlreadyDownloading = isBeingDownloaded.contains(mediaUrl);
+  if (isAlreadyDownloading) {
+    var count = 0;
+    while (cachedMediaInfo == null && count < 30) {
+      if (getShowLogs) {
+        developer.log('🔍 Is Already Downloading, wating to have cachedMediaInfo avaible (count: $count) - $mediaUrl', name: 'Cached Media package');
+      }
+      cachedMediaInfo = await findFirstCachedMediaInfoOrNull(getStorage, mediaUrl);
+      await Future.delayed(const Duration(milliseconds: 1000));
+    }
+  } else if (!isAlreadyDownloading) {
+    if (getShowLogs) {
+      developer.log('➕ Not already downloading, adding to list to download - $mediaUrl', name: 'Cached Media package');
+    }
+    isBeingDownloaded.add(mediaUrl);
+    cachedMediaInfo = await findFirstCachedMediaInfoOrNull(getStorage, mediaUrl);
+    cachedMediaInfo ??= await downloadAndSetInCache(mediaUrl, getStorage: getStorage);
   }
+  if (cachedMediaInfo != null) isBeingDownloaded.remove(mediaUrl);
   return cachedMediaInfo;
 }
 
 /// Download locally the file and return the file path if succes, or [null] if error.
-Future<CachedMediaInfo?> downloadMediaToCache(String mediaUrl, {required GetStorage getStorage}) async {
+Future<CachedMediaInfo?> downloadMedia(String mediaUrl, {required GetStorage getStorage}) async {
   try {
     final uniqueId = const Uuid().v1();
     String imgUrl = mediaUrl;
@@ -98,7 +117,7 @@ Future<CachedMediaInfo?> downloadMediaToCache(String mediaUrl, {required GetStor
 }
 
 Future<CachedMediaInfo?> downloadAndSetInCache(String mediaUrl, {required GetStorage getStorage}) async {
-  final cachedMediaInfoToSet = await downloadMediaToCache(mediaUrl, getStorage: getStorage);
+  final cachedMediaInfoToSet = await downloadMedia(mediaUrl, getStorage: getStorage);
   if (cachedMediaInfoToSet != null) {
     await addCachedMediaInfo(getStorage, cachedMediaInfoToSet);
     return cachedMediaInfoToSet;

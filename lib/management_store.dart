@@ -38,12 +38,6 @@ ${cachedMediaInfo.bytes![800]} || ${cachedMediaInfo.bytes![900]} || ${cachedMedi
 }
 
 Future<void> removeCachedMediaInfo(GetStorage getStorage, String id) async {
-  final cmi = getStorage.read(id);
-  if (cmi != null) {
-    //? We remove the media data
-    await getStorage.remove(id);
-  }
-
   final all = getStorage.read(keyName);
   if (all != null) {
     final allData = AllCachedMediaInfo.fromJson(json.decode(all));
@@ -52,6 +46,11 @@ Future<void> removeCachedMediaInfo(GetStorage getStorage, String id) async {
       allData.cachedMediaInfo!.removeWhere((e) => e.id == id);
       await getStorage.write(keyName, json.encode(allData.toJson()));
     }
+  }
+  final cmi = getStorage.read(id);
+  if (cmi != null) {
+    //? We remove the media data
+    await getStorage.remove(id);
   }
 }
 
