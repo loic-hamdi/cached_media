@@ -33,16 +33,8 @@ String? getMimeType(String fileExtension) {
 Future<CachedMediaInfo?> loadMedia(String mediaUrl, {required GetStorage getStorage}) async {
   CachedMediaInfo? cachedMediaInfo = await findFirstCachedMediaInfoOrNull(getStorage, mediaUrl);
   if (cachedMediaInfo == null) {
-    await downloadAndSetInCache(mediaUrl, getStorage: getStorage);
-  } else {
-    if (cachedMediaInfo.bytes != null) {
-      return cachedMediaInfo;
-    } else {
-      await removeCachedMediaInfo(getStorage, cachedMediaInfo.id);
-      await downloadAndSetInCache(mediaUrl, getStorage: getStorage);
-    }
+    return await downloadAndSetInCache(mediaUrl, getStorage: getStorage);
   }
-  cachedMediaInfo = await findFirstCachedMediaInfoOrNull(getStorage, mediaUrl);
   return cachedMediaInfo;
 }
 
@@ -105,9 +97,11 @@ Future<CachedMediaInfo?> downloadMediaToCache(String mediaUrl, {required GetStor
   return null;
 }
 
-Future<void> downloadAndSetInCache(String mediaUrl, {required GetStorage getStorage}) async {
+Future<CachedMediaInfo?> downloadAndSetInCache(String mediaUrl, {required GetStorage getStorage}) async {
   final cachedMediaInfoToSet = await downloadMediaToCache(mediaUrl, getStorage: getStorage);
   if (cachedMediaInfoToSet != null) {
     await addCachedMediaInfo(getStorage, cachedMediaInfoToSet);
+    return cachedMediaInfoToSet;
   }
+  return null;
 }
