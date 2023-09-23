@@ -41,7 +41,10 @@ class CachedMedia extends StatefulWidget {
   State<CachedMedia> createState() => _CachedMediaState();
 }
 
-class _CachedMediaState extends State<CachedMedia> {
+class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   final CachedMediaSnapshot _snapshot = CachedMediaSnapshot(bytes: null, status: DownloadStatus.loading);
   bool initiating = false;
   bool initiated = false;
@@ -63,6 +66,7 @@ class _CachedMediaState extends State<CachedMedia> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return widget.startLoadingOnlyWhenVisible
         ? VisibilityDetector(
             key: widget.key ?? Key(const Uuid().v1()),
@@ -79,16 +83,9 @@ class _CachedMediaState extends State<CachedMedia> {
     widget.builder(_snapshot);
 
     final cmi = await loadMedia(url, getStorage: getStorage);
-    await Future.delayed(const Duration(seconds: 1));
-    developer.log('🗣️ 1 ', name: 'Cached Media package');
-    await Future.delayed(const Duration(seconds: 1));
-    developer.log('🗣️ 2 ', name: 'Cached Media package');
-    await Future.delayed(const Duration(seconds: 1));
-    developer.log('🗣️ 3 ', name: 'Cached Media package');
-    await Future.delayed(const Duration(seconds: 1));
-    developer.log('🗣️ 4 ', name: 'Cached Media package');
-    await Future.delayed(const Duration(seconds: 1));
-    developer.log('🗣️ 5 ', name: 'Cached Media package');
+
+    await delay();
+
     if (getShowLogs) {
       developer.log('''
 🗣️  getFile() - from: await loadMedia()
@@ -120,5 +117,18 @@ _snapshot.status: ${_snapshot.status}
 url: $url
 ''', name: 'Cached Media package');
     }
+  }
+
+  Future<void> delay() async {
+    await Future.delayed(const Duration(seconds: 1));
+    developer.log('🗣️ 1 ', name: 'Cached Media package');
+    await Future.delayed(const Duration(seconds: 1));
+    developer.log('🗣️ 2 ', name: 'Cached Media package');
+    await Future.delayed(const Duration(seconds: 1));
+    developer.log('🗣️ 3 ', name: 'Cached Media package');
+    await Future.delayed(const Duration(seconds: 1));
+    developer.log('🗣️ 4 ', name: 'Cached Media package');
+    await Future.delayed(const Duration(seconds: 1));
+    developer.log('🗣️ 5 ', name: 'Cached Media package');
   }
 }
