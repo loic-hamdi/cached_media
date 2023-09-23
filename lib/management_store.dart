@@ -20,7 +20,7 @@ Future<void> addCachedMediaInfo(GetStorage getStorage, CachedMediaInfo cachedMed
         developer.log('✅  After download - Media found: ${cachedMediaInfo.id}', name: 'Cached Media package');
         developer.log('✅  After download - Media found: ${cachedMediaInfo.mediaUrl}', name: 'Cached Media package');
         developer.log('''
-✅  After download - Media found: 
+✅  After download - Media found (Length: ${cachedMediaInfo.bytes?.length ?? 0}): 
 ${cachedMediaInfo.bytes!.first} || ${cachedMediaInfo.bytes![100]} || ${cachedMediaInfo.bytes![200]} || ${cachedMediaInfo.bytes![300]} || 
 ${cachedMediaInfo.bytes![400]} || ${cachedMediaInfo.bytes![500]} || ${cachedMediaInfo.bytes![600]} || ${cachedMediaInfo.bytes![700]} || 
 ${cachedMediaInfo.bytes![800]} || ${cachedMediaInfo.bytes![900]} || ${cachedMediaInfo.bytes!.last}
