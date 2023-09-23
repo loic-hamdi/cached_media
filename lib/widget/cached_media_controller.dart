@@ -21,9 +21,8 @@ class CachedMediaController {
     _snapshot = snapshot;
   }
 
-  late final Function(CachedMediaSnapshot) _onSnapshotChanged;
-
-  late final CachedMediaSnapshot _snapshot;
+  late Function(CachedMediaSnapshot) _onSnapshotChanged;
+  late CachedMediaSnapshot _snapshot;
 
   Future<void> getFile(String url, {required GetStorage getStorage}) async {
     _snapshot.bytes = null;
@@ -32,6 +31,7 @@ class CachedMediaController {
     _onSnapshotChanged(_snapshot);
 
     final cmi = await loadMedia(url, getStorage: getStorage);
+
     if (cmi != null && cmi.bytes != null) {
       _snapshot.bytes = cmi.bytes;
       _snapshot.mimeType = cmi.mimeType;

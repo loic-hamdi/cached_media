@@ -15,7 +15,6 @@ class CachedMedia extends StatefulWidget {
     required this.getStorage,
     required this.builder,
     this.startLoadingOnlyWhenVisible = false,
-    this.wantKeepAlive = false,
   });
 
   /// Web url to get the media. The address must contains the file extension.
@@ -27,18 +26,13 @@ class CachedMedia extends StatefulWidget {
 
   final Widget? Function(BuildContext context, CachedMediaSnapshot snapshot)? builder;
 
-  final bool wantKeepAlive;
-
   final GetStorage getStorage;
 
   @override
   State<CachedMedia> createState() => _CachedMediaState();
 }
 
-class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClientMixin<CachedMedia> {
-  @override
-  bool get wantKeepAlive => widget.wantKeepAlive;
-
+class _CachedMediaState extends State<CachedMedia> {
   late CachedMediaController _cachedMediaController;
   CachedMediaSnapshot snapshot = CachedMediaSnapshot(bytes: null, status: DownloadStatus.loading);
   bool initiating = false;
@@ -47,7 +41,7 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
   @override
   void initState() {
     super.initState();
-    if (!widget.startLoadingOnlyWhenVisible) init();
+    if (!widget.startLoadingOnlyWhenVisible && !initiated) init();
   }
 
   Future<void> init() async {
@@ -56,7 +50,11 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
     snapshot = CachedMediaSnapshot(status: DownloadStatus.loading, bytes: null);
     _cachedMediaController = CachedMediaController(
       snapshot: snapshot,
-      onSnapshotChanged: (snapshot) => mounted ? setState(() => this.snapshot = snapshot) : null,
+      onSnapshotChanged: (snapshot) {
+        if (mounted) {
+          setState(() => this.snapshot = snapshot);
+        }
+      },
     );
     await _cachedMediaController.getFile(widget.mediaUrl, getStorage: widget.getStorage);
     initiating = false;
@@ -66,8 +64,6 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
-
     return widget.startLoadingOnlyWhenVisible
         ? VisibilityDetector(
             key: widget.key ?? Key(const Uuid().v1()),
