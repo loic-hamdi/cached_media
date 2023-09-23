@@ -52,9 +52,9 @@ class _MediaWidgetState extends State<MediaWidget> with AutomaticKeepAliveClient
   @override
   void initState() {
     super.initState();
-    if (widget.mediaType == MediaType.custom) {
-      init();
-    }
+    init();
+    // if (widget.mediaType == MediaType.custom) {
+    // }
   }
 
   Future<void> init() async {
