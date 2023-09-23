@@ -130,7 +130,7 @@ class MediaWidgetType extends StatelessWidget {
       switch (mediaType) {
         case MediaType.image:
           return ImageWidget(
-            key: Key('Image-widget-${cachedMediaInfo!.mediaUrl}'),
+            key: Key('MediaWidgetType-$uniqueId'),
             uniqueId: uniqueId,
             cachedMediaInfo: cachedMediaInfo!,
             width: width ?? 100,

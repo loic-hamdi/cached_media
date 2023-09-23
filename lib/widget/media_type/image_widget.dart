@@ -26,12 +26,14 @@ class ImageWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return cachedMediaInfo.bytes != null
         ? Image(
-            key: Key('cached-image-$uniqueId-${cachedMediaInfo.bytes!.first}'),
-            image: XFileImage(XFile.fromData(
-              (cachedMediaInfo.bytes!),
-              length: cachedMediaInfo.bytes!.length,
-              mimeType: cachedMediaInfo.mimeType,
-            )),
+            key: Key('CM-ImageWidget-$uniqueId'),
+            image: XFileImage(
+              XFile.fromData(
+                (cachedMediaInfo.bytes!),
+                length: cachedMediaInfo.bytes!.length,
+                mimeType: cachedMediaInfo.mimeType,
+              ),
+            ),
             width: width,
             height: height,
             fit: fit,
