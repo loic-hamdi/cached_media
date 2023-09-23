@@ -98,7 +98,7 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
   }
 
   Future<void> init() async {
-    if (cachedMediaInfo == null) {
+    if (cachedMediaInfo?.bytes == null) {
       isInitiating = true;
       if (mounted) setState(() {});
       cachedMediaInfo = await loadMedia(widget.mediaUrl, getStorage: widget.getStorage);

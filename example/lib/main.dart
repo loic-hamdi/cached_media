@@ -70,7 +70,6 @@ class _MyHomePageState extends State<MyHomePage> {
                       return const Center(child: CircularProgressIndicator.adaptive());
                     } else if (snapshot.status == DownloadStatus.success && snapshot.bytes != null) {
                       return Image.memory(
-                        key: Key('Image-mem-${snapshot.bytes.first}'),
                         snapshot.bytes!,
                       );
                     } else {

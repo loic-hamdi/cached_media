@@ -53,21 +53,17 @@ class _MediaWidgetState extends State<MediaWidget> with AutomaticKeepAliveClient
   void initState() {
     super.initState();
     init();
-    // if (widget.mediaType == MediaType.custom) {
-    // }
   }
 
   Future<void> init() async {
     initiating = true;
     if (mounted) setState(() {});
-    if (widget.builder != null) {
-      snapshot = CachedMediaSnapshot(status: DownloadStatus.loading, bytes: null);
-      _cachedMediaController = CachedMediaController(
-        snapshot: snapshot,
-        onSnapshotChanged: (snapshot) => mounted ? setState(() => this.snapshot = snapshot) : null,
-      );
-      await _cachedMediaController.getFile(widget.mediaUrl, getStorage: widget.getStorage);
-    }
+    snapshot = CachedMediaSnapshot(status: DownloadStatus.loading, bytes: null);
+    _cachedMediaController = CachedMediaController(
+      snapshot: snapshot,
+      onSnapshotChanged: (snapshot) => mounted ? setState(() => this.snapshot = snapshot) : null,
+    );
+    await _cachedMediaController.getFile(widget.mediaUrl, getStorage: widget.getStorage);
     initiating = false;
     initiated = true;
     if (mounted) setState(() {});
@@ -83,7 +79,11 @@ class _MediaWidgetState extends State<MediaWidget> with AutomaticKeepAliveClient
             ? VisibilityDetector(
                 key: widget.key ?? Key('visibility-cached-media-${widget.uniqueId}'),
                 onVisibilityChanged: !initiating && !initiated ? (_) async => _.visibleFraction > 0 ? await init() : null : null,
-                child: widget.builder != null ? widget.builder!(context, snapshot) ?? const SizedBox() : const Text('Builder implementation is missing'),
+                child: widget.builder != null
+                    ? widget.builder!(context, snapshot) ?? const SizedBox()
+                    : const Text(
+                        'Builder implementation is missing',
+                      ),
               )
             : widget.builder != null
                 ? widget.builder!(context, snapshot) ?? const SizedBox()

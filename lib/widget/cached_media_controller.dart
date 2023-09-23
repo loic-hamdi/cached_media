@@ -35,8 +35,8 @@ class CachedMediaController {
     if (cmi != null && cmi.bytes != null) {
       _snapshot.bytes = cmi.bytes;
       _snapshot.mimeType = cmi.mimeType;
+      _snapshot.status = DownloadStatus.success;
       _onSnapshotChanged(_snapshot);
-      _onSnapshotChanged(_snapshot..status = DownloadStatus.success);
     } else {
       _onSnapshotChanged(_snapshot..status = DownloadStatus.error);
     }
