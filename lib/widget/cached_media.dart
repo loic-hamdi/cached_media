@@ -13,7 +13,6 @@ class CachedMedia extends StatefulWidget {
     required super.key,
     required this.mediaUrl,
     required this.getStorage,
-    required this.uniqueId,
     required this.builder,
     this.startLoadingOnlyWhenVisible = false,
     this.wantKeepAlive = false,
@@ -25,10 +24,6 @@ class CachedMedia extends StatefulWidget {
   /// To save ressources & bandwidth you can delay the media download
   /// Set [startLoadingOnlyWhenVisible] to [true] to start to download the media when the widget becomes visible on user's screen
   final bool startLoadingOnlyWhenVisible;
-
-  /// The [uniqueId] is used to generate widget keys
-  /// Important: This [String] must be unique for any media you will load with [CachedMedia]
-  final String? uniqueId;
 
   final Widget? Function(BuildContext context, CachedMediaSnapshot snapshot)? builder;
 
