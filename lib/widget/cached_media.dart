@@ -1,12 +1,22 @@
 library cached_media;
 
-import 'package:cached_media/widget/cached_media_controller.dart';
+import 'dart:typed_data';
+import 'dart:developer' as developer;
+import 'package:cached_media/cached_media.dart';
+import 'package:cached_media/widget/functions/functions.dart';
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:uuid/uuid.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 enum DownloadStatus { success, loading, error }
+
+class CachedMediaSnapshot {
+  late DownloadStatus status;
+  late Uint8List? bytes;
+  late String? mimeType;
+  CachedMediaSnapshot({required this.bytes, required this.status});
+}
 
 class CachedMedia extends StatefulWidget {
   const CachedMedia({
@@ -33,8 +43,7 @@ class CachedMedia extends StatefulWidget {
 }
 
 class _CachedMediaState extends State<CachedMedia> {
-  late CachedMediaController _cachedMediaController;
-  CachedMediaSnapshot snapshot = CachedMediaSnapshot(bytes: null, status: DownloadStatus.loading);
+  final CachedMediaSnapshot _snapshot = CachedMediaSnapshot(bytes: null, status: DownloadStatus.loading);
   bool initiating = false;
   bool initiated = false;
 
@@ -47,17 +56,7 @@ class _CachedMediaState extends State<CachedMedia> {
   Future<void> init() async {
     initiating = true;
     //! if (mounted) setState(() {});
-    snapshot = CachedMediaSnapshot(status: DownloadStatus.loading, bytes: null);
-    _cachedMediaController = CachedMediaController(
-      onSnapshotChanged: (value) {
-        if (mounted) {
-          snapshot = value;
-          widget.builder(context, snapshot);
-          setState(() {});
-        }
-      },
-    );
-    await _cachedMediaController.getFile(widget.mediaUrl, getStorage: widget.getStorage);
+    await getFile(widget.mediaUrl, getStorage: widget.getStorage);
     initiating = false;
     initiated = true;
     //! if (mounted) setState(() {});
@@ -69,8 +68,42 @@ class _CachedMediaState extends State<CachedMedia> {
         ? VisibilityDetector(
             key: widget.key ?? Key(const Uuid().v1()),
             onVisibilityChanged: !initiating && !initiated ? (_) async => _.visibleFraction > 0 ? await init() : null : null,
-            child: widget.builder(context, snapshot),
+            child: widget.builder(context, _snapshot),
           )
-        : widget.builder(context, snapshot);
+        : widget.builder(context, _snapshot);
+  }
+
+  Future<void> getFile(String url, {required GetStorage getStorage}) async {
+    _snapshot.bytes = null;
+    _snapshot.mimeType = null;
+    _snapshot.status = DownloadStatus.loading;
+    if (mounted) widget.builder(context, _snapshot);
+    if (mounted) setState(() {});
+
+    final cmi = await loadMedia(url, getStorage: getStorage);
+
+    if (cmi != null && cmi.bytes != null) {
+      _snapshot.bytes = cmi.bytes;
+      _snapshot.mimeType = cmi.mimeType;
+      _snapshot.status = DownloadStatus.success;
+      if (mounted) widget.builder(context, _snapshot);
+      if (mounted) setState(() {});
+      printSnapshot('Success');
+    } else {
+      if (mounted) widget.builder(context, _snapshot..status = DownloadStatus.error);
+      if (mounted) setState(() {});
+      printSnapshot('Error');
+    }
+  }
+
+  void printSnapshot(String? from) {
+    if (getShowLogs) {
+      developer.log('''
+🗣️  _onSnapshotChanged() - from: $from
+_snapshot.bytes != null: ${_snapshot.bytes != null}
+_snapshot.mimeType: ${_snapshot.mimeType}
+_snapshot.status: ${_snapshot.status}
+''', name: 'Cached Media package');
+    }
   }
 }
