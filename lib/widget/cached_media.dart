@@ -49,7 +49,7 @@ class _CachedMediaState extends State<CachedMedia> {
   @override
   void initState() {
     super.initState();
-    if (!widget.startLoadingOnlyWhenVisible && !initiated) init();
+    if (!widget.startLoadingOnlyWhenVisible && !initiating && !initiated) init();
   }
 
   Future<void> init() async {
