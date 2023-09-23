@@ -25,6 +25,25 @@ class ImageWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return cachedMediaInfo.bytes != null
+        ? Container(
+            decoration: BoxDecoration(border: Border.all(color: Colors.purple)),
+            child: Image.memory(
+              key: Key('CM-ImageWidget-$uniqueId'),
+              cachedMediaInfo.bytes!,
+              width: width,
+              height: height,
+              fit: fit,
+              errorBuilder: assetErrorImage != null
+                  ? (context, error, stackTrace) => Image.asset(
+                        assetErrorImage!,
+                        fit: BoxFit.fitWidth,
+                      )
+                  : null,
+            ),
+          )
+        : const Text('Not bytes found');
+
+    return cachedMediaInfo.bytes != null
         ? Image(
             key: Key('CM-ImageWidget-$uniqueId'),
             image: XFileImage(
