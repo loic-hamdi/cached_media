@@ -46,7 +46,7 @@ class _CachedMediaState extends State<CachedMedia> {
 
   Future<void> init() async {
     initiating = true;
-    if (mounted) setState(() {});
+    //! if (mounted) setState(() {});
     snapshot = CachedMediaSnapshot(status: DownloadStatus.loading, bytes: null);
     _cachedMediaController = CachedMediaController(
       snapshot: snapshot,
@@ -59,7 +59,7 @@ class _CachedMediaState extends State<CachedMedia> {
     await _cachedMediaController.getFile(widget.mediaUrl, getStorage: widget.getStorage);
     initiating = false;
     initiated = true;
-    if (mounted) setState(() {});
+    //! if (mounted) setState(() {});
   }
 
   @override
