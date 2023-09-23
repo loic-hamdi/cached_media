@@ -54,11 +54,11 @@ class _CachedMediaState extends State<CachedMedia> {
 
   Future<void> init() async {
     initiating = true;
-    //! if (mounted) setState(() {});
+    if (mounted) setState(() {});
     await getFile(widget.mediaUrl, getStorage: widget.getStorage);
     initiating = false;
     initiated = true;
-    //! if (mounted) setState(() {});
+    if (mounted) setState(() {});
   }
 
   @override
