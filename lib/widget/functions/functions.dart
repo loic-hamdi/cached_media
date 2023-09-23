@@ -34,6 +34,9 @@ final isBeingDownloaded = <String>[];
 
 /// Return [CachedMediaInfo?] after either finding in cache or downloading then set in cache
 Future<CachedMediaInfo?> loadMedia(String mediaUrl, {required GetStorage getStorage}) async {
+  if (getShowLogs) {
+    developer.log('🟦  loadMedia () - $mediaUrl - isBeingDownloaded.length: ${isBeingDownloaded.length} ', name: 'Cached Media package');
+  }
   CachedMediaInfo? cachedMediaInfo;
   final isAlreadyDownloading = isBeingDownloaded.contains(mediaUrl);
   if (isAlreadyDownloading) {
