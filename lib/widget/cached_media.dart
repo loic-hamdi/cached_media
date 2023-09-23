@@ -1,23 +1,23 @@
 library cached_media;
 
-import 'package:cached_media/model/all_cached_media_info.dart';
 import 'package:cached_media/widget/cached_media_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:uuid/uuid.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 enum DownloadStatus { success, loading, error }
 
 class CachedMedia extends StatefulWidget {
   const CachedMedia({
-    required Key? key,
+    required super.key,
     required this.mediaUrl,
     required this.getStorage,
     required this.uniqueId,
     required this.builder,
     this.startLoadingOnlyWhenVisible = false,
     this.wantKeepAlive = false,
-  }) : super(key: key);
+  });
 
   /// Web url to get the media. The address must contains the file extension.
   final String mediaUrl;
@@ -43,8 +43,6 @@ class CachedMedia extends StatefulWidget {
 class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClientMixin<CachedMedia> {
   @override
   bool get wantKeepAlive => widget.wantKeepAlive;
-
-  CachedMediaInfo? cachedMediaInfo;
 
   late CachedMediaController _cachedMediaController;
   CachedMediaSnapshot snapshot = CachedMediaSnapshot(bytes: null, status: DownloadStatus.loading);
@@ -77,7 +75,7 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
 
     return widget.startLoadingOnlyWhenVisible
         ? VisibilityDetector(
-            key: widget.key ?? Key('visibility-cached-media-${widget.uniqueId}'),
+            key: widget.key ?? Key(const Uuid().v1()),
             onVisibilityChanged: !initiating && !initiated ? (_) async => _.visibleFraction > 0 ? await init() : null : null,
             child: widget.builder != null
                 ? widget.builder!(context, snapshot) ?? const SizedBox()
