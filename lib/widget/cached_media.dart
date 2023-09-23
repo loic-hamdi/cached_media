@@ -85,6 +85,7 @@ class _CachedMediaState extends State<CachedMedia> {
       developer.log('''
 🗣️  getFile() - from: await loadMedia()
 cmi != null: ${cmi != null}
+cmi.bytes != null: ${cmi?.bytes != null}
 url: $url
 ''', name: 'Cached Media package');
     }
@@ -94,22 +95,23 @@ url: $url
       _snapshot.mimeType = cmi.mimeType;
       _snapshot.status = DownloadStatus.success;
       if (mounted) widget.builder(_snapshot);
-      if (mounted) setState(() {});
-      printSnapshot('Success');
+      // if (mounted) setState(() {});
+      printSnapshot(url, 'Success');
     } else {
       if (mounted) widget.builder(_snapshot..status = DownloadStatus.error);
-      if (mounted) setState(() {});
-      printSnapshot('Error');
+      // if (mounted) setState(() {});
+      printSnapshot(url, 'Error');
     }
   }
 
-  void printSnapshot(String? from) {
+  void printSnapshot(String url, String from) {
     if (getShowLogs) {
       developer.log('''
 🗣️  _onSnapshotChanged() - from: $from
 _snapshot.bytes != null: ${_snapshot.bytes != null}
 _snapshot.mimeType: ${_snapshot.mimeType}
 _snapshot.status: ${_snapshot.status}
+url: $url
 ''', name: 'Cached Media package');
     }
   }
