@@ -46,6 +46,7 @@ Future<void> initStreamListener({bool showLogs = false, required GetStorage getS
     p0.addAll(allData.cachedMediaInfo ?? []);
     allCachedMediaInfo.clear();
     allCachedMediaInfo.addAll(p0);
+    currentCacheSize = calculateCacheSize(p0);
     if (currentCacheSize > cacheMaxSizeDefault) {
       await reduceCacheSize(getStorage, p0);
     }
