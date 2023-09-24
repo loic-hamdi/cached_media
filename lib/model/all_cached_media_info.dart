@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 class AllCachedMediaInfo {
   List<CachedMediaInfo>? cachedMediaInfo;
 
@@ -27,6 +29,7 @@ class CachedMediaInfo {
   late String cachedMediaUrl;
   late int fileSize;
   late int dateCreated;
+  Uint8List? bytes;
 
   CachedMediaInfo({
     required this.id,
@@ -34,6 +37,7 @@ class CachedMediaInfo {
     required this.cachedMediaUrl,
     required this.fileSize,
     required this.dateCreated,
+    this.bytes,
   });
 
   CachedMediaInfo.fromJson(Map<String, dynamic> json) {
@@ -42,6 +46,12 @@ class CachedMediaInfo {
     cachedMediaUrl = json['cachedMediaUrl'];
     fileSize = json['fileSize'];
     dateCreated = json['dateCreated'];
+    if (json['bytes'] != null) {
+      final intlist = List<int>.from(json['bytes']);
+      bytes = Uint8List.fromList(intlist);
+    } else {
+      bytes = null;
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -51,6 +61,7 @@ class CachedMediaInfo {
     data['cachedMediaUrl'] = cachedMediaUrl;
     data['fileSize'] = fileSize;
     data['dateCreated'] = dateCreated;
+    data['bytes'] = bytes?.toList();
     return data;
   }
 }
