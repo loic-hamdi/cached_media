@@ -30,10 +30,8 @@ Future<void> initializeCachedMedia({
   required GetStorage getStorage,
 }) async {
   if (!isInitialized) {
-    final hasAccess = await hasPermission();
-    if (!hasAccess) {
-      developer.log('❌  Permission access denied', name: 'Cached Media package');
-    }
+    final hasAccess = await hasPermissionIoWeb();
+    if (!hasAccess) developer.log('❌  Permission access denied', name: 'Cached Media package');
     cacheMaxSizeDefault = cacheMaxSize;
     _showLogs = showLogs;
     await initStreamListener(showLogs: showLogs, getStorage: getStorage);
@@ -51,9 +49,6 @@ Future<void> initStreamListener({bool showLogs = false, required GetStorage getS
     allCachedMediaInfo.clear();
     allCachedMediaInfo.addAll(p0);
     currentCacheSize = calculateCacheSize(p0);
-    if (currentCacheSize > cacheMaxSizeDefault) {
-      await reduceCacheSize(getStorage, p0);
-    }
     if (getShowLogs) {
       developer.log('''
 - - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -
@@ -63,11 +58,10 @@ Cache Max Size: $cacheMaxSizeDefault
 - - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -
 ''', name: 'Cached Media package');
     }
+    if (currentCacheSize > cacheMaxSizeDefault) {
+      await reduceCacheSize(getStorage, p0);
+    }
   });
-}
-
-Future<bool> hasPermission() async {
-  return await hasPermissionIoWeb();
 }
 
 Future<void> cleanCache({required GetStorage getStorage}) async {
