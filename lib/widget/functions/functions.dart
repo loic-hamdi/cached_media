@@ -83,20 +83,20 @@ Future<CachedMediaInfo?> downloadMedia(String mediaUrl, {required GetStorage get
     final fileExtension = imgUrl.split('.').last;
     final mimeType = getMimeType(fileExtension.toLowerCase());
     if (getShowLogs) {
-      developer.log('🪫  Downloading (Mime: $mimeType) : $mediaUrl', name: 'Cached Media package');
+      developer.log('🪫  Downloading (Mime: $mimeType) : \n$mediaUrl', name: 'Cached Media package');
     }
     // Uint8List bytes = (await NetworkAssetBundle(Uri.parse(mediaUrl)).load(mediaUrl)).buffer.asUint8List();
     bool statusCode200 = false;
     var count = 0;
     while (!statusCode200 && count < 6) {
       if (getShowLogs) {
-        developer.log('🟢  Launch http request (count: $count): $mediaUrl', name: 'Cached Media package');
+        developer.log('🟢  Launch http request (count: $count): \n$mediaUrl', name: 'Cached Media package');
       }
       final response = await http.get(Uri.parse(mediaUrl));
       statusCode200 = response.statusCode == 200;
       if (response.statusCode == 200) {
         if (getShowLogs) {
-          developer.log('🟢  File Downloaded (count: $count): $mediaUrl', name: 'Cached Media package');
+          developer.log('🟢  File Downloaded (count: $count): \n$mediaUrl', name: 'Cached Media package');
         }
         Uint8List bytes = response.bodyBytes;
         if (bytes.isNotEmpty) {
@@ -111,17 +111,17 @@ Future<CachedMediaInfo?> downloadMedia(String mediaUrl, {required GetStorage get
             fileSize: sizeInMb,
           );
           if (getShowLogs) {
-            developer.log('🔋  Downloaded (Length:$sizeInBytes - sizeInMb: $sizeInMb) : $mediaUrl', name: 'Cached Media package');
+            developer.log('🔋  Downloaded (Length:$sizeInBytes - sizeInMb: $sizeInMb) : \n$mediaUrl', name: 'Cached Media package');
           }
           return cachedMediaInfoToSet;
         } else {
           if (getShowLogs) {
-            developer.log('❌ Error - bytes is empty : $mediaUrl', name: 'Cached Media package');
+            developer.log('❌ Error - bytes is empty : \n$mediaUrl', name: 'Cached Media package');
           }
         }
       } else {
         if (getShowLogs) {
-          developer.log('❌ Error - CAN NOT DOWNLOAD FILE : $mediaUrl', name: 'Cached Media package');
+          developer.log('❌ Error - CAN NOT DOWNLOAD FILE : \n$mediaUrl', name: 'Cached Media package');
         }
       }
       if (!statusCode200) await Future.delayed(const Duration(seconds: 5));
@@ -130,7 +130,7 @@ Future<CachedMediaInfo?> downloadMedia(String mediaUrl, {required GetStorage get
     return null;
   } catch (e) {
     if (getShowLogs) {
-      developer.log('❌ Error - media : $mediaUrl', name: 'Cached Media package');
+      developer.log('❌ Error - media : \n$mediaUrl', name: 'Cached Media package');
     }
   }
   return null;

@@ -57,7 +57,7 @@ Future<CachedMediaInfo?> findFirstCachedMediaInfoOrNull(GetStorage getStorage, S
     final allData = AllCachedMediaInfo.fromJson(json.decode(all));
     if (allData.cachedMediaInfo != null && allData.cachedMediaInfo!.isNotEmpty) {
       var cmi = allData.cachedMediaInfo!.firstWhere((e) => e.mediaUrl == mediaUrl, orElse: () => CachedMediaInfo(bytes: null, fileSize: 0.0, dateCreated: 0, id: '', mediaUrl: '', mimeType: null));
-      if (cmi.bytes != null) {
+      if (cmi.mediaUrl.isNotEmpty) {
         final cmiTmpJson = getStorage.read(cmi.id);
         if (cmiTmpJson == null) {
           if (getShowLogs) {
