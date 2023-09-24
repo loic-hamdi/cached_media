@@ -10,8 +10,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  http:
+  collection:
+  dio:
   get_storage: 
+  path_provider: # NO WEB SUPPORT
   permission_handler:  # NO WEB SUPPORT
   uuid: 
   visibility_detector: 

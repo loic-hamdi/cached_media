@@ -1,10 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:cached_media/model/all_cached_media_info.dart';
-import 'package:cached_media/management_cache.dart';
 import 'package:get_storage/get_storage.dart';
 import 'dart:developer' as developer;
 import 'package:cached_media/widget/functions/has_permission_web.dart' if (dart.library.io) 'package:cached_media/widget/functions/has_permission_io.dart';
+import 'package:cached_media/management_cache_web.dart' if (dart.library.io) 'package:cached_media/management_cache_io.dart';
+
+dynamic tempDir;
+dynamic get getTempDir => tempDir;
 
 final allCachedMediaInfo = <CachedMediaInfo>[];
 double currentCacheSize = 0;
@@ -34,6 +37,7 @@ Future<void> initializeCachedMedia({
     cacheMaxSizeDefault = cacheMaxSize;
     _showLogs = showLogs;
     await initStreamListener(showLogs: showLogs, getStorage: getStorage);
+    tempDir = await getTemporaryDirectoryIoWeb();
     if (clearCache) await clearCacheOnInit(getStorage);
     isInitialized = true;
   }
@@ -46,7 +50,6 @@ Future<void> initStreamListener({bool showLogs = false, required GetStorage getS
     p0.addAll(allData.cachedMediaInfo ?? []);
     allCachedMediaInfo.clear();
     allCachedMediaInfo.addAll(p0);
-    currentCacheSize = calculateCacheSize(p0);
     if (currentCacheSize > cacheMaxSizeDefault) {
       await reduceCacheSize(getStorage, p0);
     }
@@ -54,8 +57,8 @@ Future<void> initStreamListener({bool showLogs = false, required GetStorage getS
       developer.log('''
 - - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -
 Media in cache: ${p0.length}
-Current Cache Size: ${(calculateCacheSize(p0))} MB
-Cache Max Size: $cacheMaxSizeDefault  MB
+Current Cache Size: ${(calculateCacheSize(p0)) / 1000000} MB
+Cache Max Size: ${cacheMaxSizeDefault / 1000000} MB
 - - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -
 ''', name: 'Cached Media package');
     }

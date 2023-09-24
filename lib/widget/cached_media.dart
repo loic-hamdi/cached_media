@@ -1,6 +1,5 @@
 library cached_media;
 
-import 'dart:typed_data';
 import 'dart:developer' as developer;
 import 'package:cached_media/cached_media.dart';
 import 'package:cached_media/widget/functions/functions.dart';
@@ -13,9 +12,8 @@ enum DownloadStatus { success, loading, error }
 
 class CachedMediaSnapshot {
   late DownloadStatus status;
-  late Uint8List? bytes;
-  late String? mimeType;
-  CachedMediaSnapshot({required this.bytes, required this.status, required this.mimeType});
+  late String? filePath;
+  CachedMediaSnapshot({required this.status, required this.filePath});
 }
 
 class CachedMedia extends StatefulWidget {
@@ -45,7 +43,7 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
   @override
   bool get wantKeepAlive => true;
 
-  final _snapshot = CachedMediaSnapshot(bytes: null, mimeType: null, status: DownloadStatus.loading);
+  final _snapshot = CachedMediaSnapshot(status: DownloadStatus.loading, filePath: null);
   bool initiating = false;
   bool initiated = false;
 
@@ -77,9 +75,8 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
   }
 
   Future<void> getFile(String url, {required GetStorage getStorage}) async {
-    _snapshot.bytes = null;
-    _snapshot.mimeType = null;
     _snapshot.status = DownloadStatus.loading;
+    _snapshot.filePath = null;
     widget.builder(_snapshot);
 
     final cmi = await loadMedia(url, getStorage: getStorage);
@@ -91,16 +88,15 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
 🗣️  getFile() - from: await loadMedia()
 🗣️  key: ${widget.key}
 🗣️  cmi != null: ${cmi != null}
-🗣️  cmi.bytes != null: ${cmi?.bytes != null}
+🗣️  cmi.cachedMediaUrl: ${cmi?.cachedMediaUrl}
 🗣️  cmi.fileSize: ${cmi?.fileSize}
 🗣️  url: $url
 ''', name: 'Cached Media package');
     }
 
-    if (cmi != null && cmi.bytes != null) {
-      _snapshot.bytes = cmi.bytes;
-      _snapshot.mimeType = cmi.mimeType;
+    if (cmi != null && cmi.cachedMediaUrl.isNotEmpty) {
       _snapshot.status = DownloadStatus.success;
+      _snapshot.filePath = cmi.cachedMediaUrl;
       widget.builder(_snapshot);
       printSnapshot(url, 'Success');
     } else {
@@ -114,8 +110,7 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
       developer.log('''
 🧠  _onSnapshotChanged() - from: $from
 🧠  key: ${widget.key}
-🧠  _snapshot.bytes != null: ${_snapshot.bytes != null}
-🧠  _snapshot.mimeType: ${_snapshot.mimeType}
+🧠  _snapshot.filePath != null: ${_snapshot.filePath}
 🧠  _snapshot.status: ${_snapshot.status} ⬅️⬅️⬅️
 🧠  url: $url
 ''', name: 'Cached Media package');
