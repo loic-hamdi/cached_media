@@ -50,7 +50,7 @@ Future<void> initStreamListener({bool showLogs = false, required GetStorage getS
     p0.addAll(allData.cachedMediaInfo ?? []);
     allCachedMediaInfo.clear();
     allCachedMediaInfo.addAll(p0);
-    calculateCacheSize(p0);
+    currentCacheSize = calculateCacheSize(p0);
     if (currentCacheSize > cacheMaxSizeDefault) {
       await reduceCacheSize(getStorage, p0);
     }
@@ -58,8 +58,8 @@ Future<void> initStreamListener({bool showLogs = false, required GetStorage getS
       developer.log('''
 - - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -
 Media in cache: ${p0.length}
-Current Cache Size: ${(calculateCacheSize(p0)) / 1000000} MB
-Cache Max Size: ${cacheMaxSizeDefault / 1000000} MB
+Current Cache Size: $currentCacheSize
+Cache Max Size: $cacheMaxSizeDefault
 - - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -
 ''', name: 'Cached Media package');
     }
