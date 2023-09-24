@@ -43,9 +43,12 @@ Future<CachedMediaInfo?> loadMedia(String mediaUrl, {required GetStorage getStor
     var count = 0;
     while (cachedMediaInfo == null && count < 30) {
       if (getShowLogs) {
-        developer.log('🟩  Is Already Downloading, wating to have cachedMediaInfo avaible (count: $count) - $mediaUrl', name: 'Cached Media package');
+        developer.log('🟨  Is Already Downloading, wating to have cachedMediaInfo avaible (count: $count) - $mediaUrl', name: 'Cached Media package');
       }
       cachedMediaInfo = await findFirstCachedMediaInfoOrNull(getStorage, mediaUrl);
+      if (getShowLogs) {
+        developer.log('🟨  Is Already Downloading, cachedMediaInfo is not null : ${cachedMediaInfo != null} (count: $count) - $mediaUrl', name: 'Cached Media package');
+      }
       if (cachedMediaInfo == null) await Future.delayed(const Duration(milliseconds: 1000));
     }
   } else if (!isAlreadyDownloading) {
@@ -69,7 +72,7 @@ Future<CachedMediaInfo?> downloadMedia(String mediaUrl, {required GetStorage get
     final fileExtension = imgUrl.split('.').last;
     final mimeType = getMimeType(fileExtension.toLowerCase());
     if (getShowLogs) {
-      developer.log('🪫 Downloading (Mime: $mimeType) : $mediaUrl', name: 'Cached Media package');
+      developer.log('🪫  Downloading (Mime: $mimeType) : $mediaUrl', name: 'Cached Media package');
     }
     Uint8List bytes = (await NetworkAssetBundle(Uri.parse(mediaUrl)).load(mediaUrl)).buffer.asUint8List();
     if (bytes.isNotEmpty) {
@@ -84,7 +87,7 @@ Future<CachedMediaInfo?> downloadMedia(String mediaUrl, {required GetStorage get
         fileSize: sizeInMb,
       );
       if (getShowLogs) {
-        developer.log('🔋 Downloaded (Length:$sizeInBytes - sizeInMb: $sizeInMb) : $mediaUrl', name: 'Cached Media package');
+        developer.log('🔋  Downloaded (Length:$sizeInBytes - sizeInMb: $sizeInMb) : $mediaUrl', name: 'Cached Media package');
       }
       return cachedMediaInfoToSet;
     }
