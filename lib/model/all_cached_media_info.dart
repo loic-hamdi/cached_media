@@ -44,7 +44,7 @@ class CachedMediaInfo {
     id = json['id'];
     mediaUrl = json['mediaUrl'];
     cachedMediaUrl = json['cachedMediaUrl'];
-    fileSize = json['fileSize'];
+    fileSize = double.parse(json['fileSize']);
     dateCreated = json['dateCreated'];
     if (json['bytes'] != null) {
       final intlist = List<int>.from(json['bytes']);
