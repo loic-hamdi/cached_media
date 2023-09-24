@@ -62,7 +62,7 @@ Future<CachedMediaInfo?> findFirstCachedMediaInfoOrNull(GetStorage getStorage, S
         if (cmiTmpJson == null) {
           if (getShowLogs) {
             developer.log('''
-❌  Media not found in findFirstCachedMediaInfoOrNull()
+❌  Media not found in MEDIA STORAGE findFirstCachedMediaInfoOrNull()
 ❌  UniqueId: ${cmi.id}
 ❌  MediaUrl: ${cmi.mediaUrl}
 ''', name: 'Cached Media package');
@@ -78,6 +78,14 @@ Future<CachedMediaInfo?> findFirstCachedMediaInfoOrNull(GetStorage getStorage, S
 ''', name: 'Cached Media package');
           }
           return cachedMediaInfoFull;
+        }
+      } else {
+        if (getShowLogs) {
+          developer.log('''
+❌  Media not found in GENERAL INDEX LIST findFirstCachedMediaInfoOrNull()
+❌  UniqueId: ${cmi.id}
+❌  MediaUrl: ${cmi.mediaUrl}
+''', name: 'Cached Media package');
         }
       }
     }
