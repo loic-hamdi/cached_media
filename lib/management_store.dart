@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:core';
 import 'package:cached_media/cached_media_init.dart';
 import 'package:cached_media/model/all_cached_media_info.dart';
-import 'package:collection/collection.dart';
 import 'package:get_storage/get_storage.dart';
 import 'dart:developer' as developer;
 
@@ -57,8 +56,8 @@ Future<CachedMediaInfo?> findFirstCachedMediaInfoOrNull(GetStorage getStorage, S
   if (all != null) {
     final allData = AllCachedMediaInfo.fromJson(json.decode(all));
     if (allData.cachedMediaInfo != null && allData.cachedMediaInfo!.isNotEmpty) {
-      final cmi = allData.cachedMediaInfo!.firstWhereOrNull((e) => e.mediaUrl == mediaUrl);
-      if (cmi != null) {
+      var cmi = allData.cachedMediaInfo!.firstWhere((e) => e.mediaUrl == mediaUrl, orElse: () => CachedMediaInfo(bytes: null, fileSize: 0.0, dateCreated: 0, id: '', mediaUrl: '', mimeType: null));
+      if (cmi.bytes != null) {
         final cmiTmpJson = getStorage.read(cmi.id);
         if (cmiTmpJson == null) {
           if (getShowLogs) {
