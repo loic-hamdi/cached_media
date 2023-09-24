@@ -84,16 +84,16 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
 
     final cmi = await loadMedia(url, getStorage: getStorage);
 
-    await delay();
+    // await delay();
 
     if (getShowLogs) {
       developer.log('''
 🗣️  getFile() - from: await loadMedia()
-key: ${widget.key}
-cmi != null: ${cmi != null}
-cmi.bytes != null: ${cmi?.bytes != null}
-cmi.fileSize: ${cmi?.fileSize}
-url: $url
+🗣️  key: ${widget.key}
+🗣️  cmi != null: ${cmi != null}
+🗣️  cmi.bytes != null: ${cmi?.bytes != null}
+🗣️  cmi.fileSize: ${cmi?.fileSize}
+🗣️  url: $url
 ''', name: 'Cached Media package');
     }
 
@@ -112,12 +112,12 @@ url: $url
   void printSnapshot(String url, String from) {
     if (getShowLogs) {
       developer.log('''
-🗣️  _onSnapshotChanged() - from: $from
-key: ${widget.key}
-_snapshot.bytes != null: ${_snapshot.bytes != null}
-_snapshot.mimeType: ${_snapshot.mimeType}
-_snapshot.status: ${_snapshot.status}
-url: $url
+🧠  _onSnapshotChanged() - from: $from
+🧠  key: ${widget.key}
+🧠  _snapshot.bytes != null: ${_snapshot.bytes != null}
+🧠  _snapshot.mimeType: ${_snapshot.mimeType}
+🧠  _snapshot.status: ${_snapshot.status} ⬅️⬅️⬅️
+🧠  url: $url
 ''', name: 'Cached Media package');
     }
   }
