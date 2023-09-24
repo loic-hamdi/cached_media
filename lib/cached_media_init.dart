@@ -18,7 +18,7 @@ bool get getShowLogs => _showLogs;
 
 bool isInitialized = false;
 
-const keyName = 'all_media';
+const keyName = 'cached_media';
 
 /// The function [initializeCachedMedia()] must be placed after [WidgetsFlutterBinding.ensureInitialized()]
 /// You can define the size in megabytes(e.g. 100 MB) for [cacheMaxSize]. It will help maintain the performance of your app.
