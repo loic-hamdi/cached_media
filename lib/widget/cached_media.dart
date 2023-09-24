@@ -1,6 +1,7 @@
 library cached_media;
 
 import 'dart:developer' as developer;
+import 'dart:typed_data';
 import 'package:cached_media/cached_media.dart';
 import 'package:cached_media/widget/functions/functions.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +14,9 @@ enum DownloadStatus { success, loading, error }
 class CachedMediaSnapshot {
   late DownloadStatus status;
   late String? filePath;
-  CachedMediaSnapshot({required this.status, required this.filePath});
+  late Uint8List? bytes;
+
+  CachedMediaSnapshot({required this.status, required this.filePath, this.bytes});
 }
 
 class CachedMedia extends StatefulWidget {
@@ -23,6 +26,7 @@ class CachedMedia extends StatefulWidget {
     required this.getStorage,
     required this.builder,
     this.startLoadingOnlyWhenVisible = true,
+    this.returnFileAsBytes = false,
   });
 
   /// Web url to get the media. The address must contains the file extension.
@@ -34,6 +38,7 @@ class CachedMedia extends StatefulWidget {
 
   final Widget Function(CachedMediaSnapshot snapshot) builder;
   final GetStorage getStorage;
+  final bool returnFileAsBytes;
 
   @override
   State<CachedMedia> createState() => _CachedMediaState();
@@ -79,7 +84,7 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
     _snapshot.filePath = null;
     widget.builder(_snapshot);
 
-    final cmi = await loadMedia(url, getStorage: getStorage);
+    final cmi = await loadMedia(url, getStorage: getStorage, returnFileAsBytes: widget.returnFileAsBytes);
 
     // await delay();
 
@@ -90,6 +95,7 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
 🗣️  cmi != null: ${cmi != null}
 🗣️  cmi.cachedMediaUrl: ${cmi?.cachedMediaUrl}
 🗣️  cmi.fileSize: ${cmi?.fileSize}
+🗣️  cmi.bytes != null: ${cmi?.bytes != null}
 🗣️  url: $url
 ''', name: 'Cached Media package');
     }
@@ -97,6 +103,7 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
     if (cmi != null && cmi.cachedMediaUrl.isNotEmpty) {
       _snapshot.status = DownloadStatus.success;
       _snapshot.filePath = cmi.cachedMediaUrl;
+      _snapshot.bytes = cmi.bytes;
       widget.builder(_snapshot);
       printSnapshot(url, 'Success');
     } else {
@@ -112,6 +119,7 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
 🧠  key: ${widget.key}
 🧠  _snapshot.filePath != null: ${_snapshot.filePath}
 🧠  _snapshot.status: ${_snapshot.status} ⬅️⬅️⬅️
+🧠  _snapshot.bytes != null: ${_snapshot.bytes != null}
 🧠  url: $url
 ''', name: 'Cached Media package');
     }
