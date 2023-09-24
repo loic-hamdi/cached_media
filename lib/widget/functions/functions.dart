@@ -12,21 +12,23 @@ Future<CachedMediaInfo?> loadMedia(
   required GetStorage getStorage,
   bool returnFileAsBytes = false,
 }) async {
-  if (kIsWeb) return null;
-  CachedMediaInfo? cachedMediaInfo = await findFirstCachedMediaInfoOrNull(getStorage, mediaUrl);
-  if (cachedMediaInfo == null) {
-    await downloadAndSetInCache(mediaUrl, getStorage: getStorage);
-  } else {
-    if (await doesFileExist(cachedMediaInfo.cachedMediaUrl)) {
-      return cachedMediaInfo;
-    } else {
-      removeCachedMediaInfo(getStorage, cachedMediaInfo.id);
+  CachedMediaInfo? cachedMediaInfo;
+  if (!kIsWeb) {
+    cachedMediaInfo = await findFirstCachedMediaInfoOrNull(getStorage, mediaUrl);
+    if (cachedMediaInfo == null) {
       await downloadAndSetInCache(mediaUrl, getStorage: getStorage);
+    } else {
+      if (await doesFileExist(cachedMediaInfo.cachedMediaUrl)) {
+        return cachedMediaInfo;
+      } else {
+        removeCachedMediaInfo(getStorage, cachedMediaInfo.id);
+        await downloadAndSetInCache(mediaUrl, getStorage: getStorage);
+      }
     }
+    cachedMediaInfo = await findFirstCachedMediaInfoOrNull(getStorage, mediaUrl);
   }
-  cachedMediaInfo = await findFirstCachedMediaInfoOrNull(getStorage, mediaUrl);
   if (returnFileAsBytes) {
-    cachedMediaInfo = await fileAsBytesIoWeb(cachedMediaInfo);
+    cachedMediaInfo = await fileAsBytesIoWeb(cachedMediaInfo, mediaUrl);
   }
   return cachedMediaInfo;
 }
