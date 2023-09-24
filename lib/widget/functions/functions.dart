@@ -51,6 +51,7 @@ Future<CachedMediaInfo?> loadMedia(String mediaUrl, {required GetStorage getStor
         developer.log('🟨  Is Already Downloading, cachedMediaInfo is not null : ${cachedMediaInfo != null} (count: $count) - $mediaUrl', name: 'Cached Media package');
       }
       if (cachedMediaInfo == null) await Future.delayed(const Duration(milliseconds: 1000));
+      count++;
     }
   } else if (!isAlreadyDownloading) {
     if (getShowLogs) {
@@ -94,6 +95,9 @@ Future<CachedMediaInfo?> downloadMedia(String mediaUrl, {required GetStorage get
     // }
     http.get(Uri.parse(mediaUrl)).then((response) {
       if (response.statusCode == 200) {
+        if (getShowLogs) {
+          developer.log('🟢  File Downloaded: $mediaUrl', name: 'Cached Media package');
+        }
         Uint8List bytes = response.bodyBytes;
         if (bytes.isNotEmpty) {
           int sizeInBytes = bytes.length;
@@ -110,6 +114,10 @@ Future<CachedMediaInfo?> downloadMedia(String mediaUrl, {required GetStorage get
             developer.log('🔋  Downloaded (Length:$sizeInBytes - sizeInMb: $sizeInMb) : $mediaUrl', name: 'Cached Media package');
           }
           return cachedMediaInfoToSet;
+        }
+      } else {
+        if (getShowLogs) {
+          developer.log('❌ Error - CANNOT DOWNLOAD FILE : $mediaUrl', name: 'Cached Media package');
         }
       }
     });
