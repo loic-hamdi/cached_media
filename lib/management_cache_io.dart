@@ -20,7 +20,7 @@ Future<void> downloadAndSetInCache(String mediaUrl, {required GetStorage getStor
       id: const Uuid().v1(),
       mediaUrl: mediaUrl,
       dateCreated: DateTime.now().millisecondsSinceEpoch ~/ 1000,
-      fileSize: await file.length(),
+      fileSize: (await file.length()) ~/ 1000000,
       cachedMediaUrl: tmpPath,
     );
     addCachedMediaInfo(getStorage, cachedMediaInfoToSet);
