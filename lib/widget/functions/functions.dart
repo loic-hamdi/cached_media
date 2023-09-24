@@ -62,6 +62,15 @@ Future<CachedMediaInfo?> loadMedia(String mediaUrl, {required GetStorage getStor
     cachedMediaInfo ??= await downloadAndSetInCache(mediaUrl, getStorage: getStorage);
   }
   if (cachedMediaInfo != null) isBeingDownloaded.remove(mediaUrl);
+
+  if (getShowLogs) {
+    developer.log('''
+🟢  Return loadMedia(): ${cachedMediaInfo?.id}
+🟢  Return loadMedia(): ${cachedMediaInfo?.mediaUrl}
+🟢  Return loadMedia() (Length: ${cachedMediaInfo?.bytes?.length ?? 0}): 
+🟢  Return loadMedia() (File size: ${cachedMediaInfo?.fileSize}): 
+''', name: 'Cached Media package');
+  }
   return cachedMediaInfo;
 }
 
@@ -137,6 +146,14 @@ Future<CachedMediaInfo?> downloadAndSetInCache(String mediaUrl, {required GetSto
   final cachedMediaInfoToSet = await downloadMedia(mediaUrl, getStorage: getStorage);
   if (cachedMediaInfoToSet != null) {
     await addCachedMediaInfo(getStorage, cachedMediaInfoToSet);
+    if (getShowLogs) {
+      developer.log('''
+🟣  Return addCachedMediaInfo(): ${cachedMediaInfoToSet.id}
+🟣  Return addCachedMediaInfo(): ${cachedMediaInfoToSet.mediaUrl}
+🟣  Return addCachedMediaInfo() (Length: ${cachedMediaInfoToSet.bytes?.length ?? 0}): 
+🟣  Return addCachedMediaInfo() (File size: ${cachedMediaInfoToSet.fileSize}): 
+''', name: 'Cached Media package');
+    }
     return cachedMediaInfoToSet;
   }
   return null;

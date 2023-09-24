@@ -61,19 +61,23 @@ Future<CachedMediaInfo?> findFirstCachedMediaInfoOrNull(GetStorage getStorage, S
       if (cmi != null) {
         final cmiTmpJson = getStorage.read(cmi.id);
         if (cmiTmpJson == null) {
-          developer.log('''
+          if (getShowLogs) {
+            developer.log('''
 ❌  Media not found in findFirstCachedMediaInfoOrNull()
-UniqueId: ${cmi.id}
-MediaUrl: ${cmi.mediaUrl}
+❌  UniqueId: ${cmi.id}
+❌  MediaUrl: ${cmi.mediaUrl}
 ''', name: 'Cached Media package');
+          }
         } else {
           final cachedMediaInfoFull = CachedMediaInfo.fromJson(json.decode(cmiTmpJson));
-          developer.log('''
-✅  Media found in findFirstCachedMediaInfoOrNull()
-UniqueId: ${cachedMediaInfoFull.id}
-MediaUrl: ${cachedMediaInfoFull.mediaUrl}
-Bytes.length: ${cachedMediaInfoFull.bytes?.length}
+          if (getShowLogs) {
+            developer.log('''
+🟫  Media found in findFirstCachedMediaInfoOrNull()
+🟫  UniqueId: ${cachedMediaInfoFull.id}
+🟫  MediaUrl: ${cachedMediaInfoFull.mediaUrl}
+🟫  Bytes.length: ${cachedMediaInfoFull.bytes?.length}
 ''', name: 'Cached Media package');
+          }
           return cachedMediaInfoFull;
         }
       }
