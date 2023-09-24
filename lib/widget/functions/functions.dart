@@ -144,8 +144,17 @@ Future<CachedMediaInfo?> downloadMedia(String mediaUrl, {required GetStorage get
 
 Future<CachedMediaInfo?> downloadAndSetInCache(String mediaUrl, {required GetStorage getStorage}) async {
   final cachedMediaInfoToSet = await downloadMedia(mediaUrl, getStorage: getStorage);
+  if (getShowLogs) {
+    developer.log('''
+🟠  Return addCachedMediaInfo(): ${cachedMediaInfoToSet?.id}
+🟠  Return addCachedMediaInfo(): ${cachedMediaInfoToSet?.mediaUrl}
+🟠  Return addCachedMediaInfo() (Length: ${cachedMediaInfoToSet?.bytes?.length ?? 0}): 
+🟠  Return addCachedMediaInfo() (File size: ${cachedMediaInfoToSet?.fileSize}): 
+''', name: 'Cached Media package');
+  }
   if (cachedMediaInfoToSet != null) {
-    await addCachedMediaInfo(getStorage, cachedMediaInfoToSet);
+    final c = CachedMediaInfo.fromJson(cachedMediaInfoToSet.toJson());
+    await addCachedMediaInfo(getStorage, c);
     if (getShowLogs) {
       developer.log('''
 🟣  Return addCachedMediaInfo(): ${cachedMediaInfoToSet.id}
