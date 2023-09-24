@@ -124,7 +124,7 @@ Future<CachedMediaInfo?> downloadMedia(String mediaUrl, {required GetStorage get
           developer.log('❌ Error - CAN NOT DOWNLOAD FILE : \n$mediaUrl', name: 'Cached Media package');
         }
       }
-      if (!statusCode200) await Future.delayed(const Duration(seconds: 5));
+      if (!statusCode200) await Future.delayed(Duration(seconds: (count * 2 + 1)));
       count++;
     }
     return null;
