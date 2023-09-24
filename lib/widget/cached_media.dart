@@ -94,7 +94,7 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
 🗣️  key: ${widget.key}
 🗣️  cmi != null: ${cmi != null}
 🗣️  cmi.cachedMediaUrl: ${cmi?.cachedMediaUrl}
-🗣️  cmi.fileSize: ${cmi?.fileSize}
+🗣️  cmi.fileSize: ${cmi?.fileSize.toStringAsExponential(2)}
 🗣️  cmi.bytes != null: ${cmi?.bytes != null}
 🗣️  url: $url
 ''', name: 'Cached Media package');

@@ -53,7 +53,7 @@ Future<void> initStreamListener({bool showLogs = false, required GetStorage getS
       developer.log('''
 - - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -
 Media in cache: ${p0.length}
-Current Cache Size: $currentCacheSize
+Current Cache Size: ${currentCacheSize.toStringAsExponential(3)}
 Cache Max Size: $cacheMaxSizeDefault
 - - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -- - -
 ''', name: 'Cached Media package');

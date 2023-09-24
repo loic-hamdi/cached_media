@@ -27,7 +27,7 @@ class CachedMediaInfo {
   late String id;
   late String mediaUrl;
   late String cachedMediaUrl;
-  late int fileSize;
+  late double fileSize;
   late int dateCreated;
   Uint8List? bytes;
 
