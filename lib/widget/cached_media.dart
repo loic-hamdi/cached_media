@@ -15,7 +15,7 @@ class CachedMediaSnapshot {
   late DownloadStatus status;
   late Uint8List? bytes;
   late String? mimeType;
-  CachedMediaSnapshot({required this.bytes, required this.status});
+  CachedMediaSnapshot({required this.bytes, required this.status, required this.mimeType});
 }
 
 class CachedMedia extends StatefulWidget {
@@ -45,7 +45,7 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
   @override
   bool get wantKeepAlive => true;
 
-  final _snapshot = CachedMediaSnapshot(bytes: null, status: DownloadStatus.loading);
+  final _snapshot = CachedMediaSnapshot(bytes: null, mimeType: null, status: DownloadStatus.loading);
   bool initiating = false;
   bool initiated = false;
 
@@ -89,6 +89,7 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
     if (getShowLogs) {
       developer.log('''
 🗣️  getFile() - from: await loadMedia()
+key: ${widget.key}
 cmi != null: ${cmi != null}
 cmi.bytes != null: ${cmi?.bytes != null}
 cmi.fileSize: ${cmi?.fileSize}
@@ -112,6 +113,7 @@ url: $url
     if (getShowLogs) {
       developer.log('''
 🗣️  _onSnapshotChanged() - from: $from
+key: ${widget.key}
 _snapshot.bytes != null: ${_snapshot.bytes != null}
 _snapshot.mimeType: ${_snapshot.mimeType}
 _snapshot.status: ${_snapshot.status}
