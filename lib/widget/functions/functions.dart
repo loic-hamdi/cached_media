@@ -19,6 +19,7 @@ Future<CachedMediaInfo?> loadMedia(
       await downloadAndSetInCache(mediaUrl, getStorage: getStorage);
     } else {
       if (await doesFileExist(cachedMediaInfo.cachedMediaUrl)) {
+        if (returnFileAsBytes) cachedMediaInfo = await fileAsBytesIoWeb(cachedMediaInfo, mediaUrl);
         return cachedMediaInfo;
       } else {
         removeCachedMediaInfo(getStorage, cachedMediaInfo.id);
@@ -27,8 +28,6 @@ Future<CachedMediaInfo?> loadMedia(
     }
     cachedMediaInfo = await findFirstCachedMediaInfoOrNull(getStorage, mediaUrl);
   }
-  if (returnFileAsBytes) {
-    cachedMediaInfo = await fileAsBytesIoWeb(cachedMediaInfo, mediaUrl);
-  }
+  if (returnFileAsBytes) cachedMediaInfo = await fileAsBytesIoWeb(cachedMediaInfo, mediaUrl);
   return cachedMediaInfo;
 }
