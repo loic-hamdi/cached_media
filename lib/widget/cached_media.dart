@@ -52,10 +52,7 @@ class CachedMedia extends StatefulWidget {
   State<CachedMedia> createState() => _CachedMediaState();
 }
 
-class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClientMixin<CachedMedia> {
-  @override
-  bool get wantKeepAlive => true;
-
+class _CachedMediaState extends State<CachedMedia> {
   final _snapshot = CachedMediaSnapshot(status: DownloadStatus.loading, filePath: null);
   bool initiating = false;
   bool initiated = false;
@@ -77,8 +74,6 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
-
     return widget.startLoadingOnlyWhenVisible
         ? VisibilityDetector(
             key: widget.key ?? Key(const Uuid().v1()),
