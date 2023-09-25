@@ -91,7 +91,13 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
               fit: widget.fit,
             ),
           )
-        : widget.builder(_snapshot);
+        : Image.file(
+            File(filePath!),
+            errorBuilder: (context, error, stackTrace) => const Text('Error'),
+            width: widget.width,
+            height: widget.height,
+            fit: widget.fit,
+          );
 
     return widget.startLoadingOnlyWhenVisible
         ? VisibilityDetector(
