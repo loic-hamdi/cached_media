@@ -1,6 +1,7 @@
 library cached_media;
 
 import 'dart:developer' as developer;
+import 'dart:io';
 import 'dart:typed_data';
 import 'package:cached_media/cached_media.dart';
 import 'package:cached_media/widget/functions/functions.dart';
@@ -27,6 +28,9 @@ class CachedMedia extends StatefulWidget {
     required this.builder,
     this.startLoadingOnlyWhenVisible = true,
     this.returnFileAsBytes = false,
+    this.width = double.infinity,
+    this.height = double.infinity,
+    this.fit,
   });
 
   /// Web url to get the media. The address must contains the file extension.
@@ -40,6 +44,10 @@ class CachedMedia extends StatefulWidget {
   final GetStorage getStorage;
   final bool returnFileAsBytes;
 
+  final double width;
+  final double height;
+  final BoxFit? fit;
+
   @override
   State<CachedMedia> createState() => _CachedMediaState();
 }
@@ -51,7 +59,7 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
   final _snapshot = CachedMediaSnapshot(status: DownloadStatus.loading, filePath: null);
   bool initiating = false;
   bool initiated = false;
-
+  String? filePath;
   @override
   void initState() {
     super.initState();
@@ -61,7 +69,7 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
   Future<void> init() async {
     initiating = true;
     if (mounted) setState(() {});
-    await getFile(widget.mediaUrl, getStorage: widget.getStorage);
+    filePath = await getFile(widget.mediaUrl, getStorage: widget.getStorage); //! TODO : Test to do Image.file from here?
     initiating = false;
     initiated = true;
     if (mounted) setState(() {});
@@ -70,6 +78,21 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
   @override
   Widget build(BuildContext context) {
     super.build(context);
+
+    return widget.startLoadingOnlyWhenVisible && filePath != null
+        ? VisibilityDetector(
+            key: widget.key ?? Key(const Uuid().v1()),
+            onVisibilityChanged: !initiating && !initiated ? (_) async => _.visibleFraction > 0 ? await init() : null : null,
+            child: Image.file(
+              File(filePath!),
+              errorBuilder: (context, error, stackTrace) => const Text('Error'),
+              width: widget.width,
+              height: widget.height,
+              fit: widget.fit,
+            ),
+          )
+        : widget.builder(_snapshot);
+
     return widget.startLoadingOnlyWhenVisible
         ? VisibilityDetector(
             key: widget.key ?? Key(const Uuid().v1()),
@@ -79,7 +102,7 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
         : widget.builder(_snapshot);
   }
 
-  Future<void> getFile(String url, {required GetStorage getStorage}) async {
+  Future<String?> getFile(String url, {required GetStorage getStorage}) async {
     _snapshot.status = DownloadStatus.loading;
     _snapshot.filePath = null;
     widget.builder(_snapshot);
@@ -94,7 +117,7 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
 🗣️  key: ${widget.key}
 🗣️  cmi != null: ${cmi != null}
 🗣️  cmi.cachedMediaUrl: ${cmi?.cachedMediaUrl}
-🗣️  cmi.fileSize: ${cmi?.fileSize.toStringAsExponential(2)}
+🗣️  cmi.fileSize: ${cmi?.fileSize.toStringAsFixed(2)}
 🗣️  cmi.bytes != null: ${cmi?.bytes != null}
 🗣️  url: $url
 ''', name: 'Cached Media package');
@@ -106,10 +129,12 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
       _snapshot.bytes = cmi.bytes;
       widget.builder(_snapshot);
       printSnapshot(url, 'Success');
+      return cmi.cachedMediaUrl;
     } else {
       widget.builder(_snapshot..status = DownloadStatus.error);
       printSnapshot(url, 'Error');
     }
+    return null;
   }
 
   void printSnapshot(String url, String from) {
