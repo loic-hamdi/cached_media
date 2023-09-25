@@ -8,13 +8,15 @@ Future<CachedMediaInfo?> fileAsBytesIoWeb(CachedMediaInfo? cachedMediaInfo, Stri
     final file = File(cachedMediaInfo.cachedMediaUrl);
     if (await file.exists()) {
       final bytes = file.readAsBytesSync();
-      cachedMediaInfo.bytes = bytes;
-      return cachedMediaInfo;
+      final r = CachedMediaInfo.fromJson(cachedMediaInfo.toJson());
+      r.bytes = bytes;
+      if (getShowLogs) developer.log('✅  fileAsBytesIoWeb() IO - $mediaUrl', name: 'Cached Media package');
+      return r;
     } else {
-      if (getShowLogs) developer.log('❌ Error - fileAsBytesIoWeb() file DOES NOT EXIST: $mediaUrl', name: 'Cached Media package');
+      if (getShowLogs) developer.log('❌  Error - fileAsBytesIoWeb() file DOES NOT EXIST: $mediaUrl', name: 'Cached Media package');
     }
   } else {
-    if (getShowLogs) developer.log('❌ Error - fileAsBytesIoWeb() cachedMediaInfo is NULL : $mediaUrl', name: 'Cached Media package');
+    if (getShowLogs) developer.log('❌  Error - fileAsBytesIoWeb() cachedMediaInfo is NULL : $mediaUrl', name: 'Cached Media package');
   }
   return null;
 }
