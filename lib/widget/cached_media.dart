@@ -40,10 +40,9 @@ class CachedMedia extends StatefulWidget {
   /// Set [startLoadingOnlyWhenVisible] to [true] to start to download the media when the widget becomes visible on user's screen
   final bool startLoadingOnlyWhenVisible;
 
-  final Widget Function(CachedMediaSnapshot snapshot) builder;
+  final Widget Function(CachedMediaSnapshot snapshot)? builder;
   final GetStorage getStorage;
   final bool returnFileAsBytes;
-
   final double width;
   final double height;
   final BoxFit? fit;
@@ -74,53 +73,55 @@ class _CachedMediaState extends State<CachedMedia> {
 
   @override
   Widget build(BuildContext context) {
-    return widget.startLoadingOnlyWhenVisible
-        ? VisibilityDetector(
-            key: widget.key ?? Key(const Uuid().v1()),
-            onVisibilityChanged: !initiating && !initiated ? (_) async => _.visibleFraction > 0 ? await init() : null : null,
-            child: filePath != null
-                ? Image.file(
-                    File(filePath!),
-                    errorBuilder: (context, error, stackTrace) => const Text('Error'),
-                    width: widget.width,
-                    height: widget.height,
-                    fit: widget.fit,
-                  )
-                : SizedBox(
-                    width: widget.width,
-                    height: widget.height,
-                  ),
-          )
-        : filePath != null
-            ? Image.file(
-                File(filePath!),
-                errorBuilder: (context, error, stackTrace) => const Text('Error'),
-                width: widget.width,
-                height: widget.height,
-                fit: widget.fit,
-              )
-            : SizedBox(
-                width: widget.width,
-                height: widget.height,
-              );
-
-    return widget.startLoadingOnlyWhenVisible
-        ? VisibilityDetector(
-            key: widget.key ?? Key(const Uuid().v1()),
-            onVisibilityChanged: !initiating && !initiated ? (_) async => _.visibleFraction > 0 ? await init() : null : null,
-            child: widget.builder(_snapshot),
-          )
-        : widget.builder(_snapshot);
+    if (widget.builder != null) {
+      return widget.startLoadingOnlyWhenVisible
+          ? VisibilityDetector(
+              key: widget.key ?? Key(const Uuid().v1()),
+              onVisibilityChanged: !initiating && !initiated ? (_) async => _.visibleFraction > 0 ? await init() : null : null,
+              child: widget.builder!(_snapshot),
+            )
+          : widget.builder!(_snapshot);
+    } else {
+      return widget.startLoadingOnlyWhenVisible
+          ? VisibilityDetector(
+              key: widget.key ?? Key(const Uuid().v1()),
+              onVisibilityChanged: !initiating && !initiated ? (_) async => _.visibleFraction > 0 ? await init() : null : null,
+              child: filePath != null
+                  ? Image.file(
+                      File(filePath!),
+                      errorBuilder: (context, error, stackTrace) => const Text('Error'),
+                      width: widget.width,
+                      height: widget.height,
+                      fit: widget.fit,
+                    )
+                  : SizedBox(
+                      width: widget.width,
+                      height: widget.height,
+                    ),
+            )
+          : filePath != null
+              ? Image.file(
+                  File(filePath!),
+                  errorBuilder: (context, error, stackTrace) => const Text('Error'),
+                  width: widget.width,
+                  height: widget.height,
+                  fit: widget.fit,
+                )
+              : SizedBox(
+                  width: widget.width,
+                  height: widget.height,
+                );
+    }
   }
 
   Future<String?> getFile(String url, {required GetStorage getStorage}) async {
-    _snapshot.status = DownloadStatus.loading;
-    _snapshot.filePath = null;
-    widget.builder(_snapshot);
+    if (widget.builder != null) {
+      _snapshot.status = DownloadStatus.loading;
+      _snapshot.filePath = null;
+      widget.builder!(_snapshot);
+    }
 
     final cmi = await loadMedia(url, getStorage: getStorage, returnFileAsBytes: widget.returnFileAsBytes);
-
-    // await delay();
 
     if (getShowLogs) {
       developer.log('''
@@ -135,15 +136,19 @@ class _CachedMediaState extends State<CachedMedia> {
     }
 
     if (cmi != null && cmi.cachedMediaUrl.isNotEmpty) {
-      _snapshot.status = DownloadStatus.success;
-      _snapshot.filePath = cmi.cachedMediaUrl;
-      _snapshot.bytes = cmi.bytes;
-      widget.builder(_snapshot);
-      printSnapshot(url, 'Success');
+      if (widget.builder != null) {
+        _snapshot.status = DownloadStatus.success;
+        _snapshot.filePath = cmi.cachedMediaUrl;
+        _snapshot.bytes = cmi.bytes;
+        widget.builder!(_snapshot);
+        printSnapshot(url, 'Success');
+      }
       return cmi.cachedMediaUrl;
     } else {
-      widget.builder(_snapshot..status = DownloadStatus.error);
-      printSnapshot(url, 'Error');
+      if (widget.builder != null) {
+        widget.builder!(_snapshot..status = DownloadStatus.error);
+        printSnapshot(url, 'Error');
+      }
     }
     return null;
   }
@@ -159,18 +164,5 @@ class _CachedMediaState extends State<CachedMedia> {
 🧠  url: $url
 ''', name: 'Cached Media package');
     }
-  }
-
-  Future<void> delay() async {
-    await Future.delayed(const Duration(seconds: 1));
-    developer.log('🗣️ 1 ', name: 'Cached Media package');
-    await Future.delayed(const Duration(seconds: 1));
-    developer.log('🗣️ 2 ', name: 'Cached Media package');
-    await Future.delayed(const Duration(seconds: 1));
-    developer.log('🗣️ 3 ', name: 'Cached Media package');
-    await Future.delayed(const Duration(seconds: 1));
-    developer.log('🗣️ 4 ', name: 'Cached Media package');
-    await Future.delayed(const Duration(seconds: 1));
-    developer.log('🗣️ 5 ', name: 'Cached Media package');
   }
 }
