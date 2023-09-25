@@ -79,25 +79,35 @@ class _CachedMediaState extends State<CachedMedia> with AutomaticKeepAliveClient
   Widget build(BuildContext context) {
     super.build(context);
 
-    return widget.startLoadingOnlyWhenVisible && filePath != null
+    return widget.startLoadingOnlyWhenVisible
         ? VisibilityDetector(
             key: widget.key ?? Key(const Uuid().v1()),
             onVisibilityChanged: !initiating && !initiated ? (_) async => _.visibleFraction > 0 ? await init() : null : null,
-            child: Image.file(
-              File(filePath!),
-              errorBuilder: (context, error, stackTrace) => const Text('Error'),
-              width: widget.width,
-              height: widget.height,
-              fit: widget.fit,
-            ),
+            child: filePath != null
+                ? Image.file(
+                    File(filePath!),
+                    errorBuilder: (context, error, stackTrace) => const Text('Error'),
+                    width: widget.width,
+                    height: widget.height,
+                    fit: widget.fit,
+                  )
+                : SizedBox(
+                    width: widget.width,
+                    height: widget.height,
+                  ),
           )
-        : Image.file(
-            File(filePath!),
-            errorBuilder: (context, error, stackTrace) => const Text('Error'),
-            width: widget.width,
-            height: widget.height,
-            fit: widget.fit,
-          );
+        : filePath != null
+            ? Image.file(
+                File(filePath!),
+                errorBuilder: (context, error, stackTrace) => const Text('Error'),
+                width: widget.width,
+                height: widget.height,
+                fit: widget.fit,
+              )
+            : SizedBox(
+                width: widget.width,
+                height: widget.height,
+              );
 
     return widget.startLoadingOnlyWhenVisible
         ? VisibilityDetector(
